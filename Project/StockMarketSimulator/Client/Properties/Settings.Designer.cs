@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Cient.Properties
+namespace Client.Properties
 {
 
 
