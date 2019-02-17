@@ -1,15 +1,19 @@
 ﻿using System;
 using System.Threading;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
+using log4net;
 
 namespace CommSystem
 {
     public class HelloWorld
     {
+        private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         public HelloWorld()
         {
+            string method = "HelloWorld Constructor";
+            Log.Debug(string.Format("Enter - {0}", method));
+
             helloText = "Hello from the shared CommSystem resource. ";
 
             //Temporary Task...
@@ -20,6 +24,8 @@ namespace CommSystem
                 Thread.Sleep(5000);
                 this.HelloText += " !!!!!This text was updated by someone.!!!!!";
             }).Start();
+
+            Log.Debug(string.Format("Exit - {0}", method));
         }
 
         //Example of a "Dependency Inversion" string property named "HelloText"
