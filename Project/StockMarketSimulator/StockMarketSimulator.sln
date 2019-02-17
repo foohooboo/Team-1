@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.28307.271
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Broker", "Broker\Broker.csproj", "{119356C1-8CD5-41D3-98B6-2D914F684FF2}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "CommSystem", "CommSystem\CommSystem.shproj", "{5A9952E2-D397-4FB7-A701-0312A39C2521}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Shared", "CommSystem\Shared.shproj", "{5A9952E2-D397-4FB7-A701-0312A39C2521}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockServer", "StockServer\StockServer.csproj", "{2EE7AF62-96A2-4F63-B2BF-CE7C616573D2}"
 EndProject

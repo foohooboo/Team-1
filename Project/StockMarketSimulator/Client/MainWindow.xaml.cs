@@ -1,43 +1,32 @@
 ﻿using CommSystem;
+using log4net;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Client
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-
-        private int _port;
-        public int Port
-        {
-            get => _port; set
-            {
-                if (Port != value)
-                {
-                    _port = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Port"));
-                }
-            }
-
-        }
+        private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private HelloWorld helloWorld = new HelloWorld();
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public MainWindow()
+        {
+            string method = "MainWindow Constructor";
+            Log.Debug(string.Format("Enter - {0}", method));
+
+            InitializeComponent();
+            DataContext = this;
+
+            helloWorld.HelloTextChanged += OnHelloTextChanged;
+            HelloTextLocal = helloWorld.HelloText;
+
+            Log.Debug(string.Format("Exit - {0}", method));
+        }
+
         private string helloTextLocal;
         public string HelloTextLocal
         {
@@ -53,27 +42,15 @@ namespace Client
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public MainWindow()
-        {
-            InitializeComponent();
-            DataContext = this;
-
-            helloWorld.HelloTextChanged += OnHelloTextChanged;
-
-            HelloTextLocal = helloWorld.HelloText;
-        }
-
         public void OnHelloTextChanged(object source, EventArgs args)
         {
+            string method = "OnHelloTextChanged";
+            Log.Debug(string.Format("Enter - {0}", method));
+
             HelloTextLocal = helloWorld.HelloText;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("HelloTextLocal"));
-        }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-
+            Log.Debug(string.Format("Exit - {0}", method));
         }
     }
 }
