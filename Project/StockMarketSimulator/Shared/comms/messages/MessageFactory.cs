@@ -9,25 +9,30 @@ namespace Shared.comms.messages
 {
     public static class MessageFactory
     {
-        public static Message GetMessage(string json)
+        public static readonly JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
+
+        public static int MessageCount
         {
-            JObject o = JObject.Parse(json);
-            if (o.ContainsKey("MType"))
-            {
-                if (Enum.TryParse(o["MType"].ToString(), out MessageTypes type)){
-                    Message m;
-                    switch (type)
-                    {
-                        case MessageTypes.Ack:
-                            m = new AckMessage(o);
-                            break;
-                        default:
-                            throw new FormatException(string.Format("{0} message type not found.",json));
-                    }
-                    return m;
-                }
-            }
-            throw new FormatException("Could not deserialize json message.");
+            get; private set;
+        }
+
+        public static Message GetMessage(string json)
+        {            
+            return JsonConvert.DeserializeObject<Message>(json, settings);
+        }
+
+        public static Message GetMessage(Type messageType, int processID, int portfolioID)
+        {
+
+            var message = Activator.CreateInstance(messageType) as Message;
+            message.MessageID = $"{processID}-{portfolioID}-{GetNextMessageCount()}";
+
+            return message;
+        }
+
+        public static int GetNextMessageCount()
+        {
+            return ++MessageCount;
         }
     }
 }

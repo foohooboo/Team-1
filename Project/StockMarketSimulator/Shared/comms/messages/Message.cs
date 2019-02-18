@@ -11,19 +11,21 @@ namespace Shared.comms.messages
         //I haven't gotten to it yet. Current state was made to build message base class.
 
 
-        //Abstract & Virtual Members/Methods
-        public readonly MessageTypes MType;
 
-        //Constructors
-        protected Message(MessageTypes messageType)
+        public Message()
         {
-            MType = messageType;
+
+        }
+
+        public string MessageID
+        {
+            get; set;
         }
 
         //Public Methods
         public string Encode()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, MessageFactory.settings);
         }
 
         //Protected Methods
