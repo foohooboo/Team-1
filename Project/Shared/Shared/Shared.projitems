@@ -12,7 +12,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)comms\messages\Message.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)comms\messages\MessageFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)comms\messages\AckMessage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)comms\messages\MessageTypes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HelloWorld.cs" />
   </ItemGroup>
 </Project>
