@@ -7,6 +7,12 @@ System consists of 3 processes:
   
 All projects are contained inside one Visual Studio Solution (found in _\<repo\>_/Project/StockMarketSimulator). These include one project for each process listed above with an additional Shared project.
 
+## Setup Notes
+
+  * This project contains NuGets. After opening the solution for the first time, you may need to "Restore NuGet Packages".
+
+## Project Info
+
 ### StockServer
 
   * .Net 4.7.1 Console application
