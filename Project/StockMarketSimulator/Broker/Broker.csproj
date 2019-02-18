@@ -57,6 +57,6 @@
     </Content>
     <None Include="packages.config" />
   </ItemGroup>
-  <Import Project="..\CommSystem\CommSystem2.projitems" Label="Shared" />
+  <Import Project="..\Shared\Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
