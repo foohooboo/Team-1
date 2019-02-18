@@ -18,3 +18,7 @@ All projects are contained inside one Visual Studio Solution (found in _\<repo\>
 ### Client
 
   * .Net 4.7.1 WPF application
+  
+### Shared
+
+  * .Net 4.7.1 Shared Project
