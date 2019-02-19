@@ -57,29 +57,27 @@ namespace SharedTest
         #endregion
 
         [TestMethod]
+        public void AckMessageCountTest()
+        {
+            var message = MessageFactory.GetMessage<AckMessage>(1, 5);
+
+            //TODO: Update the expected MessageId so it wont fail if other tests run before this.
+            Assert.AreEqual($"1-5-1", message.MessageID);
+
+            message = MessageFactory.GetMessage<AckMessage>(1, 5);
+
+            Assert.AreEqual($"1-5-2", message.MessageID);
+        }
+
+        [TestMethod]
         public void AckSerializeTest()
         {
-            var a = new AckMessage()
-            {
-                AckHello = "SerialzeTest"
-            };
+            var a = MessageFactory.GetMessage<AckMessage>(1, 5);
 
             var test = MessageFactory.GetMessage(a.Encode()) as AckMessage;
 
             Assert.AreEqual(typeof(AckMessage), test.GetType());
-            Assert.AreEqual(a.AckHello, test.AckHello);
-        }
-
-        [TestMethod]
-        public void AckMessageCountTest()
-        {
-            var message = MessageFactory.GetMessage<AckMessage>(1, 5) as AckMessage;
-
-            Assert.AreEqual(message.MessageID, $"1-5-1");
-
-            message = MessageFactory.GetMessage<AckMessage>(1, 5) as AckMessage;
-
-            Assert.AreEqual(message.MessageID, $"1-5-2");
+            Assert.AreEqual(a.MessageID, test.MessageID);
         }
     }
 }
