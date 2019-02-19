@@ -21,10 +21,9 @@ namespace Shared.comms.messages
             return JsonConvert.DeserializeObject<Message>(json, settings);
         }
 
-        public static Message GetMessage(Type messageType, int processID, int portfolioID)
+        public static Message GetMessage<TMessage>(int processID, int portfolioID)
         {
-
-            var message = Activator.CreateInstance(messageType) as Message;
+            var message = Activator.CreateInstance(typeof(TMessage)) as Message;
             message.MessageID = $"{processID}-{portfolioID}-{GetNextMessageCount()}";
 
             return message;

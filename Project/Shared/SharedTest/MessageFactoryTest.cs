@@ -73,11 +73,11 @@ namespace SharedTest
         [TestMethod]
         public void AckMessageCountTest()
         {
-            var message = MessageFactory.GetMessage(typeof(AckMessage), 1, 5) as AckMessage;
+            var message = MessageFactory.GetMessage<AckMessage>(1, 5) as AckMessage;
 
             Assert.AreEqual(message.MessageID, $"1-5-1");
 
-            message = MessageFactory.GetMessage(typeof(AckMessage), 1, 5) as AckMessage;
+            message = MessageFactory.GetMessage<AckMessage>(1, 5) as AckMessage;
 
             Assert.AreEqual(message.MessageID, $"1-5-2");
         }
