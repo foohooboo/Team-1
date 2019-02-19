@@ -5,7 +5,7 @@ System consists of 3 processes:
   2. Broker - Facilitates stock portfolio managament.
   3. Client - Graphical interface for users to manage thier stock portfolios.
   
-All projects are contained inside one Visual Studio Solution (found in _\<repo\>_/Project/StockMarketSimulator). These include one project for each process listed above with an additional Shared project.
+There is one root Visual Studio Solution (_\<repo\>_/Project/StockMarketSimulator.sln) which does not include any tests. Additionally, each process (and a shared project) have their own solutions with tests. These can be found in (_\<repo\>_/Project/\<project\>/\<project\>.sln)
 
 ## Setup Notes
 
