@@ -1,5 +1,7 @@
 # Stock Market Simulator
 
+Project board: https://trello.com/b/TfkcX7QO/design-tasks
+
 System consists of 3 processes: 
   1. StockServer - Streams simulated stock-price data.
   2. Broker - Facilitates stock portfolio managament.
