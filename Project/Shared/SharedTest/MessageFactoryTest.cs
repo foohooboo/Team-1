@@ -59,14 +59,15 @@ namespace SharedTest
         [TestMethod]
         public void AckMessageCountTest()
         {
+            var messageCount = MessageFactory.MessageCount;
             var message = MessageFactory.GetMessage<AckMessage>(1, 5);
 
             //TODO: Update the expected MessageId so it wont fail if other tests run before this.
-            Assert.AreEqual($"1-5-1", message.MessageID);
+            Assert.AreEqual($"1-5-{++messageCount}", message.MessageID);
 
             message = MessageFactory.GetMessage<AckMessage>(1, 5);
 
-            Assert.AreEqual($"1-5-2", message.MessageID);
+            Assert.AreEqual($"1-5-{++messageCount}", message.MessageID);
         }
 
         [TestMethod]
