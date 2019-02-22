@@ -1,5 +1,5 @@
 ﻿using log4net;
-using Shared.Comms.Messages;
+using Shared.Comms.MailService;
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
@@ -19,11 +19,15 @@ namespace Shared.Conversations
 
         public static Conversation InitiateAndStoreConversation<TConversation>(int processID, int portfolioID)
         {
+            Log.Debug(string.Format("Enter - {0}", nameof(InitiateAndStoreConversation)));
+
             Conversation conv = Activator.CreateInstance(typeof(TConversation), new object[] { GetNextId(processID,portfolioID) }) as Conversation;
             if(!conversations.TryAdd(conv.Id, conv))
             {
                 Log.Error($"Could not add {conv.Id} to conversations.");
             }
+
+            Log.Debug(string.Format("Exit - {0}", nameof(InitiateAndStoreConversation)));
             return conv;
         }
 
@@ -32,13 +36,13 @@ namespace Shared.Conversations
             return $"{processID}-{portfolioID}-{NextConversationCount}";
         }
 
-        public static void ProcessMessage(Message m)
+        public static void ProcessIncomingMessage(Envelope m)
         {
-            Log.Debug(string.Format("Enter - {0}", nameof(ProcessMessage)));
+            Log.Debug(string.Format("Enter - {0}", nameof(ProcessIncomingMessage)));
 
-            if (conversations.ContainsKey(m.ConversationID))
+            if (conversations.ContainsKey(m.Contents.ConversationID))
             {
-                conversations[m.ConversationID].UpdateState(m);
+                conversations[m.Contents.ConversationID].UpdateState(m);
             }
             else
             {
@@ -47,7 +51,7 @@ namespace Shared.Conversations
                 throw new NotImplementedException("Creating new conversations from incoming messages has not been implemented yet.");
             }
 
-            Log.Debug(string.Format("Exit - {0}", nameof(ProcessMessage)));
+            Log.Debug(string.Format("Exit - {0}", nameof(ProcessIncomingMessage)));
         }
 
         public static void RemoveConversation(string conversationId)

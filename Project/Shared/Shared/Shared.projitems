@@ -21,8 +21,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\StockStreamResponseMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\ConversationManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\Conversation.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Conversations\States\ConversationState.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Conversations\States\InitialConversationState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Conversations\ConversationState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Conversations\SharedStates\EndConversationState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HelloWorld.cs" />
   </ItemGroup>
 </Project>
