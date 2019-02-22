@@ -7,11 +7,6 @@ namespace Shared.comms.messages
 {
     public abstract class Message
     {
-        //TODO: Message creation still needs to be forced through the MessaegFactory.
-        //I haven't gotten to it yet. Current state was made to build message base class.
-
-
-
         public Message()
         {
 
@@ -22,14 +17,14 @@ namespace Shared.comms.messages
             get; set;
         }
 
-        //Public Methods
+        public string ConversationId
+        {
+            get; set;
+        }
+
         public string Encode()
         {
             return JsonConvert.SerializeObject(this, MessageFactory.settings);
         }
-
-        //Protected Methods
-
-        //Private Methods
     }
 }
