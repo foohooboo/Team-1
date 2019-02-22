@@ -9,9 +9,16 @@
     <Import_RootNamespace>Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)comms\messages\Message.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)comms\messages\MessageFactory.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)comms\messages\AckMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Comms\MailService\Envelope.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Comms\MailService\PostBox.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Comms\MailService\PostOffice.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Comms\MailService\TcpEnvelope.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Comms\MailService\UdpEnvelope.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\Message.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\MessageFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\AckMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\StockStreamRequestMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\StockStreamResponseMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HelloWorld.cs" />
   </ItemGroup>
 </Project>

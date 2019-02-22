@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Shared.comms.messages
+namespace Shared.Comms.Messages
 {
     public class AckMessage : Message
     {

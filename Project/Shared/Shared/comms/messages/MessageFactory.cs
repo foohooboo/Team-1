@@ -1,11 +1,11 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Shared.comms.messages;
+using Shared.Comms.Messages;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Shared.comms.messages
+namespace Shared.Comms.Messages
 {
     public static class MessageFactory
     {

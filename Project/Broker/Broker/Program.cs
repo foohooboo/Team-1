@@ -1,6 +1,6 @@
 ﻿using System;
 using log4net;
-using Shared.comms.messages;
+using Shared.Comms.Messages;
 
 namespace Broker
 {
