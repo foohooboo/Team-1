@@ -1,6 +1,6 @@
-﻿using Shared.comms.messages;
+﻿using Shared.Comms.Messages;
 
-namespace Shared.conversations.states
+namespace Shared.Conversations.States
 {
     public abstract class ConversationState
     {
@@ -10,10 +10,6 @@ namespace Shared.conversations.states
         }
 
         public abstract ConversationState ProcessMessage(Message newMessage);
-        public void EndConversation()
-        {
-            conversation.End();
-        }
 
         private Conversation conversation;
     }

@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Shared.comms.messages;
+using Shared.Comms.Messages;
 
-namespace Shared.conversations.states
+namespace Shared.Conversations.States
 {
     public class InitialConversationState : ConversationState
     {

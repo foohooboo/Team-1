@@ -1,9 +1,9 @@
 ﻿using log4net;
-using Shared.comms.messages;
-using Shared.conversations.states;
+using Shared.Comms.Messages;
+using Shared.Conversations.States;
 using System;
 
-namespace Shared.conversations
+namespace Shared.Conversations
 {
     public class Conversation
     {
@@ -16,15 +16,10 @@ namespace Shared.conversations
             Log.Debug(string.Format("Enter - {0}", nameof(Conversation)));
 
             Id = id;
-            CurrentState = initialState;
+            CurrentState = new InitialConversationState(this);
             LastUpdateTime = DateTime.Now;
 
             Log.Debug(string.Format("Exit - {0}", nameof(Conversation)));
-        }
-
-        internal void End()
-        {
-            throw new NotImplementedException();
         }
 
         private ConversationState CurrentState;

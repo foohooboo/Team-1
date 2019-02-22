@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Shared.comms.messages;
+using Shared.Comms.Messages;
 
 namespace SharedTest
 {
@@ -62,7 +62,6 @@ namespace SharedTest
             var messageCount = MessageFactory.MessageCount;
             var message = MessageFactory.GetMessage<AckMessage>(1, 5);
 
-            //TODO: Update the expected MessageId so it wont fail if other tests run before this.
             Assert.AreEqual($"1-5-{++messageCount}", message.MessageID);
 
             message = MessageFactory.GetMessage<AckMessage>(1, 5);

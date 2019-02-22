@@ -1,9 +1,6 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Shared.comms.messages
+namespace Shared.Comms.Messages
 {
     public abstract class Message
     {
@@ -12,12 +9,17 @@ namespace Shared.comms.messages
 
         }
 
-        public string MessageID
+        public string ConversationID
         {
             get; set;
         }
 
-        public string ConversationId
+        public int SourceID
+        {
+            get; set;
+        }
+
+        public string MessageID
         {
             get; set;
         }

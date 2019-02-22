@@ -1,10 +1,10 @@
 ﻿using log4net;
-using Shared.comms.messages;
+using Shared.Comms.Messages;
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
 
-namespace Shared.conversations
+namespace Shared.Conversations
 {
     public static class ConversationManager
     {
@@ -36,9 +36,9 @@ namespace Shared.conversations
         {
             Log.Debug(string.Format("Enter - {0}", nameof(ProcessMessage)));
 
-            if (conversations.ContainsKey(m.ConversationId))
+            if (conversations.ContainsKey(m.ConversationID))
             {
-                conversations[m.ConversationId].UpdateState(m);
+                conversations[m.ConversationID].UpdateState(m);
             }
             else
             {
