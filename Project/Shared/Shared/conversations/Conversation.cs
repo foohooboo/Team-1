@@ -8,20 +8,23 @@ namespace Shared.Conversations
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public Conversation(string id, ConversationState InitialState)
+        public Conversation(string conversationId)
         {
             Log.Debug(string.Format("Enter - {0}", nameof(Conversation)));
 
-            Id = id;
-            CurrentState = InitialState;
+            ConversationId = conversationId;
+            CurrentState = GetInitialState();
+            CurrentState.OnStateStart();
             LastUpdateTime = DateTime.Now;
 
             Log.Debug(string.Format("Exit - {0}", nameof(Conversation)));
         }
 
+        public abstract ConversationState GetInitialState();
+
         private ConversationState CurrentState;
         public DateTime LastUpdateTime{get; private set;}
-        public string Id { get; private set; }
+        public string ConversationId { get; private set; }
 
         public void UpdateState(Envelope incomingEnvelope)
         {

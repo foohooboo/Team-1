@@ -22,9 +22,9 @@ namespace Shared.Conversations
             Log.Debug(string.Format("Enter - {0}", nameof(InitiateAndStoreConversation)));
 
             Conversation conv = Activator.CreateInstance(typeof(TConversation), new object[] { GetNextId(processID,portfolioID) }) as Conversation;
-            if(!conversations.TryAdd(conv.Id, conv))
+            if(!conversations.TryAdd(conv.ConversationId, conv))
             {
-                Log.Error($"Could not add {conv.Id} to conversations.");
+                Log.Error($"Could not add {conv.ConversationId} to conversations.");
             }
 
             Log.Debug(string.Format("Exit - {0}", nameof(InitiateAndStoreConversation)));
@@ -68,6 +68,11 @@ namespace Shared.Conversations
             }
 
             Log.Debug(string.Format("Exit - {0}", nameof(RemoveConversation)));
+        }
+
+        public static bool ConversationExists(string conversationId)
+        {
+            return conversations.ContainsKey(conversationId);
         }
     }
 }

@@ -23,6 +23,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\Conversation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\ConversationState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\SharedStates\EndConversationState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Conversations\SharedStates\InitiateStockStreamRequestState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Conversations\StockStreamRequest\Initiator\StockStreamRequestConv_Initor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HelloWorld.cs" />
   </ItemGroup>
 </Project>
