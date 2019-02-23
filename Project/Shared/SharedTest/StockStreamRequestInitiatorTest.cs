@@ -2,6 +2,7 @@
 using Shared.Comms.MailService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
+using Shared.Conversations.SharedStates;
 using Shared.Conversations.StockStreamRequest.Initiator;
 
 namespace SharedTest
@@ -62,18 +63,17 @@ namespace SharedTest
             //Simulate application-level ids
             //TODO: Should these be moved into the TestContext?? -Dsphar 2/22/19
             int processId = 1;
-            int portfolioId = 3;
 
             //Create a new StockStreamRequestConv_Initor conversation
-            Conversation stockStreamConv_initiator = ConversationManager.InitiateAndStoreConversation<StockStreamRequestConv_Initor>(processId, portfolioId);
-            string conversationId = stockStreamConv_initiator.ConversationId;
+            var stockStreamConv = new StockStreamRequestConv_Initor(processId, new InitiateStockStreamRequestState(ConversationManager.GenerateNextId(processId)));
+            string conversationId = stockStreamConv.ConversationId;
 
             //Verify conversation exists in Conversation Manager
             Assert.IsTrue(ConversationManager.ConversationExists(conversationId));
 
             //Create fake response message and process it
             var stockStreamResponse = new Envelope(new StockStreamResponseMessage());
-            stockStreamResponse.Contents.ConversationID = stockStreamConv_initiator.ConversationId;
+            stockStreamResponse.Contents.ConversationID = stockStreamConv.ConversationId;
             ConversationManager.ProcessIncomingMessage(stockStreamResponse);
 
             //Conversation over, ensure it has been removed from Conversation Manager

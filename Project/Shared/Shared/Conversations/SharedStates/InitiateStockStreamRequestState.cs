@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using log4net;
+﻿using log4net;
 using Shared.Comms.MailService;
 using Shared.Comms.Messages;
 
@@ -11,25 +8,23 @@ namespace Shared.Conversations.SharedStates
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public InitiateStockStreamRequestState(string conversationID) : base(conversationID)
-        {
-        }
+        public InitiateStockStreamRequestState(string conversationId) : base(conversationId) { }
 
         public override ConversationState GetNextStateFromMessage(Envelope newMessage)
         {
             if (typeof(StockStreamResponseMessage) == newMessage.GetType())
             {
                 //TODO: Handle the response data somehow...
-                return new EndConversationState(conversationID);
+                return new EndConversationState(ConversationID);
             }
             //TODO: Add error message handling.
             else
             {
                 Log.Error("Could not process incoming message for conversation, ending.");
-                return new EndConversationState(conversationID);
+                return new EndConversationState(ConversationID);
             }
         }
-
+        
         public override void OnStateEnd()
         {
             //Do nothing

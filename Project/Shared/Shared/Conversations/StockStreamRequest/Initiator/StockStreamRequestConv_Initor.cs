@@ -2,15 +2,10 @@
 
 namespace Shared.Conversations.StockStreamRequest.Initiator
 {
-    class StockStreamRequestConv_Initor : Conversation
+    class StockStreamRequestConv_Initor : InitiatorConversation
     {
-        public StockStreamRequestConv_Initor(string conversationId) : base(conversationId)
+        public StockStreamRequestConv_Initor(int processId, ConversationState initialState):base(initialState)
         {
-        }
-
-        public override ConversationState GetInitialState()
-        {
-            return new InitiateStockStreamRequestState(ConversationId);
         }
     }
 }

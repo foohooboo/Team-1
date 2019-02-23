@@ -4,11 +4,11 @@ namespace Shared.Conversations
 {
     public abstract class ConversationState
     {
-        protected readonly string conversationID;
+        public readonly string ConversationID;
 
         public ConversationState(string conversationID)
         {
-            this.conversationID = conversationID;
+            ConversationID = conversationID;
         }
 
         public abstract ConversationState GetNextStateFromMessage(Envelope newMessage);

@@ -22,6 +22,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\ConversationManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\Conversation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\ConversationState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Conversations\InitiatorConversation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Conversations\ResponderConversation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\SharedStates\EndConversationState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\SharedStates\InitiateStockStreamRequestState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\StockStreamRequest\Initiator\StockStreamRequestConv_Initor.cs" />

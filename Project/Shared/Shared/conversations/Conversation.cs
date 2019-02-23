@@ -10,39 +10,46 @@ namespace Shared.Conversations
 
         public Conversation(string conversationId)
         {
-            Log.Debug(string.Format("Enter - {0}", nameof(Conversation)));
-
             ConversationId = conversationId;
-            CurrentState = GetInitialState();
-            CurrentState.OnStateStart();
-            LastUpdateTime = DateTime.Now;
-
-            Log.Debug(string.Format("Exit - {0}", nameof(Conversation)));
+            
+            //We may want to move this AddConverstion call out of this constructor. I put it here for time sake.
+            //-Dsphar 2/22/19
+            ConversationManager.AddConversation(this); 
         }
 
-        public abstract ConversationState GetInitialState();
+        public void SetInitialState(ConversationState state)
+        {
+            if (CurrentState != null)
+            {
+                Log.Error("Cannot set initial conversation state more than once.");
+            }
+            else
+            {
+                LastUpdateTime = DateTime.Now;
+                CurrentState = state;
+                CurrentState.OnStateStart();
+            }
+        }
 
         private ConversationState CurrentState;
         public DateTime LastUpdateTime{get; private set;}
-        public string ConversationId { get; private set; }
+        public readonly string ConversationId;
 
         public void UpdateState(Envelope incomingEnvelope)
         {
             Log.Debug(string.Format("Enter - {0}", nameof(UpdateState)));
 
             var nextState = CurrentState.GetNextStateFromMessage(incomingEnvelope);
-                                   
-            //Note: The logic below assumes state will always change with a valid incoming message (as is the case for our project).
-            //If we ever add a case where it is expected state will not change with an incoming message, we need to change this
-            // logic to refresh the LastUpdateTime without a changing state. Otherwise conversations may falsely timeout.
-            //-Dsphar 2/21/19
-            if (nextState != CurrentState)
+            if (nextState != null)
             {
+                LastUpdateTime = DateTime.Now;
                 CurrentState.OnStateEnd();
                 CurrentState = nextState;
                 CurrentState.OnStateStart();
-
-                LastUpdateTime = DateTime.Now;
+            }
+            else
+            {
+                Log.Warn($"Unable to advance conversation to next state with message {incomingEnvelope.Contents.MessageID}.");
             }
 
             Log.Debug(string.Format("Exit - {0}", nameof(UpdateState)));

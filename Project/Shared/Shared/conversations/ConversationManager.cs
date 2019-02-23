@@ -17,23 +17,25 @@ namespace Shared.Conversations
         //TODO: Add timeout system for conversations. One idea is to periodically traverse conversations, and remove ones with an old LastUpdateTime.
         //Make sure we log the timeout. -Dsphar 2/21/2019
 
-        public static Conversation InitiateAndStoreConversation<TConversation>(int processID, int portfolioID)
+        public static void AddConversation(Conversation conversation)
         {
-            Log.Debug(string.Format("Enter - {0}", nameof(InitiateAndStoreConversation)));
+            Log.Debug(string.Format("Enter - {0}", nameof(AddConversation)));
 
-            Conversation conv = Activator.CreateInstance(typeof(TConversation), new object[] { GetNextId(processID,portfolioID) }) as Conversation;
-            if(!conversations.TryAdd(conv.ConversationId, conv))
+            if (conversations.ContainsKey(conversation.ConversationId))
             {
-                Log.Error($"Could not add {conv.ConversationId} to conversations.");
+                Log.Error($"Conversation Manager already has a conversation for {conversation.ConversationId}.");
+            }
+            else if (!conversations.TryAdd(conversation.ConversationId, conversation))
+            {
+                Log.Error($"Could not add {conversation.ConversationId} to conversations.");
             }
 
-            Log.Debug(string.Format("Exit - {0}", nameof(InitiateAndStoreConversation)));
-            return conv;
+            Log.Debug(string.Format("Exit - {0}", nameof(AddConversation)));
         }
 
-        private static string GetNextId(int processID, int portfolioID)
+        public static string GenerateNextId(int processID)
         {
-            return $"{processID}-{portfolioID}-{NextConversationCount}";
+            return $"{processID}-{NextConversationCount}";
         }
 
         public static void ProcessIncomingMessage(Envelope m)
