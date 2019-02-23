@@ -23,10 +23,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\Conversation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\ConversationState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\InitiatorConversation.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Conversations\ResponderConversation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Conversations\ResponderConversationBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\SharedStates\EndConversationState.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Conversations\SharedStates\InitiateStockStreamRequestState.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Conversations\StockStreamRequest\Initiator\StockStreamRequestConv_Initor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Conversations\StockStreamRequest\InitialState_ConvI_StockStreamRequest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Conversations\StockStreamRequest\ConvI_StockStreamRequest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Conversations\StockStreamRequest\ConvR_StockStreamRequest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HelloWorld.cs" />
   </ItemGroup>
 </Project>

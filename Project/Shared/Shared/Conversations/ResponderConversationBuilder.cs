@@ -4,28 +4,32 @@ using System;
 
 namespace Shared.Conversations
 {
-    class ResponderConversation : Conversation
+    public static class ResponderConversationBuilder
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public ResponderConversation(Envelope e) : base(e.Contents.ConversationID)
+        public static Conversation BuildConversation(Envelope e)
         {
+            Conversation conv = null;
+
             if (_conversationFromMessageBuilder == null)
             {
                 Log.Error("ConversationFromMessageBuilder not set. Ignoring message.");
             }
             else
             {
-                var newConversation = _conversationFromMessageBuilder(e);
-                if (newConversation != null)
+                conv = _conversationFromMessageBuilder(e);
+                if (conv != null)
                 {
-                    ConversationManager.AddConversation(newConversation);
+                    ConversationManager.AddConversation(conv);
                 }
                 else
                 {
                     Log.Warn($"Unable to create new conversation out of incoming message...\n{e.Contents.Encode()}.");
                 }
             }
+
+            return conv;
         }
 
         private static Func<Envelope, Conversation> _conversationFromMessageBuilder = null;

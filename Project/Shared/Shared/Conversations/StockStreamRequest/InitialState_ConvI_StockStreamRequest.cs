@@ -4,11 +4,11 @@ using Shared.Comms.Messages;
 
 namespace Shared.Conversations.SharedStates
 {
-    class InitiateStockStreamRequestState : ConversationState
+    class InitialState_ConvI_StockStreamRequest : ConversationState
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public InitiateStockStreamRequestState(string conversationId) : base(conversationId) { }
+        public InitialState_ConvI_StockStreamRequest(string conversationId) : base(conversationId) { }
 
         public override ConversationState GetNextStateFromMessage(Envelope newMessage)
         {

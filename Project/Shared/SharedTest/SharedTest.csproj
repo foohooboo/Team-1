@@ -42,6 +42,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="StockStreamRequestResponderTest.cs" />
     <Compile Include="StockStreamRequestInitiatorTest.cs" />
     <Compile Include="MessageFactoryTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

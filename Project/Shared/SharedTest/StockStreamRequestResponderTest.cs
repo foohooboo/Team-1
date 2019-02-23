@@ -2,8 +2,7 @@
 using Shared.Comms.MailService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
-using Shared.Conversations.SharedStates;
-using Shared.Conversations.StockStreamRequest.Initiator;
+using Shared.Conversations.StockStreamRequest;
 
 namespace SharedTest
 {
@@ -11,10 +10,23 @@ namespace SharedTest
     /// Summary description for MessageFactoryTest
     /// </summary>
     [TestClass]
-    public class StockStreamRequestInitiatorTest
+    public class StockStreamRequestResponderTest
     {
-        public StockStreamRequestInitiatorTest()
+        public StockStreamRequestResponderTest()
         {
+            ResponderConversationBuilder.SetConversationFromMessageBuilder(BuildConversationFromMessage);
+        }
+
+        public Conversation BuildConversationFromMessage(Envelope e)
+        {
+            Conversation conv = null;
+
+            if(e.Contents is StockStreamRequestMessage)
+            {
+                return new ConvR_StockStreamRequest(e);
+            }
+
+            return conv;
         }
 
         private TestContext testContextInstance;
@@ -60,27 +72,25 @@ namespace SharedTest
         [TestMethod]
         public void SucessfulStockStreamRequestTest()
         {
-            //Simulate application-level ids
-            //TODO: Should these be moved into the TestContext?? -Dsphar 2/22/19
-            int processId = 1;
+            //Simulate remote application-level ids
+            string incomingConversationID = "5-4-18";
+            int remoteProcessId = 2;
+            int remotePortfolioId = 3;
 
-            //Create a new StockStreamRequestConv_Initor conversation
-            var stockStreamConv = new ConvI_StockStreamRequest(new InitialState_ConvI_StockStreamRequest(ConversationManager.GenerateNextId(processId)));
-            string conversationId = stockStreamConv.ConversationId;
+            //Create a fake incoming message to simulate a StockStreamRequest
+            var message = MessageFactory.GetMessage<StockStreamRequestMessage>(remoteProcessId, remotePortfolioId);
+            message.ConversationID = incomingConversationID;
+            var messageEnvelope = new Envelope(message);
 
-            //Verify conversation exists in Conversation Manager
-            Assert.IsTrue(ConversationManager.ConversationExists(conversationId));
+            //Build conversation from message
+            var replyConversation = BuildConversationFromMessage(messageEnvelope);
 
-            //Create fake response message and process it
-            var stockStreamResponse = new Envelope(new StockStreamResponseMessage());
-            stockStreamResponse.Contents.ConversationID = stockStreamConv.ConversationId;
-            ConversationManager.ProcessIncomingMessage(stockStreamResponse);
+            //Verify conversation was built from message
+            Assert.IsNotNull(replyConversation);
+            Assert.IsTrue(replyConversation.ConversationId.Equals(incomingConversationID));
 
-            //Conversation over, ensure it has been removed from Conversation Manager
-            Assert.IsFalse(ConversationManager.ConversationExists(conversationId));
+            //Verify conversation does NOT exist in Conversation Manager because it ends after sending reply message.
+            Assert.IsFalse(ConversationManager.ConversationExists(incomingConversationID));
         }
-
-        //TODO: Add test which handles an error response
-        //TODO: Add test which handles no response (timeout)
     }
 }

@@ -10,11 +10,18 @@ namespace Shared.Conversations
 
         public Conversation(string conversationId)
         {
-            ConversationId = conversationId;
-            
-            //We may want to move this AddConverstion call out of this constructor. I put it here for time sake.
-            //-Dsphar 2/22/19
-            ConversationManager.AddConversation(this); 
+            if(string.IsNullOrEmpty(conversationId))
+            {
+                throw new NullReferenceException();
+            }
+            else
+            {
+                ConversationId = conversationId;
+
+                //We may want to move this AddConverstion call out of this constructor. I put it here for time sake.
+                //-Dsphar 2/22/19
+                ConversationManager.AddConversation(this);
+            }
         }
 
         public void SetInitialState(ConversationState state)
