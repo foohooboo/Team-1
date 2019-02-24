@@ -33,12 +33,7 @@ namespace Shared.Comms.MailService
 
         public bool HasMessage()
         {
-            if (Contents is null)
-            {
-                return false;
-            }
-
-            return true;
+            return Contents != null;
         }
 
         public void Insert(Message message)
