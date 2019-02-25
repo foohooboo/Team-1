@@ -46,10 +46,10 @@
     <Compile Include="MailService\EnvelopeTest.cs" />
     <Compile Include="MailService\PostBoxTest.cs" />
     <Compile Include="MailService\PostOfficeTest.cs" />
-    <Compile Include="MessageTests\MessageTest.cs" />
-    <Compile Include="MessageTests\StockStreamRequestResponderTest.cs" />
-    <Compile Include="MessageTests\StockStreamRequestInitiatorTest.cs" />
-    <Compile Include="MessageTests\MessageFactoryTest.cs" />
+    <Compile Include="Messages\MessageTest.cs" />
+    <Compile Include="Conversations\Test_ConvR_StockStreamRequest.cs" />
+    <Compile Include="Conversations\Test_ConvI_StockStreamRequest.cs" />
+    <Compile Include="Messages\MessageFactoryTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

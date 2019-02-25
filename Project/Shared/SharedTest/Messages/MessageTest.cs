@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Shared.Comms.Messages;
 
-namespace SharedTest.MessageTests
+namespace SharedTest.Messages
 {
     [TestClass]
     public class MessageTest

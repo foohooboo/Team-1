@@ -4,15 +4,15 @@ using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.StockStreamRequest;
 
-namespace SharedTest
+namespace SharedTest.Conversations
 {
     /// <summary>
     /// Summary description for MessageFactoryTest
     /// </summary>
     [TestClass]
-    public class StockStreamRequestResponderTest
+    public class Test_ConvR_StockStreamRequest
     {
-        public StockStreamRequestResponderTest()
+        public Test_ConvR_StockStreamRequest()
         {
             ResponderConversationBuilder.SetConversationFromMessageBuilder(BuildConversationFromMessage);
         }
@@ -70,7 +70,7 @@ namespace SharedTest
         #endregion
 
         [TestMethod]
-        public void SucessfulStockStreamRequestTest()
+        public void StockStreamResponseTest()
         {
             //Simulate remote application-level ids
             string incomingConversationID = "5-4-18";

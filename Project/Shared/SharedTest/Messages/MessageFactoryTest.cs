@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Shared.Comms.Messages;
 
-namespace SharedTest
+namespace SharedTest.Messages
 {
     /// <summary>
     /// Summary description for MessageFactoryTest

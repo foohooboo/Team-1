@@ -5,13 +5,13 @@ using Shared.Conversations;
 using Shared.Conversations.SharedStates;
 using Shared.Conversations.StockStreamRequest.Initiator;
 
-namespace SharedTest
+namespace SharedTest.Conversations
 {
     /// <summary>
     /// Summary description for MessageFactoryTest
     /// </summary>
     [TestClass]
-    public class StockStreamRequestInitiatorTest
+    public class Test_ConvI_StockStreamRequest
     {
         [TestMethod]
         public void SucessfulStockStreamRequestTest()
@@ -36,7 +36,7 @@ namespace SharedTest
             Assert.IsFalse(ConversationManager.ConversationExists(conversationId));
         }
 
-        //TODO: Add test which handles an error response
-        //TODO: Add test which handles no response (timeout)
+        //TODO: Add test which handles an error response (once error message is created)
+        //TODO: Add test which handles no response (once timeout functionality added)
     }
 }
