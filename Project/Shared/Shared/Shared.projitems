@@ -19,6 +19,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\AckMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\StockStreamRequestMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\StockStreamResponseMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Config.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\ConversationManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\Conversation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\ConversationState.cs" />
@@ -29,5 +30,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\StockStreamRequest\ConvI_StockStreamRequest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\StockStreamRequest\ConvR_StockStreamRequest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HelloWorld.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)App.config" />
   </ItemGroup>
 </Project>
