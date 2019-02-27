@@ -29,5 +29,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\StockStreamRequest\ConvI_StockStreamRequest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\StockStreamRequest\ConvR_StockStreamRequest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HelloWorld.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MarketStructures.cs" />
   </ItemGroup>
 </Project>
