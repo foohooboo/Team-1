@@ -55,7 +55,10 @@ namespace Shared.Conversations
             else
             {
                 conv = ResponderConversationBuilder.BuildConversation(m);
-                AddConversation(conv);
+                if (conv != null)
+                {
+                    AddConversation(conv);
+                }
             }
 
             Log.Debug(string.Format("Exit - {0}", nameof(ProcessIncomingMessage)));

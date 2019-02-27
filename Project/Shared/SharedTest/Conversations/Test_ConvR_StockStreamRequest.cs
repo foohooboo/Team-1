@@ -14,10 +14,16 @@ namespace SharedTest.Conversations
     {
         public Test_ConvR_StockStreamRequest()
         {
+        
+        }
+
+        [ClassInitialize()]
+        public static void Test_ConvR_StockStreamRequestInitialize(TestContext testContext)
+        {
             ResponderConversationBuilder.SetConversationFromMessageBuilder(BuildConversationFromMessage);
         }
 
-        public Conversation BuildConversationFromMessage(Envelope e)
+        public static Conversation BuildConversationFromMessage(Envelope e)
         {
             Conversation conv = null;
 
@@ -70,10 +76,10 @@ namespace SharedTest.Conversations
         #endregion
 
         [TestMethod]
-        public void StockStreamResponseTest()
+        public void ValidStockStreamResponseTest()
         {
             //Simulate remote application-level ids
-            string incomingConversationID = "5-4-18";
+            string incomingConversationID = "5-18";
             int remoteProcessId = 2;
             int remotePortfolioId = 3;
 
@@ -90,6 +96,27 @@ namespace SharedTest.Conversations
             Assert.IsTrue(replyConversation.ConversationId.Equals(incomingConversationID));
 
             //Verify conversation does NOT exist in Conversation Manager because it ends after sending reply message.
+            Assert.IsFalse(ConversationManager.ConversationExists(incomingConversationID));
+        }
+
+        [TestMethod]
+        public void InvalidMessageResponderTest()
+        {
+            //Simulate remote application-level ids
+            string incomingConversationID = "5-23";
+            int remoteProcessId = 2;
+            int remotePortfolioId = 3;
+
+            //Create a fake incoming message to simulate a StockStreamRequest
+            var message = MessageFactory.GetMessage<AckMessage>(remoteProcessId, remotePortfolioId);
+            message.ConversationID = incomingConversationID;
+            var messageEnvelope = new Envelope(message);
+
+            //Build conversation from message
+            var replyConversation = ConversationManager.ProcessIncomingMessage(messageEnvelope);
+
+            //Verify conversation was NOT built from message
+            Assert.IsNull(replyConversation);
             Assert.IsFalse(ConversationManager.ConversationExists(incomingConversationID));
         }
     }
