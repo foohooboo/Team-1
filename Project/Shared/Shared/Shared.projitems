@@ -14,11 +14,16 @@
     <Compile Include="$(MSBuildThisFileDirectory)Comms\MailService\PostOffice.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\MailService\TcpEnvelope.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\MailService\UdpEnvelope.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\CreatePortfolioRequestMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\ErrorMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\GetPortfolioRequest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\Message.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\MessageFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\AckMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\PortfolioUpdateMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\StockStreamRequestMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\StockStreamResponseMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Config.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\ConversationManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\Conversation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\ConversationState.cs" />
@@ -30,5 +35,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\StockStreamRequest\ConvR_StockStreamRequest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HelloWorld.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MarketStructures.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Portfolio\Asset.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Portfolio\Portfolio.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Portfolio\Stock.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)App.config" />
   </ItemGroup>
 </Project>

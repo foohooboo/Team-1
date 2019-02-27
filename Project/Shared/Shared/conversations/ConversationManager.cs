@@ -25,9 +25,12 @@ namespace Shared.Conversations
             {
                 Log.Error($"Conversation Manager already has a conversation for {conversation.ConversationId}.");
             }
-            else if (!conversations.TryAdd(conversation.ConversationId, conversation))
+            else
             {
-                Log.Error($"Could not add {conversation.ConversationId} to conversations.");
+                if (conversations.TryAdd(conversation.ConversationId, conversation))
+                    conversation.StartConversation();
+                else
+                    Log.Error($"Could not add {conversation.ConversationId} to conversations.");
             }
 
             Log.Debug(string.Format("Exit - {0}", nameof(AddConversation)));
@@ -38,22 +41,28 @@ namespace Shared.Conversations
             return $"{processID}-{NextConversationCount}";
         }
 
-        public static void ProcessIncomingMessage(Envelope m)
+        public static Conversation ProcessIncomingMessage(Envelope m)
         {
             Log.Debug(string.Format("Enter - {0}", nameof(ProcessIncomingMessage)));
 
+            Conversation conv = null;
+
             if (conversations.ContainsKey(m.Contents.ConversationID))
             {
-                conversations[m.Contents.ConversationID].UpdateState(m);
+                conv = conversations[m.Contents.ConversationID];
+                conv.UpdateState(m);
             }
             else
             {
-                //TODO: If incoming message CAN initiate a conversation, create new conversation and add to conversations dictionary.
-                //TODO: If incoming message is NOT known to initiate conversation, log error/warning and drop message.
-                throw new NotImplementedException("Creating new conversations from incoming messages has not been implemented yet.");
+                conv = ResponderConversationBuilder.BuildConversation(m);
+                if (conv != null)
+                {
+                    AddConversation(conv);
+                }
             }
 
             Log.Debug(string.Format("Exit - {0}", nameof(ProcessIncomingMessage)));
+            return conv;
         }
 
         public static void RemoveConversation(string conversationId)
