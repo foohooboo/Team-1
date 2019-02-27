@@ -22,6 +22,7 @@ namespace SharedTest.Conversations
 
             //Create a new StockStreamRequestConv_Initor conversation
             var stockStreamConv = new ConvI_StockStreamRequest(new InitialState_ConvI_StockStreamRequest(ConversationManager.GenerateNextId(processId)));
+            ConversationManager.AddConversation(stockStreamConv);
             string conversationId = stockStreamConv.ConversationId;
 
             //Verify conversation exists in Conversation Manager

@@ -22,10 +22,6 @@ namespace Shared.Conversations
             else
             {
                 ConversationId = conversationId;
-
-                //We may want to move this AddConverstion call out of this constructor. I put it here for time sake.
-                //-Dsphar 2/22/19
-                ConversationManager.AddConversation(this);
             }
         }
 

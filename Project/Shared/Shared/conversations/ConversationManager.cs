@@ -25,9 +25,12 @@ namespace Shared.Conversations
             {
                 Log.Error($"Conversation Manager already has a conversation for {conversation.ConversationId}.");
             }
-            else if (!conversations.TryAdd(conversation.ConversationId, conversation))
+            else
             {
-                Log.Error($"Could not add {conversation.ConversationId} to conversations.");
+                if (conversations.TryAdd(conversation.ConversationId, conversation))
+                    conversation.StartConversation();
+                else
+                    Log.Error($"Could not add {conversation.ConversationId} to conversations.");
             }
 
             Log.Debug(string.Format("Exit - {0}", nameof(AddConversation)));
@@ -53,7 +56,6 @@ namespace Shared.Conversations
             {
                 conv = ResponderConversationBuilder.BuildConversation(m);
                 AddConversation(conv);
-                conv.StartConversation();
             }
 
             Log.Debug(string.Format("Exit - {0}", nameof(ProcessIncomingMessage)));

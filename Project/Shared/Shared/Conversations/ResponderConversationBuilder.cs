@@ -19,13 +19,9 @@ namespace Shared.Conversations
             else
             {
                 conv = _conversationFromMessageBuilder(e);
-                if (conv != null)
+                if (conv == null)
                 {
-                    ConversationManager.AddConversation(conv);
-                }
-                else
-                {
-                    Log.Warn($"Unable to create new conversation out of incoming message...\n{e.Contents.Encode()}.");
+                    Log.Warn($"ConversationFromMessageBuilder failed to create new conversation out of incoming message...\n{e.Contents.Encode()}.");
                 }
             }
 
