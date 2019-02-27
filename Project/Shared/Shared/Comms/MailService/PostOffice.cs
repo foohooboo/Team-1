@@ -1,4 +1,5 @@
-﻿using Shared.Conversations;
+﻿using log4net;
+using Shared.Conversations;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -7,6 +8,8 @@ namespace Shared.Comms.MailService
 {
     public class PostOffice
     {
+        private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         public Dictionary<EndPoint,PostBox> PostBoxes
         {
             get; set;
@@ -43,28 +46,37 @@ namespace Shared.Comms.MailService
         }
 
         /// <summary>
-        /// To achieve dependency inversion, the _incomingMessaegHandler will be set by a higher-level object.
-        /// Any incoming messages that are received should be decoded, wrapped in an envelope, and then sent though this
-        /// static object by calling PostOffice.HandleIncomingMessage(Envelope e). At which point that particular
+        /// To achieve dependency inversion, the _incomingMessaegHandler will be set by a higher-level object. As such,
+        /// any incoming messages that are received should be decoded, wrapped in an envelope, and then sent though this
+        /// static object by calling PostOffice.HandleIncomingMessage(Envelope e) at which point that particular
         /// message has been handed off and the Post Office does not need to worry about it anymore.
         /// -Dsphar 2/27/2019
         /// </summary>
         private static Func<Envelope, Conversation> _incomingMessageHandler = null;
         public static void SetIncomingMessageHandler(Func<Envelope, Conversation> func)
         {
+            Log.Debug(string.Format("Enter - {0}", nameof(SetIncomingMessageHandler)));
+
             if (_incomingMessageHandler != null)
                 throw new Exception("IncomingMessageHandler can only be set once.");
             else
                 _incomingMessageHandler = func;
+
+            Log.Debug(string.Format("Exit - {0}", nameof(SetIncomingMessageHandler)));
         }
         public static Conversation HandleIncomingMessage(Envelope e)
         {
+            Log.Debug(string.Format("Enter - {0}", nameof(HandleIncomingMessage)));
+
             if (_incomingMessageHandler == null)
             {
                 throw new NullReferenceException($"Please use SetIncomingMessageHandler(handlerFunc) before calling {nameof(HandleIncomingMessage)}");
             }
 
-            return _incomingMessageHandler(e);
+            var conv = _incomingMessageHandler(e);
+
+            Log.Debug(string.Format("Exit - {0}", nameof(HandleIncomingMessage)));
+            return conv;
         }
     }
 }
