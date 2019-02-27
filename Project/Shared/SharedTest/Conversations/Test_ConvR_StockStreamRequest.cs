@@ -21,6 +21,7 @@ namespace SharedTest.Conversations
         public static void Test_ConvR_StockStreamRequestInitialize(TestContext testContext)
         {
             ResponderConversationBuilder.SetConversationFromMessageBuilder(BuildConversationFromMessage);
+            ConversationManager.Initialize();
         }
 
         public static Conversation BuildConversationFromMessage(Envelope e)
@@ -88,8 +89,8 @@ namespace SharedTest.Conversations
             message.ConversationID = incomingConversationID;
             var messageEnvelope = new Envelope(message);
 
-            //Build conversation from message
-            var replyConversation = ConversationManager.ProcessIncomingMessage(messageEnvelope);
+            //Handle "incoming" message
+            var replyConversation = PostOffice.HandleIncomingMessage(messageEnvelope);
 
             //Verify conversation was built from message
             Assert.IsNotNull(replyConversation);
@@ -112,8 +113,8 @@ namespace SharedTest.Conversations
             message.ConversationID = incomingConversationID;
             var messageEnvelope = new Envelope(message);
 
-            //Build conversation from message
-            var replyConversation = ConversationManager.ProcessIncomingMessage(messageEnvelope);
+            //Handle "incoming" message
+            var replyConversation = PostOffice.HandleIncomingMessage(messageEnvelope);
 
             //Verify conversation was NOT built from message
             Assert.IsNull(replyConversation);

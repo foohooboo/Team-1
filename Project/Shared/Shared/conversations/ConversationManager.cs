@@ -17,6 +17,11 @@ namespace Shared.Conversations
         //TODO: Add timeout system for conversations. One idea is to periodically traverse conversations, and remove ones with an old LastUpdateTime.
         //Make sure we log the timeout. -Dsphar 2/21/2019
 
+        public static void Initialize()
+        {
+            PostOffice.SetIncomingMessageHandler(ProcessIncomingMessage);
+        }
+
         public static void AddConversation(Conversation conversation)
         {
             Log.Debug(string.Format("Enter - {0}", nameof(AddConversation)));
