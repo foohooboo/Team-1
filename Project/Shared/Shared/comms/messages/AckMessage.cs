@@ -2,9 +2,9 @@
 {
     public class AckMessage : Message
     {
-        public AckMessage(int ReferenceMessageID)
+        public AckMessage()
         {
-            this.ReferenceMessageID = ReferenceMessageID;
+
         }
 
         public int ReferenceMessageID

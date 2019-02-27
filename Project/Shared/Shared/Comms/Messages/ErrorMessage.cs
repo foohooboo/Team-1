@@ -2,7 +2,7 @@
 {
     public class ErrorMessage : AckMessage
     {
-        public ErrorMessage(int ReferenceMessageID) : base(ReferenceMessageID)
+        public ErrorMessage()
         {
 
         }

@@ -2,7 +2,7 @@
 {
     class GetPortfolioRequest : Message
     {
-        public GetPortfolioRequest() : base()
+        public GetPortfolioRequest()
         {
 
         }
