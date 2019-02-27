@@ -8,6 +8,11 @@ namespace Shared.Conversations
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
+        private ConversationState CurrentState;
+        public readonly string ConversationId;
+        public bool ConversationStarted { get; private set; }
+        public DateTime LastUpdateTime { get; private set; }
+
         public Conversation(string conversationId)
         {
             if(string.IsNullOrEmpty(conversationId))
@@ -38,9 +43,19 @@ namespace Shared.Conversations
             }
         }
 
-        private ConversationState CurrentState;
-        public DateTime LastUpdateTime{get; private set;}
-        public readonly string ConversationId;
+        public void StartConversation()
+        {
+            if (ConversationStarted)
+            {
+                Log.Error("Cannot start conversation more than once.");
+            }
+            else
+            {
+                LastUpdateTime = DateTime.Now;
+                CurrentState.OnStateStart();
+                ConversationStarted = true;
+            }
+        }
 
         public void UpdateState(Envelope incomingEnvelope)
         {

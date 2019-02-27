@@ -83,7 +83,7 @@ namespace SharedTest.Conversations
             var messageEnvelope = new Envelope(message);
 
             //Build conversation from message
-            var replyConversation = BuildConversationFromMessage(messageEnvelope);
+            var replyConversation = ConversationManager.ProcessIncomingMessage(messageEnvelope);
 
             //Verify conversation was built from message
             Assert.IsNotNull(replyConversation);
