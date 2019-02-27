@@ -6,12 +6,12 @@ namespace Shared.Comms.Messages
     {
         public PortfolioUpdateMessage()
         {
-            assets = new Dictionary<string, Portfolio.Asset>();
+            Assets = new Dictionary<string, Portfolio.Asset>();
         }
 
         public PortfolioUpdateMessage(Dictionary<string, Shared.Portfolio.Asset> Assets)
         {
-            this.assets = Assets;
+            this.Assets = Assets;
         }
 
         public int PortfolioID
