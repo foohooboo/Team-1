@@ -20,6 +20,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\Message.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\MessageFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\AckMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\PortfolioUpdateMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\StockStreamRequestMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\StockStreamResponseMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Config.cs" />

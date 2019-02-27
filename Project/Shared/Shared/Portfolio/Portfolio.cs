@@ -29,34 +29,32 @@ namespace Shared.Portfolio
             get; set;
         }
 
-        private Dictionary<string, Asset> Assets;
+        //private Dictionary<string, Asset> Assets;
+
+        public Dictionary<string, Asset> Assets
+        {
+            get;set;
+        }
 
         //Add/Remove an Asset object in the Portfolio
-        //If the specific Asset already exists within the portfolio, increment the Quantity
+        //If the specific Asset already exists within the portfolio, increment/decrement the Quantity
+        //ass quantity can be < 0 for removal of Assets
+        //fails silently
         //These two methods could maybe take a stock symbol and a quantity as parameters instead of an Asset object
-        public void AddAsset(Asset ass)
+        public void ModifyAsset(Asset ass)
         {
             if(Assets.ContainsKey(ass.RelatedStock.Symbol))
             {
                 Assets[ass.RelatedStock.Symbol].Quantity += ass.Quantity;
-            }
-            else
-            {
-                Assets.Add(ass.RelatedStock.Symbol, ass);
-            }
-        }
 
-        //If the Portfolio contains the Asset, decrement the quantity. 
-        //If the quantity of the asset falls to 0 then remove it from the portfolio
-        public void RemoveAsset(Asset ass)
-        {
-            if (Assets.ContainsKey(ass.RelatedStock.Symbol))
-            {
-                Assets[ass.RelatedStock.Symbol].Quantity -= ass.Quantity;
-                if(Assets[ass.RelatedStock.Symbol].Quantity <= 0)
+                if (Assets[ass.RelatedStock.Symbol].Quantity <= 0)
                 {
                     Assets.Remove(ass.RelatedStock.Symbol);
                 }
+            }
+            else if(ass.Quantity > 0)
+            {
+                Assets.Add(ass.RelatedStock.Symbol, ass);
             }
         }
     }

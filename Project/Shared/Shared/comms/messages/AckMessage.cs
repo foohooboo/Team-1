@@ -2,7 +2,7 @@
 {
     public class AckMessage : Message
     {
-        public AckMessage(int ReferenceMessageID) : base()
+        public AckMessage(int ReferenceMessageID)
         {
             this.ReferenceMessageID = ReferenceMessageID;
         }
