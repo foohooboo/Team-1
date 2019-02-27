@@ -4,6 +4,7 @@ namespace Shared.Comms.Messages
 {
     public class StockStreamResponseMessage : Message
     {
+        //TODO: Update this list type
         public List<object> EvaluatedStocks
         {
             get; set;
@@ -13,5 +14,7 @@ namespace Shared.Comms.Messages
         {
 
         }
+
+        //TODO: Add way to set EvaluatedStocks list data.
     }
 }
