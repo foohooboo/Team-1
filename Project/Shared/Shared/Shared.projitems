@@ -14,6 +14,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Comms\MailService\PostOffice.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\MailService\TcpEnvelope.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\MailService\UdpEnvelope.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\CreatePortfolioRequestMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\ErrorMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\GetPortfolioRequest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\Message.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\MessageFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\AckMessage.cs" />
@@ -30,6 +33,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\StockStreamRequest\ConvI_StockStreamRequest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\StockStreamRequest\ConvR_StockStreamRequest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HelloWorld.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Portfolio\Asset.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Portfolio\Portfolio.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Portfolio\Stock.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)App.config" />
