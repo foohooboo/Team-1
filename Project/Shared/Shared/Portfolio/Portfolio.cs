@@ -2,7 +2,7 @@
 
 namespace Shared.Portfolio
 {
-    class Portfolio
+    public class Portfolio
     {
         public Portfolio()
         {
@@ -33,7 +33,7 @@ namespace Shared.Portfolio
 
         public Dictionary<string, Asset> Assets
         {
-            get;set;
+            get; set;
         }
 
         //Add/Remove an Asset object in the Portfolio
