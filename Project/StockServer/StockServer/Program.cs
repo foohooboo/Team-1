@@ -66,7 +66,7 @@ namespace StockServer
                 stocks.Add(new Shared.Stock(hist[i,0], hist[i,1]));
                 List<Shared.EvaluatedStock> SingleStockUpdates = new List<Shared.EvaluatedStock>();
                 float mult = (float)Math.Pow(2, (random.NextDouble() * 4 - 2));//gives nice range for multiplier
-                using (var reader = new System.IO.StreamReader("..\\HistoricData\\" + hist[i,0] + ".csv"))//open file based on symbol
+                using (var reader = new System.IO.StreamReader("..\\..\\HistoricData\\" + hist[i,0] + ".csv"))//open file based on symbol
                 {
                     
                     for (int j = 0; j < 11; j++) { reader.ReadLine(); }//skip the first 11 lines
@@ -92,11 +92,11 @@ namespace StockServer
                     for (int j = 0; j < days; j++)
                     {
                         //multiply values by the same number for a whole stock history so its hard to cheat.
-                        SingleStockUpdates[i].close = (float)Math.Round((double)(SingleStockUpdates[i].close * mult), 2);
-                        SingleStockUpdates[i].open = (float)Math.Round((double)(SingleStockUpdates[i].open * mult), 2);
-                        SingleStockUpdates[i].high = (float)Math.Round((double)(SingleStockUpdates[i].high * mult), 2);
-                        SingleStockUpdates[i].low = (float)Math.Round((double)(SingleStockUpdates[i].low * mult), 2);
-                        SingleStockUpdates[i].volume = (int)((float)SingleStockUpdates[i].volume / mult);
+                        SingleStockUpdates[j].close = (float)Math.Round((double)(SingleStockUpdates[j].close * mult), 2);
+                        SingleStockUpdates[j].open = (float)Math.Round((double)(SingleStockUpdates[j].open * mult), 2);
+                        SingleStockUpdates[j].high = (float)Math.Round((double)(SingleStockUpdates[j].high * mult), 2);
+                        SingleStockUpdates[j].low = (float)Math.Round((double)(SingleStockUpdates[j].low * mult), 2);
+                        SingleStockUpdates[j].volume = (int)((float)SingleStockUpdates[j].volume / mult);
                         ret[i].Add(SingleStockUpdates[j]);
                         
                     }
