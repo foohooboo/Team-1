@@ -24,6 +24,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\StockPriceUpdate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\StockStreamRequestMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\StockStreamResponseMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\TransactionRequestMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\UpdateLeaderBoardMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Config.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\ConversationManager.cs" />
