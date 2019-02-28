@@ -4,7 +4,7 @@
     {
         public Asset()
         {
-
+            RelatedStock = new Stock();
         }
 
         public Shared.Stock RelatedStock

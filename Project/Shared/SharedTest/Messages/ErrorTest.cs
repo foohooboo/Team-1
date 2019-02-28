@@ -15,6 +15,25 @@ namespace SharedTest.Messages
         }
 
         [TestMethod]
+        public void InheritsMessageTest()
+        {
+            var newError = new ErrorMessage();
+
+            Assert.AreEqual(0, newError.SourceID);
+            Assert.IsNull(newError.ConversationID);
+            Assert.IsNull(newError.MessageID);
+        }
+
+        [TestMethod]
+        public void InheritsAckTest()
+        {
+            var newError = new ErrorMessage();
+
+            Assert.IsNull(newError.ReferenceMessageID);
+            Assert.IsNull(newError.AckHello);
+        }
+
+        [TestMethod]
         public void InitializeTest()
         {
             string err = "error";
