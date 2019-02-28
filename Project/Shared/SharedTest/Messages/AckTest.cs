@@ -16,6 +16,16 @@ namespace SharedTest.Messages
         }
 
         [TestMethod]
+        public void InheritsMessageTest()
+        {
+            var newAck = new AckMessage();
+
+            Assert.AreEqual(0, newAck.SourceID);
+            Assert.IsNull(newAck.ConversationID);
+            Assert.IsNull(newAck.MessageID);
+        }
+
+        [TestMethod]
         public void InitializeTest()
         {
             string referenceID = "1-2-3";
