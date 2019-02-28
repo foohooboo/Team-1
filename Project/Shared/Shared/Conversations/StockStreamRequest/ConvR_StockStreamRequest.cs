@@ -11,7 +11,7 @@ namespace Shared.Conversations.StockStreamRequest
 
         public ConvR_StockStreamRequest(Envelope e) : base(e.Contents.ConversationID)
         {
-            Log.Debug($"Enter - {nameof(ConvR_StockStreamRequest)}");
+            Log.Debug($"{nameof(ConvR_StockStreamRequest)} (enter)");
 
             //TODO: save endpoint/connection/postbox for future stock price updates
             //Note: Daniel is working on how this endpoint/connection will be persisted from the communicator standpoint.
@@ -28,7 +28,7 @@ namespace Shared.Conversations.StockStreamRequest
             SetInitialState(new EndConversationState(ConversationId));
             //^Since there is no response to this conversation's first message, we can end the conversation immediately.
 
-            Log.Debug($"Enter - {nameof(ConvR_StockStreamRequest)}");
+            Log.Debug($"{nameof(ConvR_StockStreamRequest)} (exit)");
         }
     }
 }

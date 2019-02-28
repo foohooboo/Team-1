@@ -55,18 +55,18 @@ namespace Shared.Comms.MailService
         private static Func<Envelope, Conversation> _incomingMessageHandler = null;
         public static void SetIncomingMessageHandler(Func<Envelope, Conversation> func)
         {
-            Log.Debug(string.Format("Enter - {0}", nameof(SetIncomingMessageHandler)));
+            Log.Debug($"{nameof(SetIncomingMessageHandler)} (enter)");
 
             if (_incomingMessageHandler != null)
                 throw new Exception("IncomingMessageHandler can only be set once.");
             else
                 _incomingMessageHandler = func;
 
-            Log.Debug(string.Format("Exit - {0}", nameof(SetIncomingMessageHandler)));
+            Log.Debug($"{nameof(SetIncomingMessageHandler)} (exit)");
         }
         public static Conversation HandleIncomingMessage(Envelope e)
         {
-            Log.Debug(string.Format("Enter - {0}", nameof(HandleIncomingMessage)));
+            Log.Debug($"{nameof(HandleIncomingMessage)} (enter)");
 
             if (_incomingMessageHandler == null)
             {
@@ -75,7 +75,7 @@ namespace Shared.Comms.MailService
 
             var conv = _incomingMessageHandler(e);
 
-            Log.Debug(string.Format("Exit - {0}", nameof(HandleIncomingMessage)));
+            Log.Debug($"{nameof(HandleIncomingMessage)} (exit)");
             return conv;
         }
     }

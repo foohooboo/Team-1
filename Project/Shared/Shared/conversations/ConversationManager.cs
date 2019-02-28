@@ -25,7 +25,7 @@ namespace Shared.Conversations
 
         public static void AddConversation(Conversation conversation)
         {
-            Log.Debug(string.Format("Enter - {0}", nameof(AddConversation)));
+            Log.Debug($"{nameof(AddConversation)} (enter)");
 
             if (conversations.ContainsKey(conversation.ConversationId))
             {
@@ -39,7 +39,7 @@ namespace Shared.Conversations
                     Log.Error($"Could not add {conversation.ConversationId} to conversations.");
             }
 
-            Log.Debug(string.Format("Exit - {0}", nameof(AddConversation)));
+            Log.Debug($"{nameof(AddConversation)} (exit)");
         }
 
         public static string GenerateNextId(int processID)
@@ -49,7 +49,7 @@ namespace Shared.Conversations
 
         public static Conversation ProcessIncomingMessage(Envelope m)
         {
-            Log.Debug(string.Format("Enter - {0}", nameof(ProcessIncomingMessage)));
+            Log.Debug($"{nameof(ProcessIncomingMessage)} (enter)");
 
             Conversation conv = null;
 
@@ -67,13 +67,13 @@ namespace Shared.Conversations
                 }
             }
 
-            Log.Debug(string.Format("Exit - {0}", nameof(ProcessIncomingMessage)));
+            Log.Debug($"{nameof(ProcessIncomingMessage)} (exit)");
             return conv;
         }
 
         public static void RemoveConversation(string conversationId)
         {
-            Log.Debug(string.Format("Enter - {0}", nameof(RemoveConversation)));
+            Log.Debug($"{nameof(RemoveConversation)} (enter)");
 
             if (conversations.ContainsKey(conversationId))
             {
@@ -84,7 +84,7 @@ namespace Shared.Conversations
                 Log.Warn($"Could not find {conversationId} in conversations to remove it.");
             }
 
-            Log.Debug(string.Format("Exit - {0}", nameof(RemoveConversation)));
+            Log.Debug($"{nameof(RemoveConversation)} (exit)");
         }
 
         public static bool ConversationExists(string conversationId)

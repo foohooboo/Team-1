@@ -31,8 +31,6 @@ namespace Shared
             Symbol = symbol;
             Name = name;
         }
-
-
     }
 
     public class EvaluatedStock

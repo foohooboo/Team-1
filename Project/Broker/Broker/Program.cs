@@ -1,17 +1,19 @@
 ﻿using System;
 using log4net;
+using Shared;
 using Shared.Comms.Messages;
+using Shared.Conversations;
+using Shared.Conversations.StockStreamRequest.Initiator;
 
 namespace Broker
 {
     internal class Program
     {
-        private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILog Log = LogManager.GetLogger(typeof(Program));
 
         private static void Main(string[] args)
         {
-            string method = "Main";
-            Log.Debug(String.Format("Enter - {0}", method));
+            Log.Debug($"{nameof(Main)} (enter)");
 
             var comm = new CommSystemWrapper();
 
@@ -22,21 +24,27 @@ namespace Broker
             Message decoded = MessageFactory.GetMessage(encodedAck);
             //Log.Info(string.Format("Decoded Message:  type={0}",decoded.MType));
 
-            Log.Info("Hello World! From the Broker.");
-            Log.Info(comm.HelloText);
-            Log.Info("Now waiting for something to change shared resource value. Please wait...");
+            PrintMenu();
+            var input = Console.ReadLine();
 
-            while (comm.WaitingForUpdate)
+            while (!input.Equals("exit"))
             {
+                var c = new ConvI_StockStreamRequest(new InitialSate_ConvI_StockStreamRequest());
+                Log.Info($"Starting new conversation: {c.ConversationId}");
+                ConversationManager.AddConversation(c);
 
+                PrintMenu();
+                input = Console.ReadLine();
             }
 
-            Log.Info(comm.HelloText);
-            Log.Info("Something should have changed in the above text.");
-            Log.Info("Pres any key to finish.");
-            Console.ReadKey();
+            Log.Debug($"{nameof(Main)} (exit)");
+        }
 
-            Log.Debug(String.Format("Exit - {0}", method));
+        static void PrintMenu()
+        {
+            Console.WriteLine("\nInput Options:");
+            Console.WriteLine("   -\"exit\" to end");
+            Console.WriteLine("   -anything else to start a StockStreamRequest conversation.");
         }
     }
 }

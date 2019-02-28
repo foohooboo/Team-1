@@ -55,7 +55,7 @@ namespace Shared.Conversations
 
         public void UpdateState(Envelope incomingEnvelope)
         {
-            Log.Debug(string.Format("Enter - {0}", nameof(UpdateState)));
+            Log.Debug($"{nameof(UpdateState)} (enter)");
 
             var nextState = CurrentState.GetNextStateFromMessage(incomingEnvelope);
             if (nextState != null)
@@ -70,7 +70,7 @@ namespace Shared.Conversations
                 Log.Warn($"Unable to advance conversation to next state with message {incomingEnvelope.Contents.MessageID}.");
             }
 
-            Log.Debug(string.Format("Exit - {0}", nameof(UpdateState)));
+            Log.Debug($"{nameof(UpdateState)} (exit)");
         }
     }
 }
