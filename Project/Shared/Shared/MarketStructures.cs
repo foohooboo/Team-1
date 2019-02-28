@@ -26,6 +26,11 @@ namespace Shared
     {
         public string Symbol{ get; set; }
         public string Name { get; set; }
+        public Stock()
+        {
+            Symbol = null;
+            Name = null;
+        }
         public Stock(string symbol, string name)
         {
             Symbol = symbol;
