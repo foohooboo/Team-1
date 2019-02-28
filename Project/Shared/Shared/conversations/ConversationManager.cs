@@ -19,8 +19,12 @@ namespace Shared.Conversations
 
         public static void Initialize(Func<Envelope, Conversation> conversationFromMessageBuilderFunction)
         {
+            Log.Debug($"{nameof(Initialize)} (enter)");
+
             ResponderConversationBuilder.SetConversationFromMessageBuilder(conversationFromMessageBuilderFunction);
             PostOffice.SetIncomingMessageHandler(ProcessIncomingMessage);
+
+            Log.Debug($"{nameof(Initialize)} (exit)");
         }
 
         public static void AddConversation(Conversation conversation)

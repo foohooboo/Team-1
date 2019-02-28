@@ -46,7 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommSystemWrapper.cs" />
-    <Compile Include="InitialSate_ConvI_StockStreamRequest.cs" />
+    <Compile Include="Conversations\States\InitialSate_ConvI_StockStreamRequest.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

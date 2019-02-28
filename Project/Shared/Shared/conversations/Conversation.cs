@@ -35,7 +35,6 @@ namespace Shared.Conversations
             {
                 LastUpdateTime = DateTime.Now;
                 CurrentState = state;
-                CurrentState.OnStateStart();
             }
         }
 
