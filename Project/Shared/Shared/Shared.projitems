@@ -23,6 +23,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\PortfolioUpdateMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\StockStreamRequestMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\StockStreamResponseMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\UpdateLeaderBoardMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Config.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\ConversationManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\Conversation.cs" />
