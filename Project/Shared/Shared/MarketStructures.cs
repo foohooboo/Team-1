@@ -7,7 +7,7 @@ namespace Shared
 
     //These classes are all basic skeletons. Please add funcitonality as you choose
 
-    class EvaluatedStocks: List<EvaluatedStock>//contains every evaluated stock for a day
+    public class EvaluatedStocks: List<EvaluatedStock>//contains every evaluated stock for a day
     {//Reminder: inherits List and all of its methods.
         public String Date { get; set; }
         public EvaluatedStocks(string date)
@@ -23,7 +23,7 @@ namespace Shared
 
     }
 
-    class Stock//no value, just holds the symbol and full name of company
+    public class Stock//no value, just holds the symbol and full name of company
     {
         public string Symbol{ get; set; }
         public string Name { get; set; }
@@ -36,7 +36,7 @@ namespace Shared
 
     }
 
-    class EvaluatedStock
+    public class EvaluatedStock
     {
         public Stock stock { get; set; }
         
