@@ -57,8 +57,8 @@ namespace Shared.Comms.MailService
         {
             Log.Debug($"{nameof(SetIncomingMessageHandler)} (enter)");
 
-            if (_incomingMessageHandler != null)
-                throw new Exception("IncomingMessageHandler can only be set once.");
+            if (func != null && _incomingMessageHandler != null)
+                throw new Exception("IncomingMessageHandler already set.");
             else
                 _incomingMessageHandler = func;
 

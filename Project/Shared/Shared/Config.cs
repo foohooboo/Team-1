@@ -9,6 +9,7 @@ namespace Shared
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public const string
+            DEFAULT_TIMEOUT = "defaultTimeout",
             CLIENT_PROCESS_NUM = "clientProcessNum",
             BROKER_IP = "brokerIp",
             BROKER_PORT = "brokerPort",

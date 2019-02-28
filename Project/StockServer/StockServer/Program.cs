@@ -11,10 +11,10 @@ namespace StockServer
         
         static void Main(string[] args)
         {
+            Log.Debug($"{nameof(Main)} (enter)");
+
             StockData stockData = new StockData();
 
-            string method = "Main";
-            Log.Debug(string.Format("Enter - {0}", method));
             Log.Info("Loading Stock Data");
 
             var comm = new CommSystemWrapper();
@@ -34,7 +34,7 @@ namespace StockServer
             Log.Info("Pres any key to finish.");
             Console.ReadKey();
 
-            Log.Debug(string.Format("Exit - {0}", method));
+            Log.Debug($"{nameof(Main)} (exit)");
         }
         
         

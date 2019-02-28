@@ -14,7 +14,7 @@ namespace Broker
         {
             Log.Debug($"{nameof(Main)} (enter)");
 
-            ConversationManager.Initialize(null);
+            ConversationManager.Start(null);
             var comm = new CommSystemWrapper(); //TODO: Update this example once Post Office allows us to open a listener.
 
             PrintMenu();
@@ -29,6 +29,8 @@ namespace Broker
                 PrintMenu();
                 input = Console.ReadLine();
             }
+
+            ConversationManager.Stop();
 
             Log.Debug($"{nameof(Main)} (exit)");
         }

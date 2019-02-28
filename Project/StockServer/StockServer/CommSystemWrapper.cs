@@ -16,15 +16,14 @@ namespace StockServer
         private HelloWorld helloWorld;
 
         public CommSystemWrapper(){
-            string method = "CommSystemWrapper Constructor";
-            Log.Debug(string.Format("Enter - {0}", method));
+            Log.Debug($"{nameof(CommSystemWrapper)} (enter)");
 
             WaitingForUpdate = true;
 
             helloWorld = new HelloWorld();
             helloWorld.HelloTextChanged += OnHelloTextChanged;
 
-            Log.Debug(string.Format("Exit - {0}", method));
+            Log.Debug($"{nameof(CommSystemWrapper)} (exit)");
         }
 
         public string HelloText
@@ -40,12 +39,11 @@ namespace StockServer
         
         public void OnHelloTextChanged(object source, EventArgs args)
         {
-            string method = "OnHelloTextChanged";
-            Log.Debug(string.Format("Enter - {0}", method));
+            Log.Debug($"{nameof(OnHelloTextChanged)} (enter)");
 
             WaitingForUpdate = false;
 
-            Log.Debug(string.Format("Exit - {0}", method));
+            Log.Debug($"{nameof(OnHelloTextChanged)} (exit)");
         }
     }
 }

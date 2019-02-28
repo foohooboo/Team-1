@@ -3,6 +3,7 @@ using Shared.Comms.MailService;
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Shared.Conversations
 {
@@ -13,18 +14,59 @@ namespace Shared.Conversations
         private static ConcurrentDictionary<string, Conversation> conversations = new ConcurrentDictionary<string, Conversation>();
         private static int count;
         private static int NextConversationCount => Interlocked.Increment(ref count);
+        public static bool IsRunning { get; private set; }
 
         //TODO: Add timeout system for conversations. One idea is to periodically traverse conversations, and remove ones with an old LastUpdateTime.
         //Make sure we log the timeout. -Dsphar 2/21/2019
 
-        public static void Initialize(Func<Envelope, Conversation> conversationFromMessageBuilderFunction)
+        public static void Start(Func<Envelope, Conversation> conversationFromMessageBuilderFunction)
         {
-            Log.Debug($"{nameof(Initialize)} (enter)");
+            Log.Debug($"{nameof(Start)} (enter)");
 
-            ResponderConversationBuilder.SetConversationFromMessageBuilder(conversationFromMessageBuilderFunction);
-            PostOffice.SetIncomingMessageHandler(ProcessIncomingMessage);
+            if (!IsRunning)
+            {
+                ResponderConversationBuilder.SetConversationFromMessageBuilder(conversationFromMessageBuilderFunction);
+                PostOffice.SetIncomingMessageHandler(ProcessIncomingMessage);
 
-            Log.Debug($"{nameof(Initialize)} (exit)");
+                IsRunning = true;
+                new Task(() => {
+                    var timeout = Config.GetInt(Config.DEFAULT_TIMEOUT);
+                    while (IsRunning)
+                    {
+                        foreach(var conv in conversations)
+                        {
+                            var timeSinceUpdate = (int)(DateTime.Now - conv.Value.LastUpdateTime).TotalMilliseconds;
+                            if (timeSinceUpdate > timeout){
+                                Log.Warn($"Conversation {conv.Key} timed out.");
+                                RemoveConversation(conv.Key);
+                            }
+                        }
+                        Thread.Sleep(timeout);
+                    }
+                }).Start();
+            }
+            else
+            {
+                Log.Warn("ConversationManager already running. Did you try to start it more than once?");
+            }
+
+            Log.Debug($"{nameof(Start)} (exit)");
+        }
+
+        public static void Stop()
+        {
+            if (IsRunning)
+            {
+                IsRunning = false;
+                ResponderConversationBuilder.SetConversationFromMessageBuilder(null);
+                PostOffice.SetIncomingMessageHandler(null);
+                conversations.Clear();
+            }
+            else
+            {
+                Log.Warn("ConversationManager already stopped.");
+            }
+            
         }
 
         public static void AddConversation(Conversation conversation)
