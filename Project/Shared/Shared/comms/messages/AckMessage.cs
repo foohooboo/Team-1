@@ -7,7 +7,7 @@
 
         }
 
-        public int ReferenceMessageID
+        public string ReferenceMessageID
         {
             get; set;
         }
