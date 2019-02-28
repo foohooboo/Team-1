@@ -21,6 +21,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\MessageFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\AckMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\PortfolioUpdateMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\StockPriceUpdate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\StockStreamRequestMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\StockStreamResponseMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\UpdateLeaderBoardMessage.cs" />
@@ -38,7 +39,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)MarketStructures.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Portfolio\Asset.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Portfolio\Portfolio.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Portfolio\Stock.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)App.config" />

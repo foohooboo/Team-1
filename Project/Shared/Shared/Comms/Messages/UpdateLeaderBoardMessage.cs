@@ -2,7 +2,7 @@
 
 namespace Shared.Comms.Messages
 {
-    class UpdateLeaderBoardMessage : Message
+    public class UpdateLeaderBoardMessage : Message
     {
         public UpdateLeaderBoardMessage()
         {

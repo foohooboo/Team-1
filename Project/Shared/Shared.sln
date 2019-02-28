@@ -9,6 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedTest", "SharedTest\Sh
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Shared\Shared.projitems*{ac426b38-a9c8-4649-b9b2-3e755bd5aab0}*SharedItemsImports = 13
 		Shared\Shared.projitems*{dec37860-73cf-46ff-91d2-5ee103b6acc3}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

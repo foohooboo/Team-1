@@ -1,13 +1,13 @@
 ﻿namespace Shared.Portfolio
 {
-    class Asset
+    public class Asset
     {
         public Asset()
         {
 
         }
 
-        public Stock RelatedStock
+        public Shared.Stock RelatedStock
         {
             get; set;
         }

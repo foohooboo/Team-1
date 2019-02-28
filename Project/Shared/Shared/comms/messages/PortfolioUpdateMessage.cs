@@ -2,7 +2,7 @@
 
 namespace Shared.Comms.Messages
 {
-    class PortfolioUpdateMessage : Message
+    public class PortfolioUpdateMessage : Message
     {
         public PortfolioUpdateMessage()
         {

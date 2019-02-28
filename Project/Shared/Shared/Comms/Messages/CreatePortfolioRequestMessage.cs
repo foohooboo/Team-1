@@ -1,6 +1,6 @@
 ﻿namespace Shared.Comms.Messages
 {
-    class CreatePortfolioRequestMessage : GetPortfolioRequest
+    public class CreatePortfolioRequestMessage : GetPortfolioRequest
     {
         public CreatePortfolioRequestMessage()
         {
