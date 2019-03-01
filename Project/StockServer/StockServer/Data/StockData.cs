@@ -6,7 +6,7 @@ namespace StockServer.Data
 {
     public class StockData
     {
-        //TODO: Do we want to refactor this into a static class? -Dsphar 2/27/2019
+        
 
         public readonly List<EvaluatedStocks> Data;
 
@@ -33,6 +33,8 @@ namespace StockServer.Data
             //That way we wont require any "magic" filenames like hist[,] below. The csv files themselves
             //could contain the company name and symbol. Not worth changing now, but maybe if we have time
             //in the future.     -Dsphar 2/27/2019
+            
+         
             string[,] hist = new string[,] {{"AAPL", "Apple Inc."}, {"AMZN", "Amazon.com Inc"}, {"BABA", "Alibaba Group"}
                 , {"BAC", "Bank of America Corp." }, {"BUD", "Anheuser-Busch Inbev"}, {"CVX", "Chevron Corperation"}, {"FB", "Facebook Inc."}
                 , {"GOOGL", "Alphabet"}, {"HD", "Home Depot Inc."}, {"JNJ", "Johnson & Johnson"}, {"JPM", "JPMorgan Chase & Co."}, { "MSFT", "Microsoft"}
@@ -46,6 +48,7 @@ namespace StockServer.Data
 
             for (int i = 0; i < hist.GetLength(0); i++)
             {
+                
                 stocks.Add(new Stock(hist[i, 0], hist[i, 1]));
                 List<EvaluatedStock> SingleStockUpdates = new List<EvaluatedStock>();
                 float mult = (float)Math.Pow(2, (random.NextDouble() * 4 - 2));//gives nice range for multiplier
@@ -77,7 +80,11 @@ namespace StockServer.Data
                         SingleStockUpdates[j].high = (float)Math.Round((double)(SingleStockUpdates[j].high * mult), 2);
                         SingleStockUpdates[j].low = (float)Math.Round((double)(SingleStockUpdates[j].low * mult), 2);
                         SingleStockUpdates[j].volume = (int)((float)SingleStockUpdates[j].volume / mult);
-                        ret[i].Add(SingleStockUpdates[j]);
+                        if (SingleStockUpdates[j].close <= 0.02)
+                        {
+                            
+                        }
+                        ret[j].Add(SingleStockUpdates[j]);
                     }
                 }
             }
