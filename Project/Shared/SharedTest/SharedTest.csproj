@@ -55,6 +55,7 @@
     <Compile Include="Conversations\Test_ConvR_StockStreamRequest.cs" />
     <Compile Include="Conversations\Test_ConvI_StockStreamRequest.cs" />
     <Compile Include="Messages\MessageFactoryTest.cs" />
+    <Compile Include="Messages\PortfolioUpdateMessageTest.cs" />
     <Compile Include="PortfolioTests\AssetTest.cs" />
     <Compile Include="PortfolioTests\PortfolioTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
