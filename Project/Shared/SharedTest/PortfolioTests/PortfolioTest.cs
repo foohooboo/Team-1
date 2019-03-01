@@ -8,6 +8,11 @@ namespace SharedTest.PortfolioTests
     [TestClass]
     public class PortfolioTest
     {
+        public PortfolioTest()
+        {
+
+        }
+
         [TestMethod]
         public void TestConstructor()
         {
@@ -58,11 +63,134 @@ namespace SharedTest.PortfolioTests
             Assert.IsTrue(account.RequestWriteAuthority);
         }
 
-        //TODO
         [TestMethod]
-        public void TestModifyAsset()
+        public void TestAddNewAsset()
         {
+            var stock1 = new Stock("GOOGL", "GOOGLE");
+            var stock2 = new Stock("CASH", "MONEY");
 
+            var ass1 = new Asset
+            {
+                Quantity = 1,
+                RelatedStock = stock1
+            };
+            var ass2 = new Asset
+            {
+                Quantity = 1,
+                RelatedStock = stock2
+            };
+
+            var account = new Portfolio();
+
+            account.ModifyAsset(ass1);
+
+            Assert.AreEqual(account.Assets.Count, 1);
+            Assert.IsTrue(account.Assets.ContainsKey("GOOGL"));
+            Assert.AreEqual(account.Assets["GOOGL"].Quantity, 1);
+            Assert.AreEqual(account.Assets["GOOGL"].RelatedStock.Symbol, "GOOGL");
+            Assert.AreEqual(account.Assets["GOOGL"].RelatedStock.Name, "GOOGLE");
+        }
+
+        [TestMethod]
+        public void TestIncrementAsset()
+        {
+            var stock1 = new Stock("GOOGL", "GOOGLE");
+            var stock2 = new Stock("CASH", "MONEY");
+
+            var ass1 = new Asset
+            {
+                Quantity = 1,
+                RelatedStock = stock1
+            };
+
+            var account = new Portfolio();
+
+            account.ModifyAsset(ass1);
+            account.ModifyAsset(ass1);
+
+            Assert.AreEqual(account.Assets.Count, 1);
+            Assert.IsTrue(account.Assets.ContainsKey("GOOGL"));
+            Assert.AreEqual(account.Assets["GOOGL"].Quantity, 2);
+            Assert.AreEqual(account.Assets["GOOGL"].RelatedStock.Symbol, "GOOGL");
+            Assert.AreEqual(account.Assets["GOOGL"].RelatedStock.Name, "GOOGLE");
+        }
+
+        [TestMethod]
+        public void TestRemoveAsset()
+        {
+            var stock1 = new Stock("GOOGL", "GOOGLE");
+
+            var ass1 = new Asset
+            {
+                Quantity = 1,
+                RelatedStock = stock1
+            };
+            var ass2 = new Asset
+            {
+                Quantity = -1,
+                RelatedStock = stock1
+            };
+
+            var account = new Portfolio();
+
+            account.ModifyAsset(ass1);
+            account.ModifyAsset(ass2);
+
+            Assert.AreEqual(account.Assets.Count, 0);
+            Assert.IsFalse(account.Assets.ContainsKey("GOOGL"));
+        }
+
+        [TestMethod]
+        public void TestDecrementAsset()
+        {
+            var stock1 = new Stock("GOOGL", "GOOGLE");
+
+            var ass1 = new Asset
+            {
+                Quantity = 2,
+                RelatedStock = stock1
+            };
+            var ass2 = new Asset
+            {
+                Quantity = -1,
+                RelatedStock = stock1
+            };
+
+            var account = new Portfolio();
+
+            account.ModifyAsset(ass1);
+            account.ModifyAsset(ass2);
+
+            Assert.AreEqual(account.Assets.Count, 1);
+            Assert.IsTrue(account.Assets.ContainsKey("GOOGL"));
+            Assert.AreEqual(account.Assets["GOOGL"].Quantity, 1);
+            Assert.AreEqual(account.Assets["GOOGL"].RelatedStock.Symbol, "GOOGL");
+            Assert.AreEqual(account.Assets["GOOGL"].RelatedStock.Name, "GOOGLE");
+        }
+
+        [TestMethod]
+        public void TestRemoveAssetOverflow()
+        {
+            var stock1 = new Stock("GOOGL", "GOOGLE");
+
+            var ass1 = new Asset
+            {
+                Quantity = 1,
+                RelatedStock = stock1
+            };
+            var ass2 = new Asset
+            {
+                Quantity = -10,
+                RelatedStock = stock1
+            };
+
+            var account = new Portfolio();
+
+            account.ModifyAsset(ass1);
+            account.ModifyAsset(ass2);
+
+            Assert.AreEqual(account.Assets.Count, 0);
+            Assert.IsFalse(account.Assets.ContainsKey("GOOGL"));
         }
     }
 }
