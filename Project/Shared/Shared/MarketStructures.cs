@@ -10,7 +10,7 @@ namespace Shared
     //Reminder: inherits List and all of its methods.
     public class EvaluatedStocks: List<EvaluatedStock>
     {
-        public String Date { get; set; }
+        public string Date { get; set; }
 
         public EvaluatedStocks(string date)
         {

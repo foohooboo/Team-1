@@ -5,16 +5,14 @@ namespace Shared.Comms.Messages
 {
     public class StockStreamResponseMessage : Message
     {
-        public List<EvaluatedStocks> EvaluatedStocksList
+        public EvaluatedStocks EvaluatedStocksList
         {
             get; set;
         }
 
         public StockStreamResponseMessage()
         {
-
+            EvaluatedStocksList = new EvaluatedStocks();
         }
-
-        //TODO: Add way to set EvaluatedStocks list data.
     }
 }
