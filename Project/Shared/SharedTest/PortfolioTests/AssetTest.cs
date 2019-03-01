@@ -19,7 +19,7 @@ namespace SharedTest.PortfolioTests
         [TestMethod]
         public void TestInitializer()
         {
-            var testStock = new Shared.Stock("CASH", "MONEY");
+            var testStock = new Stock("CASH", "MONEY");
 
             var ass = new Asset
             {

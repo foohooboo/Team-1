@@ -6,31 +6,39 @@ namespace Shared
 
     //These classes are all basic skeletons. Please add funcitonality as you choose
 
-    public class EvaluatedStocks: List<EvaluatedStock>//contains every evaluated stock for a day
-    {//Reminder: inherits List and all of its methods.
+    //contains every evaluated stock for a day
+    //Reminder: inherits List and all of its methods.
+    public class EvaluatedStocks: List<EvaluatedStock>
+    {
         public String Date { get; set; }
+
         public EvaluatedStocks(string date)
         {
             Date = date;
         }
+
         public EvaluatedStocks(string date, EvaluatedStock[] starterArray)
         {
             Date = date;
             this.AddRange(starterArray);
         }
+
         public EvaluatedStocks() { }
 
     }
 
-    public class Stock//no value, just holds the symbol and full name of company
+    //no value, just holds the symbol and full name of company
+    public class Stock
     {
         public string Symbol{ get; set; }
         public string Name { get; set; }
+
         public Stock()
         {
             Symbol = null;
             Name = null;
         }
+
         public Stock(string symbol, string name)
         {
             Symbol = symbol;
@@ -47,14 +55,27 @@ namespace Shared
         public float low { get; set; }
         public float close { get; set; }
         public int volume { get; set; }
+
+        public EvaluatedStock()
+        {
+            open = 0.0F;
+            high = 0.0F;
+            low = 0.0F;
+            close = 0.0F;
+            volume = 0;
+
+            stock = new Stock();
+        }
+
         public EvaluatedStock(string[] data, Stock s)
-        {//date,open,high,low,close,volume  Date is unused here.
+        {
+            //date,open,high,low,close,volume  Date is unused here.
             open = float.Parse(data[1]);
             high = float.Parse(data[2]);
             low = float.Parse(data[3]);
             close = float.Parse(data[4]);
             volume = int.Parse(data[5]);
-            stock =s;
+            stock = s;
         }
     }
 }
