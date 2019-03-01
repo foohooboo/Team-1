@@ -61,11 +61,14 @@ namespace SharedTest.Messages
                 Account = acc,
             };
 
-            var serailizedMessage = MessageFactory.GetMessage(m.Encode()) as GetPortfolioRequest;
+            var serializedMessage = MessageFactory.GetMessage(m.Encode()) as GetPortfolioRequest;
 
-            Assert.IsNotNull(serailizedMessage);
-            Assert.AreEqual(serailizedMessage.Account.Assets.Count, 1);
-            Assert.AreEqual(serailizedMessage.Account.Password, "yolo");
+            Assert.IsNotNull(serializedMessage);
+            Assert.AreEqual(serializedMessage.Account.Assets.Count, 1);
+            Assert.AreEqual(serializedMessage.Account.Password, "yolo");
+            Assert.AreEqual(serializedMessage.Account.Username, "foohooboo");
+            Assert.AreEqual(serializedMessage.Account.PortfolioID, 1);
+            Assert.IsTrue(serializedMessage.Account.RequestWriteAuthority);
         }
     }
 }
