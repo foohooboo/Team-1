@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
+using Shared;
 
 namespace Shared.Comms.Messages
 {
     public class StockStreamResponseMessage : Message
     {
-        //TODO: Update this list type
-        public List<object> EvaluatedStocks
+        public List<EvaluatedStocks> EvaluatedStocksList
         {
             get; set;
         }

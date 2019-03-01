@@ -1,4 +1,6 @@
-﻿namespace Shared.Comms.Messages
+﻿using Shared;
+
+namespace Shared.Comms.Messages
 {
     public class TransactionRequestMessage : Message
     {
@@ -13,7 +15,7 @@
             get; set;
         }
 
-        public Shared.EvaluatedStock StockValue
+        public EvaluatedStock StockValue
         {
             get; set;
         }

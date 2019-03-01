@@ -37,5 +37,20 @@ namespace SharedTest.Messages
                 ConfirmPassword = password
             };
         }
+
+        [TestMethod]
+        public void SerializeTest()
+        {
+            string password = "yolo";
+
+            var newCreatePortfolioRequest = new CreatePortfolioRequestMessage
+            {
+                ConfirmPassword = password
+            };
+
+            var serializedMessage = MessageFactory.GetMessage(newCreatePortfolioRequest.Encode()) as CreatePortfolioRequestMessage;
+
+            Assert.AreEqual(newCreatePortfolioRequest.ConfirmPassword, serializedMessage.ConfirmPassword);
+        }
     }
 }

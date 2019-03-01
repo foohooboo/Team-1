@@ -1,4 +1,6 @@
-﻿namespace Shared.Comms.Messages
+﻿using Shared;
+
+namespace Shared.Comms.Messages
 {
     public class StockPriceUpdate : Message
     {
@@ -7,7 +9,7 @@
 
         }
 
-        public Shared.EvaluatedStocks StocksList
+        public EvaluatedStocks StocksList
         {
             get; set;
         }
