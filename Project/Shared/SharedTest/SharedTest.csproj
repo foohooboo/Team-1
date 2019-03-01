@@ -48,6 +48,7 @@
     <Compile Include="MailService\PostBoxTest.cs" />
     <Compile Include="MailService\PostOfficeTest.cs" />
     <Compile Include="Messages\AckTest.cs" />
+    <Compile Include="Messages\CreatePortfolioRequestMessageTest.cs" />
     <Compile Include="Messages\ErrorTest.cs" />
     <Compile Include="Messages\GetPortfolioRequestTest.cs" />
     <Compile Include="Messages\MessageTest.cs" />
