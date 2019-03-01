@@ -20,7 +20,7 @@ namespace SharedTest.Conversations
         [ClassInitialize()]
         public static void Test_ConvR_StockStreamRequestInitialize(TestContext testContext)
         {
-            ConversationManager.Initialize(BuildConversationFromMessage);
+            ConversationManager.Start(BuildConversationFromMessage);
         }
 
         public static Conversation BuildConversationFromMessage(Envelope e)
