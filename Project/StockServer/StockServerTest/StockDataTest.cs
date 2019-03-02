@@ -42,15 +42,15 @@ namespace StockServerTest
             StockData.Init();
             var marketDay = StockData.GetCurrentDay();
             var numDays = StockData.GetSize();
-            var numCompanies = marketDay.Count;
+            var numCompanies = marketDay.Data.Count;
 
             for(int i=0; i<numDays; i++)
             {
-                Assert.AreEqual("Apple Inc.", marketDay[0].Name);
-                Assert.AreEqual("AAPL", marketDay[0].Symbol);
-                Assert.AreEqual("Amazon.com Inc", marketDay[1].Name);
-                Assert.AreEqual("AMZN", marketDay[1].Symbol);
-                Assert.AreEqual(numCompanies, marketDay.Count);
+                Assert.AreEqual("Apple Inc.", marketDay.Data[0].Name);
+                Assert.AreEqual("AAPL", marketDay.Data[0].Symbol);
+                Assert.AreEqual("Amazon.com Inc", marketDay.Data[1].Name);
+                Assert.AreEqual("AMZN", marketDay.Data[1].Symbol);
+                Assert.AreEqual(numCompanies, marketDay.Data.Count);
                 marketDay = StockData.AdvanceDay();
             }
         }

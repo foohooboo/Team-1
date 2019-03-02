@@ -5,9 +5,10 @@ namespace Shared.MarketStructures
     /// <summary>
     /// Is a List<ValuatedStock> which represents a single day of trading.
     /// </summary>
-    public class MarketDay: List<ValuatedStock>
+    public class MarketDay
     {
         public string Date { get; set; }
+        public List<ValuatedStock> Data = new List<ValuatedStock>();
 
         public MarketDay(string date)
         {
@@ -17,7 +18,7 @@ namespace Shared.MarketStructures
         public MarketDay(string date, ValuatedStock[] starterArray)
         {
             Date = date;
-            AddRange(starterArray);
+            Data.AddRange(starterArray);
         }
 
         public MarketDay() { }

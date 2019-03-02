@@ -18,7 +18,7 @@ namespace SharedTest.Messages
             var stockStreamResponse = new StockStreamResponseMessage();
 
             Assert.IsNull(stockStreamResponse.MarketDayList.Date);
-            Assert.AreEqual(stockStreamResponse.MarketDayList.Count, 0);
+            Assert.AreEqual(stockStreamResponse.MarketDayList.Data.Count, 0);
         }
 
         [TestMethod]
@@ -33,7 +33,7 @@ namespace SharedTest.Messages
             {
                 Date = date
             };
-            MarketDay.AddRange(stocks);
+            MarketDay.Data.AddRange(stocks);
 
             var stockStreamResponse = new StockStreamResponseMessage
             {
@@ -41,7 +41,7 @@ namespace SharedTest.Messages
             };
 
             Assert.AreEqual(stockStreamResponse.MarketDayList.Date, date);
-            Assert.AreEqual(stockStreamResponse.MarketDayList.Count, 2);
+            Assert.AreEqual(stockStreamResponse.MarketDayList.Data.Count, 2);
         }
 
         [TestMethod]
@@ -66,19 +66,19 @@ namespace SharedTest.Messages
             {
                 Date = date
             };
-            MarketDay.AddRange(stocks);
+            MarketDay.Data.AddRange(stocks);
 
             var stockStreamResponse = new StockStreamResponseMessage
             {
                 MarketDayList = MarketDay
             };
 
-            var serializedMessage = MessageFactory.GetMessage(stockStreamResponse.Encode()) as StockStreamResponseMessage;
+            var serializedMessage = stockStreamResponse.Encode();
+            var deserializedMessage = MessageFactory.GetMessage(serializedMessage) as StockStreamResponseMessage;
 
-            Assert.AreEqual(stockStreamResponse.MarketDayList.Count, serializedMessage.MarketDayList.Count);
-            Assert.AreEqual(stockStreamResponse.MarketDayList[0].Close, serializedMessage.MarketDayList[0].Close);
-            //TODO: Date is being dropped in the serializer for some reason...
-            Assert.AreEqual(stockStreamResponse.MarketDayList.Date, serializedMessage.MarketDayList.Date);
+            Assert.AreEqual(stockStreamResponse.MarketDayList.Data.Count, deserializedMessage.MarketDayList.Data.Count);
+            Assert.AreEqual(stockStreamResponse.MarketDayList.Data[0].Close, deserializedMessage.MarketDayList.Data[0].Close);
+            Assert.AreEqual(stockStreamResponse.MarketDayList.Date, deserializedMessage.MarketDayList.Date);
         }
     }
 }

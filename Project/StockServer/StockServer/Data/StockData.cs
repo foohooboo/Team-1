@@ -9,12 +9,24 @@ namespace StockServer.Data
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
+        private static MarketSegment _fullHistory = null;
+        private static List<MarketDay> History
+        {
+            get
+            {
+                if (_fullHistory == null)
+                    Init();
+                return _fullHistory;
+            }
+            set { }
+        }
+
         public static void Init()
         {
             Log.Debug($"{nameof(Init)} (enter)");
 
-            if (_history == null)
-                _history = LoadStocksFromFile();
+            if (_fullHistory == null)
+                _fullHistory = LoadStocksFromFile();
 
             CurrentDayNumber = 0;
 
@@ -26,7 +38,7 @@ namespace StockServer.Data
         {
             get
             {
-                if (_history == null)
+                if (_fullHistory == null)
                     return 0;
                 else
                     return _currentDayNumber;
@@ -42,17 +54,7 @@ namespace StockServer.Data
             return History.Count;
         }
 
-        private static List<MarketDay> _history = null;
-        private static List<MarketDay> History
-        {
-            get
-            {
-                if (_history == null)
-                    Init();
-                return _history;
-            }
-            set { }
-        }
+        
 
         public static MarketDay GetCurrentDay()
         {
@@ -65,7 +67,7 @@ namespace StockServer.Data
             return GetCurrentDay();
         }
 
-        private static List<MarketDay> LoadStocksFromFile()
+        private static MarketSegment LoadStocksFromFile()
         {
             /* To Add a new Stock: use this link and replace [SYMBOL] with a company's symbol
              * http://download.macrotrends.net/assets/php/stock_data_export.php?t=[SYMBOL]
@@ -81,7 +83,7 @@ namespace StockServer.Data
             int days = 1000;//Should be shorter than the shortest stock history.
 
 
-            List<MarketDay> ret = new List<MarketDay>();//gets returned
+            MarketSegment ret = new MarketSegment();//gets returned
             for (int i = 0; i < days; i++)
             {
                 ret.Add(new MarketDay("2069-04-20"));
@@ -141,7 +143,7 @@ namespace StockServer.Data
                         {
 
                         }
-                        ret[j].Add(SingleStockUpdates[j]);
+                        ret[j].Data.Add(SingleStockUpdates[j]);
                     }
                 }
             }

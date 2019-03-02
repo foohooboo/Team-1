@@ -37,6 +37,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\StockStreamRequest\ConvI_StockStreamRequest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\StockStreamRequest\ConvR_StockStreamRequest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HelloWorld.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MarketStructures\MarketSegment.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MarketStructures\ValuatedStock.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MarketStructures\Stock.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MarketStructures\MarketDay.cs" />
