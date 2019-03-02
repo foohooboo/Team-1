@@ -24,9 +24,11 @@ namespace Shared.Comms.Messages
             get; set;
         }
 
-        public string Encode()
+        public byte[] Encode()
         {
-            return JsonConvert.SerializeObject(this, MessageFactory.settings);
+            var jsonData = JsonConvert.SerializeObject(this, MessageFactory.settings);
+
+            return System.Text.Encoding.Default.GetBytes(jsonData);
         }
     }
 }

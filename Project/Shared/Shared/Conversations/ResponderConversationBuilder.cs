@@ -33,6 +33,7 @@ namespace Shared.Conversations
         }
 
         private static Func<Envelope, Conversation> _conversationFromMessageBuilder = null;
+
         public static void SetConversationFromMessageBuilder(Func<Envelope, Conversation> func)
         {
             if (_conversationFromMessageBuilder != null)

@@ -5,14 +5,14 @@ namespace Shared.Comms.MailService
 {
     public class PostOffice
     {
-        public Dictionary<EndPoint,PostBox> PostBoxes
+        public Dictionary<string,PostBox> PostBoxes
         {
             get; set;
         }
 
         public PostOffice()
         {
-            PostBoxes = new Dictionary<EndPoint, PostBox>();
+            PostBoxes = new Dictionary<string, PostBox>();
         }
 
         public bool HasPostBox()
@@ -20,12 +20,12 @@ namespace Shared.Comms.MailService
             return PostBoxes.Count > 0;
         }
 
-        public void AddBox(EndPoint address)
+        public void AddBox(PostBox postBox)
         {
-            PostBoxes.Add(address, new PostBox(address));
+            PostBoxes.Add(postBox.EndPoint.ToString(), postBox);
         }
 
-        public PostBox GetBox(EndPoint address)
+        public PostBox GetBox(string address)
         {
             if (PostBoxes.TryGetValue(address, out PostBox postBox))
             {
@@ -35,7 +35,7 @@ namespace Shared.Comms.MailService
             return null;
         }
 
-        public void RemoveBox(EndPoint address)
+        public void RemoveBox(string address)
         {
             PostBoxes.Remove(address);
         }

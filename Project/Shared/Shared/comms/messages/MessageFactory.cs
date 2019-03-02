@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Text;
 
 namespace Shared.Comms.Messages
 {
@@ -10,6 +11,13 @@ namespace Shared.Comms.Messages
         public static int MessageCount
         {
             get; private set;
+        }
+
+        public static Message GetMessage(byte[] bytes)
+        {
+            string readData = Encoding.Default.GetString(bytes);
+
+            return (GetMessage(readData));
         }
 
         public static Message GetMessage(string json)

@@ -4,9 +4,15 @@ using Shared.Comms.Messages;
 
 namespace Shared.Comms.MailService
 {
-    public class PostBox
+    public abstract class PostBox
     {
-        public EndPoint Address
+
+        public List<IPEndPoint> Peers
+        {
+            get; protected set;
+        }
+
+        public IPEndPoint EndPoint
         {
             get; private set;
         }
@@ -16,12 +22,13 @@ namespace Shared.Comms.MailService
             get; set;
         }
 
-        public PostBox(EndPoint address)
+        public PostBox(string address)
         {
-            Address = address;
+            Peers = new List<IPEndPoint>();
+            EndPoint = EndPointParser.Parse(address);
             Mail = new Queue<Envelope>();
         }
-
+        
         public bool HasMail()
         {
             return Mail.Count > 0;
@@ -45,17 +52,11 @@ namespace Shared.Comms.MailService
 
             return Mail.Dequeue();
         }
-               
+
         /// <summary>
         /// Used to send an envelope to the address.
         /// </summary>
         /// <param name="envelope">The <see cref="Envelope"/> containing the <see cref="Message"/> to send.</param>
-        public void SendMessage(Envelope envelope)
-        {
-            envelope.From = Address;
-
-            // Send to Outgoing Address.
-            // Do we remove it from the queue before waiting for a response?
-        }
+        public abstract void Send(Envelope envelope);
     }
 }

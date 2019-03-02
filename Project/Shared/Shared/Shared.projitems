@@ -9,11 +9,11 @@
     <Import_RootNamespace>Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Comms\MailService\EndPointParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\MailService\Envelope.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\MailService\PostBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\MailService\PostOffice.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Comms\MailService\TcpEnvelope.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Comms\MailService\UdpEnvelope.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Comms\MailService\UdpPostBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\Message.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\MessageFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\AckMessage.cs" />

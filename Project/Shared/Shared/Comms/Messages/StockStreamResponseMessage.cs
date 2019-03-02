@@ -9,7 +9,7 @@ namespace Shared.Comms.Messages
             get; set;
         }
 
-        public StockStreamResponseMessage()
+        public StockStreamResponseMessage() 
         {
 
         }
