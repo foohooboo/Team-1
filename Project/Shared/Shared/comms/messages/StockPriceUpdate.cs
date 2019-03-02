@@ -6,7 +6,12 @@ namespace Shared.Comms.Messages
     {
         public StockPriceUpdate()
         {
+            StocksList = new MarketDay();
+        }
 
+        public StockPriceUpdate(MarketDay marketDay)
+        {
+            StocksList = marketDay;
         }
 
         public MarketDay StocksList
