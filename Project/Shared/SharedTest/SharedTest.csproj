@@ -63,6 +63,7 @@
     <Compile Include="Messages\StockPriceUpdateTest.cs" />
     <Compile Include="Messages\StockStreamRequestMessageTest.cs" />
     <Compile Include="Messages\StockStreamResponseMessageTest.cs" />
+    <Compile Include="Messages\TransactionRequestMessageTest.cs" />
     <Compile Include="Messages\UpdateLeaderBoardMessageTest.cs" />
     <Compile Include="PortfolioTests\AssetTest.cs" />
     <Compile Include="PortfolioTests\PortfolioTest.cs" />

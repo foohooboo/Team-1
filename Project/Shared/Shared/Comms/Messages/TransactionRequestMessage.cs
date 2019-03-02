@@ -6,7 +6,19 @@ namespace Shared.Comms.Messages
     {
         public TransactionRequestMessage()
         {
+            StockValue = new ValuatedStock();
+        }
 
+        public TransactionRequestMessage(TransactionRequestMessage message)
+        {
+            Quantity = message.Quantity;
+            StockValue = message.StockValue;
+        }
+
+        public TransactionRequestMessage(int quantity, ValuatedStock stockValue)
+        {
+            Quantity = quantity;
+            StockValue = stockValue;
         }
 
         //Positive value for buy, negative value for sell
