@@ -1,4 +1,4 @@
-﻿using Shared;
+﻿using Shared.MarketStructures;
 
 namespace Shared.Comms.Messages
 {
@@ -15,7 +15,7 @@ namespace Shared.Comms.Messages
             get; set;
         }
 
-        public EvaluatedStock StockValue
+        public ValuatedStock StockValue
         {
             get; set;
         }

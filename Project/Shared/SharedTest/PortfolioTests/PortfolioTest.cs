@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Shared.Portfolio;
-using Shared;
+using Shared.MarketStructures;
 using System.Collections.Generic;
 
 namespace SharedTest.PortfolioTests

@@ -1,5 +1,5 @@
-﻿using Shared;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Shared.MarketStructures;
 
 namespace SharedTest.MarketStructureTests
 {

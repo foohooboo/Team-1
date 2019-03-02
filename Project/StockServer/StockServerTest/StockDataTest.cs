@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using StockServer.Data;
 using System.Collections.Generic;
+using Shared.MarketStructures;
 
 namespace StockServerTest
 {
@@ -15,18 +16,19 @@ namespace StockServerTest
         [TestMethod]
         public void LoadDataTest()
         {
-            List<Shared.EvaluatedStocks> stockData = new StockData().Data;
+            List<StockMarketDay> stockData = new StockData().Data;
             //How this datatype Works
             //stockData = new List<EvaluatedStocks>();
             //EvaluatedStocks: List<EvaluatedStock>
             //EvaluatedStock
-            Assert.AreSame(stockData[0][0].stock.Name, "Apple Inc.");
-            Assert.AreSame(stockData[0][0].stock.Symbol, "AAPL");
-            Assert.AreSame(stockData.Count, 1000);
-            int stockCount = stockData[0].Count;
+            Assert.AreEqual(stockData[0][0].Name, "Apple Inc.");
+            Assert.AreEqual(stockData[0][0].Symbol, "AAPL");
+            Assert.AreEqual(stockData.Count, 1000);
+
+            int numCompanies = stockData[0].Count;
             for (int i = 0; i < 1000; i++)
             {
-                Assert.AreSame(stockData[i].Count, stockCount);
+                Assert.AreEqual(stockData[i].Count, numCompanies);
             }
         }
     }

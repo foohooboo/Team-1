@@ -1,4 +1,4 @@
-﻿using Shared;
+﻿using Shared.MarketStructures;
 
 namespace Shared.Comms.Messages
 {
@@ -9,7 +9,7 @@ namespace Shared.Comms.Messages
 
         }
 
-        public EvaluatedStocks StocksList
+        public StockMarketDay StocksList
         {
             get; set;
         }

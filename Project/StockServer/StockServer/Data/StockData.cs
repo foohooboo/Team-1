@@ -1,21 +1,19 @@
-﻿using Shared;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Shared.MarketStructures;
 
 namespace StockServer.Data
 {
     public class StockData
     {
-        
-
-        public readonly List<EvaluatedStocks> Data;
+        public readonly List<StockMarketDay> Data;
 
         public StockData()
         {
             Data = LoadStocksFromFile();
         }
 
-        private List<EvaluatedStocks> LoadStocksFromFile()
+        private List<StockMarketDay> LoadStocksFromFile()
         {
             /* To Add a new Stock: use this link and replace [SYMBOL] with a company's symbol
              * http://download.macrotrends.net/assets/php/stock_data_export.php?t=[SYMBOL]
@@ -24,10 +22,10 @@ namespace StockServer.Data
              * Add tuple to hist[] below
             */
             int days = 1000;//Should be shorter than the shortest stock history.
-            List<EvaluatedStocks> ret = new List<EvaluatedStocks>();//gets returned
+            List<StockMarketDay> ret = new List<StockMarketDay>();//gets returned
             for (int i = 0; i < days; i++)
             {
-                ret.Add(new EvaluatedStocks("2069-04-20"));
+                ret.Add(new StockMarketDay("2069-04-20"));
             }
             //TODO: It might be a good idea to have this loader try to parse every file in some directory.
             //That way we wont require any "magic" filenames like hist[,] below. The csv files themselves
@@ -50,7 +48,7 @@ namespace StockServer.Data
             {
                 
                 stocks.Add(new Stock(hist[i, 0], hist[i, 1]));
-                List<EvaluatedStock> SingleStockUpdates = new List<EvaluatedStock>();
+                List<ValuatedStock> SingleStockUpdates = new List<ValuatedStock>();
                 float mult = (float)Math.Pow(2, (random.NextDouble() * 4 - 2));//gives nice range for multiplier
                 using (var reader = new System.IO.StreamReader("HistoricData/" + hist[i, 0] + ".csv"))//open file based on symbol
                 {
@@ -66,7 +64,7 @@ namespace StockServer.Data
                         string[] values = line.Split(',');
                         //Format: string[date,open,high,low,close,volume]
 
-                        SingleStockUpdates.Add(new EvaluatedStock(values, stocks[i]));
+                        SingleStockUpdates.Add(new ValuatedStock(values, stocks[i]));
                     }
                     int l = SingleStockUpdates.Count;
                     int lr = random.Next(0, l - days);
@@ -75,12 +73,12 @@ namespace StockServer.Data
                     for (int j = 0; j < days; j++)
                     {
                         //multiply values by the same number for a whole stock history so its hard to cheat.
-                        SingleStockUpdates[j].close = (float)Math.Round((double)(SingleStockUpdates[j].close * mult), 2);
-                        SingleStockUpdates[j].open = (float)Math.Round((double)(SingleStockUpdates[j].open * mult), 2);
-                        SingleStockUpdates[j].high = (float)Math.Round((double)(SingleStockUpdates[j].high * mult), 2);
-                        SingleStockUpdates[j].low = (float)Math.Round((double)(SingleStockUpdates[j].low * mult), 2);
-                        SingleStockUpdates[j].volume = (int)((float)SingleStockUpdates[j].volume / mult);
-                        if (SingleStockUpdates[j].close <= 0.02)
+                        SingleStockUpdates[j].Close = (float)Math.Round((double)(SingleStockUpdates[j].Close * mult), 2);
+                        SingleStockUpdates[j].Open = (float)Math.Round((double)(SingleStockUpdates[j].Open * mult), 2);
+                        SingleStockUpdates[j].High = (float)Math.Round((double)(SingleStockUpdates[j].High * mult), 2);
+                        SingleStockUpdates[j].Low = (float)Math.Round((double)(SingleStockUpdates[j].Low * mult), 2);
+                        SingleStockUpdates[j].Volume = (int)((float)SingleStockUpdates[j].Volume / mult);
+                        if (SingleStockUpdates[j].Close <= 0.02)
                         {
                             
                         }

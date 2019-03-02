@@ -1,18 +1,18 @@
 ﻿using System.Collections.Generic;
-using Shared;
+using Shared.MarketStructures;
 
 namespace Shared.Comms.Messages
 {
     public class StockStreamResponseMessage : Message
     {
-        public EvaluatedStocks EvaluatedStocksList
+        public StockMarketDay StockMarketDayList
         {
             get; set;
         }
 
         public StockStreamResponseMessage()
         {
-            EvaluatedStocksList = new EvaluatedStocks();
+            StockMarketDayList = new StockMarketDay();
         }
     }
 }

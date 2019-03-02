@@ -1,4 +1,6 @@
-﻿namespace Shared.Portfolio
+﻿using Shared.MarketStructures;
+
+namespace Shared.Portfolio
 {
     public class Asset
     {
@@ -7,7 +9,7 @@
             RelatedStock = new Stock();
         }
 
-        public Shared.Stock RelatedStock
+        public Stock RelatedStock
         {
             get; set;
         }

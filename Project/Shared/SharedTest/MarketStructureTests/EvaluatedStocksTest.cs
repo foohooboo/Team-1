@@ -1,12 +1,12 @@
-﻿using Shared;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Shared.MarketStructures;
 
 namespace SharedTest.MarketStructureTests
 {
     [TestClass]
-    public class EvaluatedStocksTest
+    public class StockMarketDayTest
     {
-        public EvaluatedStocksTest()
+        public StockMarketDayTest()
         {
 
         }
@@ -14,55 +14,55 @@ namespace SharedTest.MarketStructureTests
         [TestMethod]
         public void DefaultConstructorTest()
         {
-            var evaluatedStocks = new EvaluatedStocks();
+            var StockMarketDay = new StockMarketDay();
 
-            Assert.AreEqual(evaluatedStocks.Count, 0);
-            Assert.IsNull(evaluatedStocks.Date);
+            Assert.AreEqual(StockMarketDay.Count, 0);
+            Assert.IsNull(StockMarketDay.Date);
         }
 
         [TestMethod]
         public void DateConstructorTest()
         {
             string date = "1990-02-20";
-            var evaluatedStocks = new EvaluatedStocks(date);
+            var StockMarketDay = new StockMarketDay(date);
 
-            Assert.AreEqual(evaluatedStocks.Count, 0);
-            Assert.AreEqual(evaluatedStocks.Date, date);
+            Assert.AreEqual(StockMarketDay.Count, 0);
+            Assert.AreEqual(StockMarketDay.Date, date);
         }
 
         [TestMethod]
         public void LoadedConstructorTest()
         {
             string date = "1990-02-20";
-            var stock1 = new EvaluatedStock();
-            var stock2 = new EvaluatedStock();
+            var stock1 = new ValuatedStock();
+            var stock2 = new ValuatedStock();
 
-            EvaluatedStock[] stocks = { stock1, stock2 };
+            ValuatedStock[] stocks = { stock1, stock2 };
             
-            var evaluatedStocks = new EvaluatedStocks(date, stocks);
+            var StockMarketDay = new StockMarketDay(date, stocks);
 
-            Assert.AreEqual(evaluatedStocks.Count, 2);
-            Assert.AreEqual(evaluatedStocks.Date, date);
+            Assert.AreEqual(StockMarketDay.Count, 2);
+            Assert.AreEqual(StockMarketDay.Date, date);
         }
 
         [TestMethod]
         public void InitializerTest()
         {
             string date = "1990-02-20";
-            var stock1 = new EvaluatedStock();
-            var stock2 = new EvaluatedStock();
+            var stock1 = new ValuatedStock();
+            var stock2 = new ValuatedStock();
 
-            EvaluatedStock[] stocks = { stock1, stock2 };
+            ValuatedStock[] stocks = { stock1, stock2 };
 
-            var evaluatedStocks = new EvaluatedStocks
+            var StockMarketDay = new StockMarketDay
             {
                 Date = date
             };
 
-            evaluatedStocks.AddRange(stocks);
+            StockMarketDay.AddRange(stocks);
 
-            Assert.AreEqual(evaluatedStocks.Count, 2);
-            Assert.AreEqual(evaluatedStocks.Date, date);
+            Assert.AreEqual(StockMarketDay.Count, 2);
+            Assert.AreEqual(StockMarketDay.Date, date);
         }
     }
 }

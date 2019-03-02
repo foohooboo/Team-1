@@ -1,8 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Shared.Comms.Messages;
 using Shared.Portfolio;
-using Shared;
 using System.Collections.Generic;
+using Shared.MarketStructures;
 
 namespace SharedTest.Messages
 {

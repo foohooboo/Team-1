@@ -1,12 +1,12 @@
-﻿using Shared;
+﻿using Shared.MarketStructures;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace SharedTest.MarketStructureTests
 {
     [TestClass]
-    public class EvaluatedStockTest
+    public class ValuatedStockTest
     {
-        public EvaluatedStockTest()
+        public ValuatedStockTest()
         {
 
         }
@@ -14,15 +14,15 @@ namespace SharedTest.MarketStructureTests
         [TestMethod]
         public void DefaultConstructorTest()
         {
-            var evaluatedStock = new EvaluatedStock();
+            var ValuatedStock = new ValuatedStock();
 
-            Assert.AreEqual(evaluatedStock.close, 0.0F);
-            Assert.AreEqual(evaluatedStock.high, 0.0F);
-            Assert.AreEqual(evaluatedStock.low, 0.0F);
-            Assert.AreEqual(evaluatedStock.open, 0.0F);
-            Assert.AreEqual(evaluatedStock.volume, 0);
-            Assert.IsNull(evaluatedStock.stock.Name);
-            Assert.IsNull(evaluatedStock.stock.Symbol);
+            Assert.AreEqual(ValuatedStock.Close, 0.0F);
+            Assert.AreEqual(ValuatedStock.High, 0.0F);
+            Assert.AreEqual(ValuatedStock.Low, 0.0F);
+            Assert.AreEqual(ValuatedStock.Open, 0.0F);
+            Assert.AreEqual(ValuatedStock.Volume, 0);
+            Assert.IsNull(ValuatedStock.Name);
+            Assert.IsNull(ValuatedStock.Symbol);
         }
 
         [TestMethod]
@@ -30,37 +30,38 @@ namespace SharedTest.MarketStructureTests
         {
             var stock = new Stock("GOOGL","GOOGLE");
             string[] data = { "yolo", "1.0", "1.1", "1.2", "1.3", "2" }; 
-            var evaluatedStock = new EvaluatedStock(data, stock);
+            var ValuatedStock = new ValuatedStock(data, stock);
 
-            Assert.AreEqual(evaluatedStock.open, 1.0F);
-            Assert.AreEqual(evaluatedStock.high, 1.1F);
-            Assert.AreEqual(evaluatedStock.low, 1.2F);
-            Assert.AreEqual(evaluatedStock.close, 1.3F);
-            Assert.AreEqual(evaluatedStock.volume, 2);
-            Assert.AreEqual(evaluatedStock.stock.Name, "GOOGLE");
-            Assert.AreEqual(evaluatedStock.stock.Symbol, "GOOGL");
+            Assert.AreEqual(ValuatedStock.Open, 1.0F);
+            Assert.AreEqual(ValuatedStock.High, 1.1F);
+            Assert.AreEqual(ValuatedStock.Low, 1.2F);
+            Assert.AreEqual(ValuatedStock.Close, 1.3F);
+            Assert.AreEqual(ValuatedStock.Volume, 2);
+            Assert.AreEqual(ValuatedStock.Name, "GOOGLE");
+            Assert.AreEqual(ValuatedStock.Symbol, "GOOGL");
         }
 
         [TestMethod]
         public void InitializerTest()
         {
-            var evaluatedStock = new EvaluatedStock
+            var ValuatedStock = new ValuatedStock
             {
-                stock = new Stock("GOOGL", "GOOGLE"),
-                open = 1.0F,
-                high = 1.1F,
-                low = 1.2F,
-                close = 1.3F,
-                volume = 2
+                Symbol = "GOOGL",
+                Name = "GOOGLE",
+                Open = 1.0F,
+                High = 1.1F,
+                Low = 1.2F,
+                Close = 1.3F,
+                Volume = 2
             };
 
-            Assert.AreEqual(evaluatedStock.open, 1.0F);
-            Assert.AreEqual(evaluatedStock.high, 1.1F);
-            Assert.AreEqual(evaluatedStock.low, 1.2F);
-            Assert.AreEqual(evaluatedStock.close, 1.3F);
-            Assert.AreEqual(evaluatedStock.volume, 2);
-            Assert.AreEqual(evaluatedStock.stock.Name, "GOOGLE");
-            Assert.AreEqual(evaluatedStock.stock.Symbol, "GOOGL");
+            Assert.AreEqual(ValuatedStock.Open, 1.0F);
+            Assert.AreEqual(ValuatedStock.High, 1.1F);
+            Assert.AreEqual(ValuatedStock.Low, 1.2F);
+            Assert.AreEqual(ValuatedStock.Close, 1.3F);
+            Assert.AreEqual(ValuatedStock.Volume, 2);
+            Assert.AreEqual(ValuatedStock.Name, "GOOGLE");
+            Assert.AreEqual(ValuatedStock.Symbol, "GOOGL");
         }
     }
 }
