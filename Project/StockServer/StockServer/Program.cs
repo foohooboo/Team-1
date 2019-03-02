@@ -13,12 +13,8 @@ namespace StockServer
         {
             Log.Debug($"{nameof(Main)} (enter)");
 
-            StockData stockData = new StockData();
-
-            Log.Info("Loading Stock Data");
-
+            StockData.Init();
             var comm = new CommSystemWrapper();
-            
 
             Log.Info("Hello World! From the StockServer.");
             Log.Info(comm.HelloText);

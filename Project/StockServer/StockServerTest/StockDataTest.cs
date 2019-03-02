@@ -14,21 +14,44 @@ namespace StockServerTest
     public class StockDataTest
     {
         [TestMethod]
+        public void AdvanceDayTest()
+        {
+            StockData.Init();
+            Assert.AreEqual(StockData.CurrentDayNumber, 0);
+
+            StockData.AdvanceDay();
+            Assert.AreEqual(StockData.CurrentDayNumber, 1);
+
+            StockData.AdvanceDay();
+            Assert.AreEqual(StockData.CurrentDayNumber, 2);
+
+            StockData.Init();
+            Assert.AreEqual(StockData.CurrentDayNumber, 0);
+
+            //ensure proper rollover
+            for (int i=0; i < StockData.GetSize()-1; i++)
+                StockData.AdvanceDay();
+            Assert.AreEqual(StockData.GetSize() - 1, StockData.CurrentDayNumber);
+            StockData.AdvanceDay();
+            Assert.AreEqual(0, StockData.CurrentDayNumber);
+        }
+
+        [TestMethod]
         public void LoadDataTest()
         {
-            List<MarketDay> stockData = new StockData().Data;
-            //How this datatype Works
-            //stockData = new List<EvaluatedStocks>();
-            //EvaluatedStocks: List<EvaluatedStock>
-            //EvaluatedStock
-            Assert.AreEqual(stockData[0][0].Name, "Apple Inc.");
-            Assert.AreEqual(stockData[0][0].Symbol, "AAPL");
-            Assert.AreEqual(stockData.Count, 1000);
+            StockData.Init();
+            var marketDay = StockData.GetCurrentDay();
+            var numDays = StockData.GetSize();
+            var numCompanies = marketDay.Count;
 
-            int numCompanies = stockData[0].Count;
-            for (int i = 0; i < 1000; i++)
+            for(int i=0; i<numDays; i++)
             {
-                Assert.AreEqual(stockData[i].Count, numCompanies);
+                Assert.AreEqual("Apple Inc.", marketDay[0].Name);
+                Assert.AreEqual("AAPL", marketDay[0].Symbol);
+                Assert.AreEqual("Amazon.com Inc", marketDay[1].Name);
+                Assert.AreEqual("AMZN", marketDay[1].Symbol);
+                Assert.AreEqual(numCompanies, marketDay.Count);
+                marketDay = StockData.AdvanceDay();
             }
         }
     }

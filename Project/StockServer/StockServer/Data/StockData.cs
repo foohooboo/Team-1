@@ -1,19 +1,71 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using log4net;
 using Shared.MarketStructures;
+using System;
+using System.Collections.Generic;
 
 namespace StockServer.Data
 {
-    public class StockData
+    public static class StockData
     {
-        public readonly List<MarketDay> Data;
+        private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public StockData()
+        public static void Init()
         {
-            Data = LoadStocksFromFile();
+            Log.Debug($"{nameof(Init)} (enter)");
+
+            if (_history == null)
+                _history = LoadStocksFromFile();
+
+            CurrentDayNumber = 0;
+
+            Log.Debug($"{nameof(Init)} (exit)");
         }
 
-        private List<MarketDay> LoadStocksFromFile()
+        private static int _currentDayNumber;
+        public static int CurrentDayNumber
+        {
+            get
+            {
+                if (_history == null)
+                    return 0;
+                else
+                    return _currentDayNumber;
+            }
+            private set
+            {
+                _currentDayNumber = value % History.Count;
+            }
+        }
+
+        public static int GetSize()
+        {
+            return History.Count;
+        }
+
+        private static List<MarketDay> _history = null;
+        private static List<MarketDay> History
+        {
+            get
+            {
+                if (_history == null)
+                    Init();
+                return _history;
+            }
+            set { }
+        }
+
+        public static MarketDay GetCurrentDay()
+        {
+            return History[CurrentDayNumber];
+        }
+
+        public static MarketDay AdvanceDay()
+        {
+            CurrentDayNumber++;
+            return GetCurrentDay();
+        }
+
+        private static List<MarketDay> LoadStocksFromFile()
         {
             /* To Add a new Stock: use this link and replace [SYMBOL] with a company's symbol
              * http://download.macrotrends.net/assets/php/stock_data_export.php?t=[SYMBOL]
@@ -21,7 +73,14 @@ namespace StockServer.Data
              * Put file in StockServer/bin/HistoricData
              * Add tuple to hist[] below
             */
+
+            //TODO: If we ever remove the Hist[,] below, we will probably also want to remove this magic "days" number.
+            //It might be a pain, but one way is to step every file and just count the number of days, finding the smallest
+            //and setting this value to that. That way the files can live completely on their own and users can change them
+            //to any size without having to re-compile. -Dsphar 3/1/2019
             int days = 1000;//Should be shorter than the shortest stock history.
+
+
             List<MarketDay> ret = new List<MarketDay>();//gets returned
             for (int i = 0; i < days; i++)
             {
@@ -31,8 +90,8 @@ namespace StockServer.Data
             //That way we wont require any "magic" filenames like hist[,] below. The csv files themselves
             //could contain the company name and symbol. Not worth changing now, but maybe if we have time
             //in the future.     -Dsphar 2/27/2019
-            
-         
+
+
             string[,] hist = new string[,] {{"AAPL", "Apple Inc."}, {"AMZN", "Amazon.com Inc"}, {"BABA", "Alibaba Group"}
                 , {"BAC", "Bank of America Corp." }, {"BUD", "Anheuser-Busch Inbev"}, {"CVX", "Chevron Corperation"}, {"FB", "Facebook Inc."}
                 , {"GOOGL", "Alphabet"}, {"HD", "Home Depot Inc."}, {"JNJ", "Johnson & Johnson"}, {"JPM", "JPMorgan Chase & Co."}, { "MSFT", "Microsoft"}
@@ -46,7 +105,7 @@ namespace StockServer.Data
 
             for (int i = 0; i < hist.GetLength(0); i++)
             {
-                
+
                 stocks.Add(new Stock(hist[i, 0], hist[i, 1]));
                 List<ValuatedStock> SingleStockUpdates = new List<ValuatedStock>();
                 float mult = (float)Math.Pow(2, (random.NextDouble() * 4 - 2));//gives nice range for multiplier
@@ -80,7 +139,7 @@ namespace StockServer.Data
                         SingleStockUpdates[j].Volume = (int)((float)SingleStockUpdates[j].Volume / mult);
                         if (SingleStockUpdates[j].Close <= 0.02)
                         {
-                            
+
                         }
                         ret[j].Add(SingleStockUpdates[j]);
                     }
