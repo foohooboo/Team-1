@@ -16,7 +16,7 @@ namespace StockServerTest
         [TestMethod]
         public void LoadDataTest()
         {
-            List<StockMarketDay> stockData = new StockData().Data;
+            List<MarketDay> stockData = new StockData().Data;
             //How this datatype Works
             //stockData = new List<EvaluatedStocks>();
             //EvaluatedStocks: List<EvaluatedStock>

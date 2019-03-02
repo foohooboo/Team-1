@@ -17,8 +17,8 @@ namespace SharedTest.Messages
         {
             var stockStreamResponse = new StockStreamResponseMessage();
 
-            Assert.IsNull(stockStreamResponse.StockMarketDayList.Date);
-            Assert.AreEqual(stockStreamResponse.StockMarketDayList.Count, 0);
+            Assert.IsNull(stockStreamResponse.MarketDayList.Date);
+            Assert.AreEqual(stockStreamResponse.MarketDayList.Count, 0);
         }
 
         [TestMethod]
@@ -29,19 +29,19 @@ namespace SharedTest.Messages
             ValuatedStock[] stocks = { stock1, stock2 }; 
             string date = "1990-02-20";
 
-            var StockMarketDay = new StockMarketDay
+            var MarketDay = new MarketDay
             {
                 Date = date
             };
-            StockMarketDay.AddRange(stocks);
+            MarketDay.AddRange(stocks);
 
             var stockStreamResponse = new StockStreamResponseMessage
             {
-                StockMarketDayList = StockMarketDay
+                MarketDayList = MarketDay
             };
 
-            Assert.AreEqual(stockStreamResponse.StockMarketDayList.Date, date);
-            Assert.AreEqual(stockStreamResponse.StockMarketDayList.Count, 2);
+            Assert.AreEqual(stockStreamResponse.MarketDayList.Date, date);
+            Assert.AreEqual(stockStreamResponse.MarketDayList.Count, 2);
         }
 
         [TestMethod]
@@ -62,23 +62,23 @@ namespace SharedTest.Messages
             ValuatedStock[] stocks = { stock1, stock2 };
             string date = "1990-02-20";
 
-            var StockMarketDay = new StockMarketDay
+            var MarketDay = new MarketDay
             {
                 Date = date
             };
-            StockMarketDay.AddRange(stocks);
+            MarketDay.AddRange(stocks);
 
             var stockStreamResponse = new StockStreamResponseMessage
             {
-                StockMarketDayList = StockMarketDay
+                MarketDayList = MarketDay
             };
 
             var serializedMessage = MessageFactory.GetMessage(stockStreamResponse.Encode()) as StockStreamResponseMessage;
 
-            Assert.AreEqual(stockStreamResponse.StockMarketDayList.Count, serializedMessage.StockMarketDayList.Count);
-            Assert.AreEqual(stockStreamResponse.StockMarketDayList[0].Close, serializedMessage.StockMarketDayList[0].Close);
+            Assert.AreEqual(stockStreamResponse.MarketDayList.Count, serializedMessage.MarketDayList.Count);
+            Assert.AreEqual(stockStreamResponse.MarketDayList[0].Close, serializedMessage.MarketDayList[0].Close);
             //TODO: Date is being dropped in the serializer for some reason...
-            Assert.AreEqual(stockStreamResponse.StockMarketDayList.Date, serializedMessage.StockMarketDayList.Date);
+            Assert.AreEqual(stockStreamResponse.MarketDayList.Date, serializedMessage.MarketDayList.Date);
         }
     }
 }

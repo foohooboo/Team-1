@@ -9,7 +9,7 @@ namespace Shared.Comms.Messages
 
         }
 
-        public StockMarketDay StocksList
+        public MarketDay StocksList
         {
             get; set;
         }

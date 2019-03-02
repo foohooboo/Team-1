@@ -6,14 +6,14 @@ namespace StockServer.Data
 {
     public class StockData
     {
-        public readonly List<StockMarketDay> Data;
+        public readonly List<MarketDay> Data;
 
         public StockData()
         {
             Data = LoadStocksFromFile();
         }
 
-        private List<StockMarketDay> LoadStocksFromFile()
+        private List<MarketDay> LoadStocksFromFile()
         {
             /* To Add a new Stock: use this link and replace [SYMBOL] with a company's symbol
              * http://download.macrotrends.net/assets/php/stock_data_export.php?t=[SYMBOL]
@@ -22,10 +22,10 @@ namespace StockServer.Data
              * Add tuple to hist[] below
             */
             int days = 1000;//Should be shorter than the shortest stock history.
-            List<StockMarketDay> ret = new List<StockMarketDay>();//gets returned
+            List<MarketDay> ret = new List<MarketDay>();//gets returned
             for (int i = 0; i < days; i++)
             {
-                ret.Add(new StockMarketDay("2069-04-20"));
+                ret.Add(new MarketDay("2069-04-20"));
             }
             //TODO: It might be a good idea to have this loader try to parse every file in some directory.
             //That way we wont require any "magic" filenames like hist[,] below. The csv files themselves

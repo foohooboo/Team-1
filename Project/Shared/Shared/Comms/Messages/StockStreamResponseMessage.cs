@@ -5,14 +5,14 @@ namespace Shared.Comms.Messages
 {
     public class StockStreamResponseMessage : Message
     {
-        public StockMarketDay StockMarketDayList
+        public MarketDay MarketDayList
         {
             get; set;
         }
 
         public StockStreamResponseMessage()
         {
-            StockMarketDayList = new StockMarketDay();
+            MarketDayList = new MarketDay();
         }
     }
 }
