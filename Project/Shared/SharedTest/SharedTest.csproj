@@ -50,6 +50,7 @@
     <Compile Include="MailService\UdpPostBoxTest.cs" />
     <Compile Include="MarketStructureTests\EvaluatedStocksTest.cs" />
     <Compile Include="MarketStructureTests\EvaluatedStockTest.cs" />
+    <Compile Include="MarketStructureTests\MarketSegmentTest.cs" />
     <Compile Include="MarketStructureTests\StockTest.cs" />
     <Compile Include="Messages\AckTest.cs" />
     <Compile Include="Messages\CreatePortfolioRequestMessageTest.cs" />
@@ -63,6 +64,7 @@
     <Compile Include="Messages\StockPriceUpdateTest.cs" />
     <Compile Include="Messages\StockStreamRequestMessageTest.cs" />
     <Compile Include="Messages\StockStreamResponseMessageTest.cs" />
+    <Compile Include="Messages\TransactionRequestMessageTest.cs" />
     <Compile Include="Messages\UpdateLeaderBoardMessageTest.cs" />
     <Compile Include="PortfolioTests\AssetTest.cs" />
     <Compile Include="PortfolioTests\PortfolioTest.cs" />

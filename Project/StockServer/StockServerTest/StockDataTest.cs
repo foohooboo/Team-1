@@ -1,7 +1,5 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using StockServer.Data;
-using System.Collections.Generic;
 using Shared.MarketStructures;
 
 namespace StockServerTest
@@ -53,6 +51,40 @@ namespace StockServerTest
                 Assert.AreEqual(numCompanies, marketDay.Data.Count);
                 marketDay = StockData.AdvanceDay();
             }
+        }
+
+        [TestMethod]
+        public void GetRecentHistoryTest()
+        {    
+            //Setup control variables for verification
+            var privateStockHistory = new PrivateObject(new StockData(), new PrivateType(typeof(StockData)));
+            var entireHistory = privateStockHistory.Invoke("GetFullHistory") as MarketSegment;
+            var firstDay = entireHistory[0];
+            var secondDay = entireHistory[1];
+            var thirdDay = entireHistory[2];
+            var lastDay = entireHistory[entireHistory.Count - 1];
+
+            //Reset StockData to day 0
+            StockData.Init();
+
+            //Current day zero, recentHistory should rollover.
+            var recentHist = StockData.GetRecentHistory(2);
+            Assert.AreEqual(lastDay, recentHist[0]);
+            Assert.AreEqual(firstDay, recentHist[1]);
+
+            //Current day 1, still a recentHistory rollover
+            StockData.AdvanceDay();
+            recentHist = StockData.GetRecentHistory(3);
+            Assert.AreEqual(lastDay, recentHist[0]);
+            Assert.AreEqual(firstDay, recentHist[1]);
+            Assert.AreEqual(secondDay, recentHist[2]);
+
+            //Current day 2, no more recentHistory rollover
+            StockData.AdvanceDay();
+            recentHist = StockData.GetRecentHistory(3);
+            Assert.AreEqual(firstDay, recentHist[0]);
+            Assert.AreEqual(secondDay, recentHist[1]);
+            Assert.AreEqual(thirdDay, recentHist[2]);
         }
     }
 }

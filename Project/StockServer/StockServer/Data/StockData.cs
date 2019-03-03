@@ -5,12 +5,12 @@ using System.Collections.Generic;
 
 namespace StockServer.Data
 {
-    public static class StockData
+    public class StockData
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private static MarketSegment _fullHistory = null;
-        private static List<MarketDay> History
+        private static MarketSegment FullHistory
         {
             get
             {
@@ -19,18 +19,6 @@ namespace StockServer.Data
                 return _fullHistory;
             }
             set { }
-        }
-
-        public static void Init()
-        {
-            Log.Debug($"{nameof(Init)} (enter)");
-
-            if (_fullHistory == null)
-                _fullHistory = LoadStocksFromFile();
-
-            CurrentDayNumber = 0;
-
-            Log.Debug($"{nameof(Init)} (exit)");
         }
 
         private static int _currentDayNumber;
@@ -45,20 +33,47 @@ namespace StockServer.Data
             }
             private set
             {
-                _currentDayNumber = value % History.Count;
+                _currentDayNumber = value % FullHistory.Count;
             }
+        }
+
+        public static void Init()
+        {
+            Log.Debug($"{nameof(Init)} (enter)");
+
+            if (_fullHistory == null)
+                _fullHistory = LoadStocksFromFile();
+
+            CurrentDayNumber = 0;
+
+            Log.Debug($"{nameof(Init)} (exit)");
         }
 
         public static int GetSize()
         {
-            return History.Count;
+            return FullHistory.Count;
         }
 
-        
+        public static MarketSegment GetRecentHistory(int numDays)
+        {
+            int currentIndex = CurrentDayNumber - numDays; ;
+            if (currentIndex < 0)
+                currentIndex = (currentIndex + GetSize()+1) % GetSize();//account for rollover
+
+            var segment = new MarketSegment();
+            for(int i=0; i<numDays; i++)
+            {
+                
+                segment.Add(FullHistory[currentIndex]);
+                currentIndex = (++currentIndex) % GetSize();
+            }
+
+            return segment;
+        }
 
         public static MarketDay GetCurrentDay()
         {
-            return History[CurrentDayNumber];
+            return FullHistory[CurrentDayNumber];
         }
 
         public static MarketDay AdvanceDay()
@@ -84,9 +99,16 @@ namespace StockServer.Data
 
 
             MarketSegment ret = new MarketSegment();//gets returned
+            DateTime date = DateTime.Now;
+            date = date.AddYears(50);
             for (int i = 0; i < days; i++)
             {
-                ret.Add(new MarketDay("2069-04-20"));
+                date = date.AddDays(1);
+                if ((date.DayOfWeek == DayOfWeek.Saturday) || (date.DayOfWeek == DayOfWeek.Sunday))
+                {
+                    date = date.AddDays(1);
+                }
+                ret.Add(new MarketDay(date.ToString("yyyy-MM-dd")));
             }
             //TODO: It might be a good idea to have this loader try to parse every file in some directory.
             //That way we wont require any "magic" filenames like hist[,] below. The csv files themselves
@@ -102,6 +124,7 @@ namespace StockServer.Data
             };
 
             List<Stock> stocks = new List<Stock>();
+
             Random random = new Random();
             int dates = random.Next(0, hist.GetLength(0));
 
@@ -148,6 +171,17 @@ namespace StockServer.Data
                 }
             }
             return ret;
+        }
+
+        /// <summary>
+        /// GetFullHistory is a hack to allow unit testing to get PrivateObject access to the FullHistory,
+        /// property. It can probably be cleaned up somehow, but I am ready to move on.
+        /// Note: it should only to be used for confirmation purposes.   -Dsphar 3/2/2019
+        /// </summary>
+        /// <returns></returns>
+        private MarketSegment GetFullHistory()
+        {
+            return FullHistory;
         }
     }
 }
