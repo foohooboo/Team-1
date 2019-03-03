@@ -8,32 +8,57 @@ namespace Shared.Conversations.SharedStates
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public InitialState_ConvI_StockStreamRequest(string conversationId) : base(conversationId) { }
+        public InitialState_ConvI_StockStreamRequest(int processNum) : base(ConversationManager.GenerateNextId(processNum)) { }
 
-        public override ConversationState GetNextStateFromMessage(Envelope newMessage)
+        public override ConversationState GetNextStateFromMessage(Envelope incomingMessage)
         {
-            if (typeof(StockStreamResponseMessage) == newMessage.GetType())
+            Log.Debug($"{nameof(GetNextStateFromMessage)} (enter)");
+
+            ConversationState nextState = null;
+
+            switch (incomingMessage.Contents)
             {
-                //TODO: Handle the response data somehow...
-                return new EndConversationState(ConversationID);
+                case StockStreamResponseMessage m:
+                    var stockHistory = m.RecentHistory;
+                    Log.Info($"Received stock stream response with {stockHistory.Count} days of recent trading.");
+                    for (int i=0; i<5 && i < stockHistory.Count; i++)
+                    {
+                        Log.Info(stockHistory[i].ToString());
+                    }
+                    nextState = new EndConversationState(ConversationID);
+                    break;
+                case ErrorMessage m:
+                    Log.Error($"Received error message as reply...\n{m.ErrorText}");
+                    nextState = new EndConversationState(ConversationID);
+                    break;
+                default:
+                    Log.Error($"No logic to process incoming message of type {incomingMessage.Contents?.GetType()}.");
+                    Log.Error($"Ending conversation {ConversationID}.");
+                    nextState = new EndConversationState(ConversationID);
+                    break;
             }
-            //TODO: Add error message handling.
-            else
-            {
-                Log.Error("Could not process incoming message for conversation, ending.");
-                return new EndConversationState(ConversationID);
-            }
+
+            Log.Debug($"{nameof(GetNextStateFromMessage)} (exit)");
+            return nextState;
         }
         
         public override void OnStateEnd()
         {
+            Log.Debug($"{nameof(OnStateEnd)} (enter)");
+
             //Do nothing
+
+            Log.Debug($"{nameof(OnStateEnd)} (enter)");
         }
 
         public override void OnStateStart()
         {
+            Log.Debug($"{nameof(OnStateStart)} (enter)");
+
             //TODO: Use Post Office to send request message to StockServer
             Log.Info("InitiateStockStreamRequestState OnStateStart running");
+
+            Log.Debug($"{nameof(OnStateStart)} (enter)");
         }
     }
 }

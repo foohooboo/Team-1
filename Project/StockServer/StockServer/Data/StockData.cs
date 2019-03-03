@@ -166,7 +166,7 @@ namespace StockServer.Data
                         {
 
                         }
-                        ret[j].Data.Add(SingleStockUpdates[j]);
+                        ret[j].TradedCompanies.Add(SingleStockUpdates[j]);
                     }
                 }
             }

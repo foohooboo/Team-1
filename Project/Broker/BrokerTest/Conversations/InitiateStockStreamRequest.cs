@@ -1,27 +1,22 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Shared;
 using Shared.Comms.MailService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
 using Shared.Conversations.StockStreamRequest.Initiator;
 
-namespace SharedTest.Conversations
+namespace BrokerTest
 {
-    /// <summary>
-    /// Summary description for MessageFactoryTest
-    /// </summary>
     [TestClass]
-    public class Test_ConvI_StockStreamRequest
+    public class InitiateStockStreamRequest
     {
         [TestMethod]
         public void SucessfulStockStreamRequestTest()
         {
-            //Simulate application-level ids
-            //TODO: Should these be moved into the TestContext?? -Dsphar 2/22/19
-            int processId = 1;
-
             //Create a new StockStreamRequestConv_Initor conversation
-            var stockStreamConv = new ConvI_StockStreamRequest(new InitialState_ConvI_StockStreamRequest(processId));
+            var initialState  = new InitialState_ConvI_StockStreamRequest(Config.GetInt(Config.BROKER_PROCESS_NUM));
+            var stockStreamConv = new ConvI_StockStreamRequest(initialState);
             ConversationManager.AddConversation(stockStreamConv);
             string conversationId = stockStreamConv.ConversationId;
 
@@ -36,8 +31,5 @@ namespace SharedTest.Conversations
             //Conversation over, ensure it has been removed from Conversation Manager
             Assert.IsFalse(ConversationManager.ConversationExists(conversationId));
         }
-
-        //TODO: Add test which handles an error response (once error message is created)
-        //TODO: Add test which handles no response (once timeout functionality added)
     }
 }

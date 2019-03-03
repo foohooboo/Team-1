@@ -1,7 +1,8 @@
 ﻿using System;
-using Broker.Conversations.States;
 using log4net;
+using Shared;
 using Shared.Conversations;
+using Shared.Conversations.SharedStates;
 using Shared.Conversations.StockStreamRequest.Initiator;
 
 namespace Broker
@@ -22,7 +23,7 @@ namespace Broker
 
             while (!input.Equals("exit"))
             {
-                var c = new ConvI_StockStreamRequest(new InitialSate_ConvI_StockStreamRequest());
+                var c = new ConvI_StockStreamRequest(new InitialState_ConvI_StockStreamRequest(Config.GetInt(Config.BROKER_PROCESS_NUM)));
                 Log.Info($"Starting new conversation: {c.ConversationId}");
                 ConversationManager.AddConversation(c);
 

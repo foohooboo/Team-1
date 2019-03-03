@@ -16,7 +16,7 @@ namespace SharedTest.MarketStructureTests
         {
             var MarketDay = new MarketDay();
 
-            Assert.AreEqual(MarketDay.Data.Count, 0);
+            Assert.AreEqual(MarketDay.TradedCompanies.Count, 0);
             Assert.IsNull(MarketDay.Date);
         }
 
@@ -26,7 +26,7 @@ namespace SharedTest.MarketStructureTests
             string date = "1990-02-20";
             var MarketDay = new MarketDay(date);
 
-            Assert.AreEqual(MarketDay.Data.Count, 0);
+            Assert.AreEqual(MarketDay.TradedCompanies.Count, 0);
             Assert.AreEqual(MarketDay.Date, date);
         }
 
@@ -41,7 +41,7 @@ namespace SharedTest.MarketStructureTests
             
             var MarketDay = new MarketDay(date, stocks);
 
-            Assert.AreEqual(MarketDay.Data.Count, 2);
+            Assert.AreEqual(MarketDay.TradedCompanies.Count, 2);
             Assert.AreEqual(MarketDay.Date, date);
         }
 
@@ -59,9 +59,9 @@ namespace SharedTest.MarketStructureTests
                 Date = date
             };
 
-            MarketDay.Data.AddRange(stocks);
+            MarketDay.TradedCompanies.AddRange(stocks);
 
-            Assert.AreEqual(MarketDay.Data.Count, 2);
+            Assert.AreEqual(MarketDay.TradedCompanies.Count, 2);
             Assert.AreEqual(MarketDay.Date, date);
         }
     }

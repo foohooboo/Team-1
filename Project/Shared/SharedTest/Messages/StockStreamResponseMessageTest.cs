@@ -17,8 +17,7 @@ namespace SharedTest.Messages
         {
             var stockStreamResponse = new StockStreamResponseMessage();
 
-            Assert.IsNull(stockStreamResponse.MarketDayList.Date);
-            Assert.AreEqual(stockStreamResponse.MarketDayList.Data.Count, 0);
+            Assert.AreEqual(stockStreamResponse.RecentHistory.Count, 0);
         }
 
         [TestMethod]
@@ -27,21 +26,26 @@ namespace SharedTest.Messages
             var stock1 = new ValuatedStock();
             var stock2 = new ValuatedStock();
             ValuatedStock[] stocks = { stock1, stock2 }; 
-            string date = "1990-02-20";
+            string date1 = "1990-02-20";
+            string date2 = "1990-03-20";
 
-            var MarketDay = new MarketDay
-            {
-                Date = date
-            };
-            MarketDay.Data.AddRange(stocks);
+            MarketDay day1 = new MarketDay(date1,stocks);
+            MarketDay day2 = new MarketDay(date2,stocks);//not important that has same valuated stocks
+
+            var recentHistory = new MarketSegment();
+            recentHistory.Add(day1);
+            recentHistory.Add(day2);
 
             var stockStreamResponse = new StockStreamResponseMessage
             {
-                MarketDayList = MarketDay
+                RecentHistory = recentHistory
             };
-
-            Assert.AreEqual(stockStreamResponse.MarketDayList.Date, date);
-            Assert.AreEqual(stockStreamResponse.MarketDayList.Data.Count, 2);
+            
+            Assert.AreEqual(stockStreamResponse.RecentHistory[0].Date, date1);
+            Assert.AreEqual(stockStreamResponse.RecentHistory[1].Date, date2);
+            Assert.AreEqual(stockStreamResponse.RecentHistory.Count, 2);
+            Assert.AreEqual(stockStreamResponse.RecentHistory[0].TradedCompanies.Count, 2);
+            Assert.AreEqual(stockStreamResponse.RecentHistory[1].TradedCompanies.Count, 2);
         }
 
         [TestMethod]
@@ -60,25 +64,24 @@ namespace SharedTest.Messages
             var stock1 = new ValuatedStock();
             var stock2 = new ValuatedStock();
             ValuatedStock[] stocks = { stock1, stock2 };
-            string date = "1990-02-20";
+            string date1 = "1990-02-20";
 
-            var MarketDay = new MarketDay
-            {
-                Date = date
-            };
-            MarketDay.Data.AddRange(stocks);
-
+            MarketDay day1 = new MarketDay(date1, stocks);
+            
+            var recentHistory = new MarketSegment();
+            recentHistory.Add(day1);
+            
             var stockStreamResponse = new StockStreamResponseMessage
             {
-                MarketDayList = MarketDay
+                RecentHistory = recentHistory
             };
 
             var serializedMessage = stockStreamResponse.Encode();
             var deserializedMessage = MessageFactory.GetMessage(serializedMessage) as StockStreamResponseMessage;
 
-            Assert.AreEqual(stockStreamResponse.MarketDayList.Data.Count, deserializedMessage.MarketDayList.Data.Count);
-            Assert.AreEqual(stockStreamResponse.MarketDayList.Data[0].Close, deserializedMessage.MarketDayList.Data[0].Close);
-            Assert.AreEqual(stockStreamResponse.MarketDayList.Date, deserializedMessage.MarketDayList.Date);
+            Assert.AreEqual(stockStreamResponse.RecentHistory[0].TradedCompanies.Count, deserializedMessage.RecentHistory[0].TradedCompanies.Count);
+            Assert.AreEqual(stockStreamResponse.RecentHistory[0].TradedCompanies[0].Close, deserializedMessage.RecentHistory[0].TradedCompanies[0].Close);
+            Assert.AreEqual(stockStreamResponse.RecentHistory[0].Date, deserializedMessage.RecentHistory[0].Date);
         }
     }
 }
