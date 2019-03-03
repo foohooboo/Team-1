@@ -39,8 +39,8 @@ namespace SharedTest.MailService
             var pb = postOffice.GetBox(a2);
             var addressParts = a2.Split(':');
 
-            Assert.AreEqual(addressParts[0], pb.EndPoint.Address.ToString());
-            Assert.AreEqual(addressParts[1], pb.EndPoint.Port.ToString());
+            Assert.AreEqual(addressParts[0], pb.LocalEndPoint.Address.ToString());
+            Assert.AreEqual(addressParts[1], pb.LocalEndPoint.Port.ToString());
         }
 
         [TestMethod]

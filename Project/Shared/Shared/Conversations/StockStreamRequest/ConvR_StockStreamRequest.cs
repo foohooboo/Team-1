@@ -21,7 +21,6 @@ namespace Shared.Conversations.StockStreamRequest
             //TODO: Add stock data history to responseMessage
             
             var responseEnvelope = new Envelope(responseMessage);
-            responseEnvelope.To = e.From;
             //TODO: Change envelope to UDP or TCP. Send to communicator for transmission.
             //This is likely to change once Daniel works out persistence in post boxes. Either way, .
             

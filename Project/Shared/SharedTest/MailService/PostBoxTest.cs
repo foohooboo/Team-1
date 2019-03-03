@@ -14,6 +14,11 @@ namespace SharedTest.MailService
 
             }
 
+            public override void CollectMail()
+            {
+                throw new System.NotImplementedException();
+            }
+
             public override void Send(Envelope envelope)
             {
                 throw new System.NotImplementedException();
@@ -35,8 +40,8 @@ namespace SharedTest.MailService
         {
             var addressParts = address.Split(':');
 
-            Assert.AreEqual(addressParts[0], postBox.EndPoint.Address.ToString());
-            Assert.AreEqual(addressParts[1], postBox.EndPoint.Port.ToString());
+            Assert.AreEqual(addressParts[0], postBox.LocalEndPoint.Address.ToString());
+            Assert.AreEqual(addressParts[1], postBox.LocalEndPoint.Port.ToString());
             Assert.IsFalse(postBox.HasMail());
         }
 
@@ -45,7 +50,7 @@ namespace SharedTest.MailService
         {
             var m = MessageFactory.GetMessage<AckMessage>(1, 5);
             var e = new Envelope(m);
-            postBox.Insert(e);
+            postBox.CollectMail();
 
             Assert.IsTrue(postBox.HasMail());
             Assert.AreSame(e, postBox.GetMail());

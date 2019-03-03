@@ -12,7 +12,7 @@ namespace SharedTest.MailService
             var address = "127.0.0.1:1342";
             var udp = new UdpPostBox(address);
 
-            Assert.AreEqual(address, udp.EndPoint.ToString());
+            Assert.AreEqual(address, udp.LocalEndPoint.ToString());
         }
     }
 }

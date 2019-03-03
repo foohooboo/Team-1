@@ -1,25 +1,32 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
 using Shared.Comms.Messages;
 
 namespace Shared.Comms.MailService
 {
     public abstract class PostBox
     {
-        public IPEndPoint EndPoint
+        private readonly object boxLock;
+        protected readonly AutoResetEvent waitHandle = new AutoResetEvent(false);
+
+        public IPEndPoint LocalEndPoint
         {
             get; private set;
         }
 
-        public Queue<Envelope> Mail
+        public ConcurrentQueue<Envelope> Mail
         {
             get; set;
         }
 
         public PostBox(string address)
         {
-            EndPoint = EndPointParser.Parse(address);
-            Mail = new Queue<Envelope>();
+            boxLock = new object();
+            LocalEndPoint = EndPointParser.Parse(address);
+            Mail = new ConcurrentQueue<Envelope>();
         }
         
         public bool HasMail()
@@ -30,20 +37,26 @@ namespace Shared.Comms.MailService
         /// <summary>
         /// Used to insert an envelope that is recieved.
         /// </summary>
-        /// <param name="envelope">The <see cref="Envelope"/> containing the received <see cref="Message"/>.</param>
-        public void Insert(Envelope envelope)
-        {
-            Mail.Enqueue(envelope);
-        }
+        public abstract void CollectMail();
 
         public Envelope GetMail()
         {
-            if (!HasMail())
+            Envelope envelope = null;
+
+            while (envelope is null)
             {
-                return null;
+                if (!HasMail())
+                {
+                    waitHandle.WaitOne(1000);
+                }
+
+                if (!Mail.TryDequeue(out envelope))
+                {
+                    envelope = null;
+                }
             }
 
-            return Mail.Dequeue();
+            return envelope;
         }
 
         /// <summary>

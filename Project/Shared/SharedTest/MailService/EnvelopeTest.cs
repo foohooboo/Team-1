@@ -14,7 +14,6 @@ namespace SharedTest.MailService
             var e = new Envelope();
 
             Assert.IsNull(e.To);
-            Assert.IsNull(e.From);
             Assert.IsNull(e.Contents);
         }
 
@@ -27,11 +26,9 @@ namespace SharedTest.MailService
             var e = new Envelope()
             {
                 To = toEP,
-                From = fromEP
             };
 
             Assert.AreSame(toEP, e.To);
-            Assert.AreSame(fromEP, e.From);
         }
 
         [TestMethod]
