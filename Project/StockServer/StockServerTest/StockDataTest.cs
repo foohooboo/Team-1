@@ -5,9 +5,6 @@ using Shared.MarketStructures;
 namespace StockServerTest
 {
 
-    //TODO: Add more tests. I added this as a very basic START to the test project.
-    //Dsphar 2/27/2019
-
     [TestClass]
     public class StockDataTest
     {
