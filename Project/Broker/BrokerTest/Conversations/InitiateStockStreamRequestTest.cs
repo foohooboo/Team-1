@@ -9,7 +9,7 @@ using Shared.Conversations.StockStreamRequest.Initiator;
 namespace BrokerTest
 {
     [TestClass]
-    public class InitiateStockStreamRequest
+    public class InitiateStockStreamRequestTest
     {
         [TestMethod]
         public void SucessfulStockStreamRequestTest()
