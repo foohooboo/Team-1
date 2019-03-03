@@ -8,6 +8,11 @@ namespace Shared.Conversations
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
+        private ConversationState CurrentState;
+        public readonly string ConversationId;
+        public bool ConversationStarted { get; private set; }
+        public DateTime LastUpdateTime { get; private set; }
+
         public Conversation(string conversationId)
         {
             if(string.IsNullOrEmpty(conversationId))
@@ -17,10 +22,6 @@ namespace Shared.Conversations
             else
             {
                 ConversationId = conversationId;
-
-                //We may want to move this AddConverstion call out of this constructor. I put it here for time sake.
-                //-Dsphar 2/22/19
-                ConversationManager.AddConversation(this);
             }
         }
 
@@ -34,17 +35,26 @@ namespace Shared.Conversations
             {
                 LastUpdateTime = DateTime.Now;
                 CurrentState = state;
-                CurrentState.OnStateStart();
             }
         }
 
-        private ConversationState CurrentState;
-        public DateTime LastUpdateTime{get; private set;}
-        public readonly string ConversationId;
+        public void StartConversation()
+        {
+            if (ConversationStarted)
+            {
+                Log.Error("Cannot start conversation more than once.");
+            }
+            else
+            {
+                LastUpdateTime = DateTime.Now;
+                CurrentState.OnStateStart();
+                ConversationStarted = true;
+            }
+        }
 
         public void UpdateState(Envelope incomingEnvelope)
         {
-            Log.Debug(string.Format("Enter - {0}", nameof(UpdateState)));
+            Log.Debug($"{nameof(UpdateState)} (enter)");
 
             var nextState = CurrentState.GetNextStateFromMessage(incomingEnvelope);
             if (nextState != null)
@@ -59,7 +69,7 @@ namespace Shared.Conversations
                 Log.Warn($"Unable to advance conversation to next state with message {incomingEnvelope.Contents.MessageID}.");
             }
 
-            Log.Debug(string.Format("Exit - {0}", nameof(UpdateState)));
+            Log.Debug($"{nameof(UpdateState)} (exit)");
         }
     }
 }

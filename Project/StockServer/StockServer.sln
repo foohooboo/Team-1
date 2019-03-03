@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockServer", "StockServer\
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Shared", "..\Shared\Shared\Shared.shproj", "{AC426B38-A9C8-4649-B9B2-3E755BD5AAB0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockServerTest", "StockServerTest\StockServerTest.csproj", "{B75EEFE1-B52A-4395-8820-53FAF51A5E9A}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		..\Shared\Shared\Shared.projitems*{2ee7af62-96a2-4f63-b2bf-ce7c616573d2}*SharedItemsImports = 4
@@ -21,6 +23,10 @@ Global
 		{2EE7AF62-96A2-4F63-B2BF-CE7C616573D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2EE7AF62-96A2-4F63-B2BF-CE7C616573D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2EE7AF62-96A2-4F63-B2BF-CE7C616573D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B75EEFE1-B52A-4395-8820-53FAF51A5E9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B75EEFE1-B52A-4395-8820-53FAF51A5E9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B75EEFE1-B52A-4395-8820-53FAF51A5E9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B75EEFE1-B52A-4395-8820-53FAF51A5E9A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

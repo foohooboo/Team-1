@@ -1,10 +1,6 @@
 ﻿using CommSystem;
 using log4net;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Broker
 {
@@ -16,15 +12,14 @@ namespace Broker
         private HelloWorld helloWorld;
 
         public CommSystemWrapper(){
-            string method = "CommSystemWrapper Constructor";
-            Log.Debug(string.Format("Enter - {0}", method));
+            Log.Debug($"{nameof(CommSystemWrapper)} (enter)");
 
             WaitingForUpdate = true;
 
             helloWorld = new HelloWorld();
             helloWorld.HelloTextChanged += OnHelloTextChanged;
 
-            Log.Debug(string.Format("Exit - {0}", method));
+            Log.Debug($"{nameof(CommSystemWrapper)} (exit)");
         }
 
         public string HelloText
@@ -40,12 +35,11 @@ namespace Broker
         
         public void OnHelloTextChanged(object source, EventArgs args)
         {
-            string method = "OnHelloTextChanged";
-            Log.Debug(string.Format("Enter - {0}", method));
+            Log.Debug($"{nameof(OnHelloTextChanged)} (enter)");
 
             WaitingForUpdate = false;
 
-            Log.Debug(string.Format("Exit - {0}", method));
+            Log.Debug($"{nameof(OnHelloTextChanged)} (exit)");
         }
     }
 }

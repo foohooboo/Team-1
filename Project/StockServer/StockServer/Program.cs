@@ -1,17 +1,19 @@
 ﻿using log4net;
+using StockServer.Data;
 using System;
+using System.Collections.Generic;
 
 namespace StockServer
 {
     class Program
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
+        
         static void Main(string[] args)
         {
-            string method = "Main";
-            Log.Debug(string.Format("Enter - {0}", method));
+            Log.Debug($"{nameof(Main)} (enter)");
 
+            StockData.Init();
             var comm = new CommSystemWrapper();
 
             Log.Info("Hello World! From the StockServer.");
@@ -28,7 +30,9 @@ namespace StockServer
             Log.Info("Pres any key to finish.");
             Console.ReadKey();
 
-            Log.Debug(string.Format("Exit - {0}", method));
+            Log.Debug($"{nameof(Main)} (exit)");
         }
+        
+        
     }
 }

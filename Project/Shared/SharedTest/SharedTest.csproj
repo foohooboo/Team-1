@@ -43,14 +43,28 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\ConfigurationTest.cs" />
     <Compile Include="MailService\EnvelopeTest.cs" />
     <Compile Include="MailService\PostBoxTest.cs" />
     <Compile Include="MailService\PostOfficeTest.cs" />
-    <Compile Include="MailService\UdpPostBoxTest.cs" />
+    <Compile Include="MarketStructureTests\EvaluatedStocksTest.cs" />
+    <Compile Include="MarketStructureTests\EvaluatedStockTest.cs" />
+    <Compile Include="MarketStructureTests\StockTest.cs" />
+    <Compile Include="Messages\AckTest.cs" />
+    <Compile Include="Messages\CreatePortfolioRequestMessageTest.cs" />
+    <Compile Include="Messages\ErrorTest.cs" />
+    <Compile Include="Messages\GetPortfolioRequestTest.cs" />
     <Compile Include="Messages\MessageTest.cs" />
     <Compile Include="Conversations\Test_ConvR_StockStreamRequest.cs" />
     <Compile Include="Conversations\Test_ConvI_StockStreamRequest.cs" />
     <Compile Include="Messages\MessageFactoryTest.cs" />
+    <Compile Include="Messages\PortfolioUpdateMessageTest.cs" />
+    <Compile Include="Messages\StockPriceUpdateTest.cs" />
+    <Compile Include="Messages\StockStreamRequestMessageTest.cs" />
+    <Compile Include="Messages\StockStreamResponseMessageTest.cs" />
+    <Compile Include="Messages\UpdateLeaderBoardMessageTest.cs" />
+    <Compile Include="PortfolioTests\AssetTest.cs" />
+    <Compile Include="PortfolioTests\PortfolioTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -65,6 +79,9 @@
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>12.0.1</Version>
+    </PackageReference>
+    <PackageReference Include="System.Configuration.ConfigurationManager">
+      <Version>4.5.0</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="..\Shared\Shared.projitems" Label="Shared" />

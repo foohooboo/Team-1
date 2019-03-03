@@ -1,15 +1,20 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-namespace Shared.Comms.Messages
+﻿namespace Shared.Comms.Messages
 {
     public class AckMessage : Message
     {
-        public AckMessage() : base()
+        public AckMessage()
         {
 
         }
 
-        public string AckHello;
+        public string ReferenceMessageID
+        {
+            get; set;
+        }
+
+        public string AckHello
+        {
+            get; set;
+        }
     }
 }

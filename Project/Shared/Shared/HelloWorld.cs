@@ -11,7 +11,7 @@ namespace CommSystem
 
         public HelloWorld()
         {
-            Log.Debug(string.Format("Enter - {0}", nameof(HelloWorld)));
+            Log.Debug($"{nameof(HelloWorld)} (enter)");
 
             _helloText = "Hello from the shared CommSystem resource. ";
 
@@ -24,7 +24,7 @@ namespace CommSystem
                 HelloText += " !!!!!This text was updated by someone.!!!!!";
             }).Start();
 
-            Log.Debug(string.Format("Exit - {0}", nameof(HelloWorld)));
+            Log.Debug($"{nameof(HelloWorld)} (exit)");
         }
 
         //Example of a "Dependency Inversion" string property named "HelloText"

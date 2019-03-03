@@ -14,10 +14,16 @@ namespace SharedTest.Conversations
     {
         public Test_ConvR_StockStreamRequest()
         {
-            ResponderConversationBuilder.SetConversationFromMessageBuilder(BuildConversationFromMessage);
+        
         }
 
-        public Conversation BuildConversationFromMessage(Envelope e)
+        [ClassInitialize()]
+        public static void Test_ConvR_StockStreamRequestInitialize(TestContext testContext)
+        {
+            ConversationManager.Start(BuildConversationFromMessage);
+        }
+
+        public static Conversation BuildConversationFromMessage(Envelope e)
         {
             Conversation conv = null;
 
@@ -70,10 +76,10 @@ namespace SharedTest.Conversations
         #endregion
 
         [TestMethod]
-        public void StockStreamResponseTest()
+        public void ValidStockStreamResponseTest()
         {
             //Simulate remote application-level ids
-            string incomingConversationID = "5-4-18";
+            string incomingConversationID = "5-18";
             int remoteProcessId = 2;
             int remotePortfolioId = 3;
 
@@ -82,14 +88,35 @@ namespace SharedTest.Conversations
             message.ConversationID = incomingConversationID;
             var messageEnvelope = new Envelope(message);
 
-            //Build conversation from message
-            var replyConversation = BuildConversationFromMessage(messageEnvelope);
+            //Handle "incoming" message
+            var replyConversation = PostOffice.HandleIncomingMessage(messageEnvelope);
 
             //Verify conversation was built from message
             Assert.IsNotNull(replyConversation);
             Assert.IsTrue(replyConversation.ConversationId.Equals(incomingConversationID));
 
             //Verify conversation does NOT exist in Conversation Manager because it ends after sending reply message.
+            Assert.IsFalse(ConversationManager.ConversationExists(incomingConversationID));
+        }
+
+        [TestMethod]
+        public void InvalidMessageResponderTest()
+        {
+            //Simulate remote application-level ids
+            string incomingConversationID = "5-23";
+            int remoteProcessId = 2;
+            int remotePortfolioId = 3;
+
+            //Create a fake incoming message to simulate a StockStreamRequest
+            var message = MessageFactory.GetMessage<AckMessage>(remoteProcessId, remotePortfolioId);
+            message.ConversationID = incomingConversationID;
+            var messageEnvelope = new Envelope(message);
+
+            //Handle "incoming" message
+            var replyConversation = PostOffice.HandleIncomingMessage(messageEnvelope);
+
+            //Verify conversation was NOT built from message
+            Assert.IsNull(replyConversation);
             Assert.IsFalse(ConversationManager.ConversationExists(incomingConversationID));
         }
     }

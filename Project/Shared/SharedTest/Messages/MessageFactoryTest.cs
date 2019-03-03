@@ -72,12 +72,17 @@ namespace SharedTest.Messages
         [TestMethod]
         public void AckSerializeTest()
         {
-            var a = MessageFactory.GetMessage<AckMessage>(1, 5);
+            var a = MessageFactory.GetMessage<AckMessage>(1, 5) as AckMessage;
+
+            string testReferenceID = "1-2-3";
+            a.ReferenceMessageID = testReferenceID;
 
             var test = MessageFactory.GetMessage(a.Encode()) as AckMessage;
 
+
             Assert.AreEqual(typeof(AckMessage), test.GetType());
             Assert.AreEqual(a.MessageID, test.MessageID);
+            Assert.AreEqual(a.ReferenceMessageID, testReferenceID);
         }
     }
 }
