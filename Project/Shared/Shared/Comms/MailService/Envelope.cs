@@ -6,12 +6,7 @@ namespace Shared.Comms.MailService
 {
     public class Envelope
     {
-        public EndPoint To
-        {
-            get; set;
-        }
-
-        public EndPoint From
+        public IPEndPoint To
         {
             get; set;
         }
