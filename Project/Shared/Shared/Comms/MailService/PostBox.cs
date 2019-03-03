@@ -6,12 +6,6 @@ namespace Shared.Comms.MailService
 {
     public abstract class PostBox
     {
-
-        public List<IPEndPoint> Peers
-        {
-            get; protected set;
-        }
-
         public IPEndPoint EndPoint
         {
             get; private set;
@@ -24,7 +18,6 @@ namespace Shared.Comms.MailService
 
         public PostBox(string address)
         {
-            Peers = new List<IPEndPoint>();
             EndPoint = EndPointParser.Parse(address);
             Mail = new Queue<Envelope>();
         }

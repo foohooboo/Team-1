@@ -10,14 +10,14 @@ namespace Shared.Comms.MailService
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public Dictionary<EndPoint,PostBox> PostBoxes
+        public Dictionary<string,PostBox> PostBoxes
         {
             get; set;
         }
 
         public PostOffice()
         {
-            PostBoxes = new Dictionary<EndPoint, PostBox>();
+            PostBoxes = new Dictionary<string, PostBox>();
         }
 
         public bool HasPostBox()
@@ -25,12 +25,12 @@ namespace Shared.Comms.MailService
             return PostBoxes.Count > 0;
         }
 
-        public void AddBox(EndPoint address)
+        public void AddBox(string address)
         {
-            PostBoxes.Add(address, new PostBox(address));
+            PostBoxes.Add(address, new UdpPostBox(address));
         }
 
-        public PostBox GetBox(EndPoint address)
+        public PostBox GetBox(string address)
         {
             if (PostBoxes.TryGetValue(address, out PostBox postBox))
             {
@@ -40,7 +40,7 @@ namespace Shared.Comms.MailService
             return null;
         }
 
-        public void RemoveBox(EndPoint address)
+        public void RemoveBox(string address)
         {
             PostBoxes.Remove(address);
         }

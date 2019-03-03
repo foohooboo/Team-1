@@ -20,7 +20,7 @@ namespace SharedTest.MailService
             var postOffice = new PostOffice();
             var a1 = @"127.0.0.1:231";
 
-            postOffice.AddBox(new UdpPostBox(a1));
+            postOffice.AddBox(a1);
             Assert.IsTrue(postOffice.HasPostBox());
         }
 
@@ -32,9 +32,9 @@ namespace SharedTest.MailService
             var a2 = @"127.0.0.1:241";
             var a3 = @"127.0.0.1:261";
 
-            postOffice.AddBox(new UdpPostBox(a1));
-            postOffice.AddBox(new UdpPostBox(a2));
-            postOffice.AddBox(new UdpPostBox(a3));
+            postOffice.AddBox(a1);
+            postOffice.AddBox(a2);
+            postOffice.AddBox(a3);
 
             var pb = postOffice.GetBox(a2);
             var addressParts = a2.Split(':');
@@ -50,8 +50,8 @@ namespace SharedTest.MailService
             var a1 = @"127.0.0.1:231";
             var a2 = @"127.0.0.1:211";
 
-            postOffice.AddBox(new UdpPostBox(a1));
-            postOffice.AddBox(new UdpPostBox(a2));
+            postOffice.AddBox(a1);
+            postOffice.AddBox(a2);
 
             postOffice.RemoveBox(a2);
             Assert.IsNull(postOffice.GetBox(a2));

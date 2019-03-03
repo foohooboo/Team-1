@@ -19,15 +19,7 @@ namespace Shared.Comms.MailService
 
         public override void Send(Envelope envelope)
         {
-            if (Peers == null || Peers.Count <= 0)
-                return;
 
-            var messageBytes = envelope.Remove().Encode();
-
-            foreach (var endPoint in Peers)
-            {
-                var result = myUdpClient.Send(messageBytes, messageBytes.Length, endPoint);
-            }
         }
     }
 }

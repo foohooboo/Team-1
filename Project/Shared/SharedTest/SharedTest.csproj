@@ -47,6 +47,7 @@
     <Compile Include="MailService\EnvelopeTest.cs" />
     <Compile Include="MailService\PostBoxTest.cs" />
     <Compile Include="MailService\PostOfficeTest.cs" />
+    <Compile Include="MailService\UdpPostBoxTest.cs" />
     <Compile Include="MarketStructureTests\EvaluatedStocksTest.cs" />
     <Compile Include="MarketStructureTests\EvaluatedStockTest.cs" />
     <Compile Include="MarketStructureTests\StockTest.cs" />
