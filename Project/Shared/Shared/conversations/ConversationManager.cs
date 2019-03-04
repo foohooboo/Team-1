@@ -98,6 +98,7 @@ namespace Shared.Conversations
             Log.Debug($"{nameof(ProcessIncomingMessage)} (enter)");
 
             Conversation conv = null;
+            Log.Info($"Processing message {m.Contents?.MessageID} for conversation {m.Contents?.ConversationID}.");
 
             if( string.IsNullOrEmpty(m.Contents?.ConversationID))
             {
@@ -115,7 +116,7 @@ namespace Shared.Conversations
                 {
                     AddConversation(conv);
                 }
-            }
+            }            
 
             Log.Debug($"{nameof(ProcessIncomingMessage)} (exit)");
             return conv;

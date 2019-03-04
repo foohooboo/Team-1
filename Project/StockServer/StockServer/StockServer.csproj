@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommSystemWrapper.cs" />
+    <Compile Include="Conversations\ConvR_StockStreamRequest.cs" />
     <Compile Include="Data\StockData.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

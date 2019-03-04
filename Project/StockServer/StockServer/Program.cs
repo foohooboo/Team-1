@@ -3,7 +3,7 @@ using Shared;
 using Shared.Comms.MailService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
-using Shared.Conversations.StockStreamRequest;
+using StockServer.Conversations.StockStreamRequest;
 using StockServer.Data;
 using System;
 using System.Net;

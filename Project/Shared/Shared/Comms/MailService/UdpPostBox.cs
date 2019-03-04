@@ -1,10 +1,10 @@
-﻿using System;
+﻿using log4net;
+using Shared.Comms.Messages;
+using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
-using log4net;
-using Shared.Comms.Messages;
 
 namespace Shared.Comms.MailService
 {
@@ -31,6 +31,7 @@ namespace Shared.Comms.MailService
 
         public override void Send(Envelope envelope)
         {
+            Log.Info($"Sending message to {envelope.To}");
             byte[] bytesToSend = envelope.Remove().Encode();
             try
             {
@@ -45,7 +46,7 @@ namespace Shared.Comms.MailService
 
         public override void CollectMail()
         {
-            
+
             while (isActive)
             {
                 var envelope = GetIncomingMail();
@@ -55,50 +56,51 @@ namespace Shared.Comms.MailService
                     PostOffice.HandleIncomingMessage(envelope);
                     waitHandle.Set();
                 }
-                
+
             }
         }
 
         private Envelope GetIncomingMail()
         {
-            Log.Debug($"{nameof(GetIncomingMail)} (enter)");
-
             Envelope newEnvelope = null;
 
             var receivedBytes = ReceiveBytes(1000, out IPEndPoint endPoint);
             if (receivedBytes != null &&
                 receivedBytes.Length > 0)
             {
-                var message = MessageFactory.GetMessage(receivedBytes,true);
+                var message = MessageFactory.GetMessage(receivedBytes, true);
                 newEnvelope = new Envelope(message)
                 {
                     To = endPoint
                 };
             }
 
-            Log.Debug($"{nameof(GetIncomingMail)} (exit)");
             return newEnvelope;
         }
 
         private byte[] ReceiveBytes(int timeout, out IPEndPoint endPoint)
         {
-            Log.Debug($"{nameof(ReceiveBytes)} (enter)");
-
-            while (isActive && myUdpClient?.Available <= 0 && timeout > 0)
-            {
-                Thread.Sleep(10);
-                timeout -= 10;
-            }
-
-            endPoint = null;
             byte[] receivedBytes = null;
+            endPoint = null;
 
-            if (isActive && myUdpClient!=null)
+            try
             {
-                receivedBytes = myUdpClient.Receive(ref endPoint);
+                while (isActive && myUdpClient?.Available <= 0 && timeout > 0)
+                {
+                    Thread.Sleep(10);
+                    timeout -= 10;
+                }
+                if (isActive && myUdpClient?.Available > 0)
+                {
+                    receivedBytes = myUdpClient.Receive(ref endPoint);
+                    Log.Info($"Received message from {endPoint.ToString()}");
+                }
             }
-            
-            Log.Debug($"{nameof(ReceiveBytes)} (exit)");
+            catch (Exception err)
+            {
+                Log.ErrorFormat($"Unexpected exception while receiving datagram: {err} ");
+            }
+
             return receivedBytes;
         }
 
