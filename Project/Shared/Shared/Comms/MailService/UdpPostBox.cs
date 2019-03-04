@@ -15,8 +15,7 @@ namespace Shared.Comms.MailService
         {
             myUdpClient = new UdpClient(LocalEndPoint);
             isActive = true;
-            receiveTask = new Task(() => CollectMail());
-            
+            receiveTask = new Task(() => CollectMail());            
         }
 
         public override void Send(Envelope envelope)

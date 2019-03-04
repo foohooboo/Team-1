@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Shared.Comms.MailService;
-using Shared.Comms.Messages;
 
 namespace SharedTest.MailService
 {
@@ -43,17 +42,6 @@ namespace SharedTest.MailService
             Assert.AreEqual(addressParts[0], postBox.LocalEndPoint.Address.ToString());
             Assert.AreEqual(addressParts[1], postBox.LocalEndPoint.Port.ToString());
             Assert.IsFalse(postBox.HasMail());
-        }
-
-        [TestMethod]
-        public void InsertReceivedMessageTest()
-        {
-            var m = MessageFactory.GetMessage<AckMessage>(1, 5);
-            var e = new Envelope(m);
-            postBox.CollectMail();
-
-            Assert.IsTrue(postBox.HasMail());
-            Assert.AreSame(e, postBox.GetMail());
         }
 
         [TestMethod]
