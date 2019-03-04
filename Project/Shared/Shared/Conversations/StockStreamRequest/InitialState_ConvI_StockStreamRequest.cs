@@ -48,17 +48,18 @@ namespace Shared.Conversations.SharedStates
 
             //Do nothing
 
-            Log.Debug($"{nameof(OnStateEnd)} (enter)");
+            Log.Debug($"{nameof(OnStateEnd)} (exit)");
         }
 
         public override void OnStateStart()
         {
             Log.Debug($"{nameof(OnStateStart)} (enter)");
 
-            //TODO: Use Post Office to send request message to StockServer
-            Log.Info("InitiateStockStreamRequestState OnStateStart running");
+            var request = MessageFactory.GetMessage<StockStreamRequestMessage>(Config.GetInt(Config.BROKER_PROCESS_NUM), 0);
+            var requestEnv = new Envelope(request, Config.GetString(Config.STOCK_SERVER_IP),Config.GetInt(Config.STOCK_SERVER_PORT));
+            PostOffice.GetBox(requestEnv.To.ToString()).Send(requestEnv);
 
-            Log.Debug($"{nameof(OnStateStart)} (enter)");
+            Log.Debug($"{nameof(OnStateStart)} (exit)");
         }
     }
 }

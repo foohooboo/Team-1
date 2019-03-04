@@ -6,31 +6,23 @@ using System.Net;
 
 namespace Shared.Comms.MailService
 {
-    public class PostOffice
+    public static class PostOffice
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public Dictionary<string,PostBox> PostBoxes
-        {
-            get; set;
-        }
-
-        public PostOffice()
-        {
-            PostBoxes = new Dictionary<string, PostBox>();
-        }
-
-        public bool HasPostBox()
+        public static Dictionary<string,PostBox> PostBoxes = new Dictionary<string, PostBox>();
+        
+        public static bool HasPostBox()
         {
             return PostBoxes.Count > 0;
         }
 
-        public void AddBox(string address)
+        public static void AddBox(string address)
         {
             PostBoxes.Add(address, new UdpPostBox(address));
         }
 
-        public PostBox GetBox(string address)
+        public static PostBox GetBox(string address)
         {
             if (PostBoxes.TryGetValue(address, out PostBox postBox))
             {
@@ -40,7 +32,7 @@ namespace Shared.Comms.MailService
             return null;
         }
 
-        public void RemoveBox(string address)
+        public static void RemoveBox(string address)
         {
             PostBoxes.Remove(address);
         }

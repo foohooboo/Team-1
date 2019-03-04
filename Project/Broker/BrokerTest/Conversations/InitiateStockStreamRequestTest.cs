@@ -11,6 +11,21 @@ namespace BrokerTest
     [TestClass]
     public class InitiateStockStreamRequestTest
     {
+
+        string destAddress = $"{Config.GetString(Config.STOCK_SERVER_IP)}:{Config.GetString(Config.STOCK_SERVER_PORT)}";
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            PostOffice.AddBox(destAddress);
+        }
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            PostOffice.RemoveBox(destAddress);
+        }
+
         [TestMethod]
         public void SucessfulStockStreamRequestTest()
         {
@@ -33,3 +48,4 @@ namespace BrokerTest
         }
     }
 }
+

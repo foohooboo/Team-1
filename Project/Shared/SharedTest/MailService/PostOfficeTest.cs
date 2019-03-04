@@ -7,36 +7,26 @@ namespace SharedTest.MailService
     public class PostOfficeTest
     {
         [TestMethod]
-        public void ConstructorTest()
-        {
-            var postOffice = new PostOffice();
-
-            Assert.IsFalse(postOffice.HasPostBox());
-        }
-
-        [TestMethod]
         public void AddPostBoxTest()
         {
-            var postOffice = new PostOffice();
             var a1 = @"127.0.0.1:231";
 
-            postOffice.AddBox(a1);
-            Assert.IsTrue(postOffice.HasPostBox());
+            PostOffice.AddBox(a1);
+            Assert.IsTrue(PostOffice.HasPostBox());
         }
 
         [TestMethod]
         public void AccessPostBoxTest()
         {
-            var postOffice = new PostOffice();
             var a1 = @"127.0.0.1:231";
             var a2 = @"127.0.0.1:241";
             var a3 = @"127.0.0.1:261";
 
-            postOffice.AddBox(a1);
-            postOffice.AddBox(a2);
-            postOffice.AddBox(a3);
+            PostOffice.AddBox(a1);
+            PostOffice.AddBox(a2);
+            PostOffice.AddBox(a3);
 
-            var pb = postOffice.GetBox(a2);
+            var pb = PostOffice.GetBox(a2);
             var addressParts = a2.Split(':');
 
             Assert.AreEqual(addressParts[0], pb.LocalEndPoint.Address.ToString());
@@ -46,15 +36,14 @@ namespace SharedTest.MailService
         [TestMethod]
         public void RemovePostBoxTest()
         {
-            var postOffice = new PostOffice();
             var a1 = @"127.0.0.1:231";
             var a2 = @"127.0.0.1:211";
 
-            postOffice.AddBox(a1);
-            postOffice.AddBox(a2);
+            PostOffice.AddBox(a1);
+            PostOffice.AddBox(a2);
 
-            postOffice.RemoveBox(a2);
-            Assert.IsNull(postOffice.GetBox(a2));
+            PostOffice.RemoveBox(a2);
+            Assert.IsNull(PostOffice.GetBox(a2));
         }
     }
 }
