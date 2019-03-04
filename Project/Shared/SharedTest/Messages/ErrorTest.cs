@@ -56,7 +56,7 @@ namespace SharedTest.Messages
                 ErrorText = err
             };
 
-            var serailizedMessage = MessageFactory.GetMessage(m.Encode()) as ErrorMessage;
+            var serailizedMessage = MessageFactory.GetMessage(m.Encode(), false) as ErrorMessage;
 
             Assert.AreEqual(m.ErrorText, serailizedMessage.ErrorText);
         }

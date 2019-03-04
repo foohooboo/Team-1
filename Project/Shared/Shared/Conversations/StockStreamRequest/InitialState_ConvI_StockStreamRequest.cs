@@ -54,10 +54,11 @@ namespace Shared.Conversations.SharedStates
         public override void OnStateStart()
         {
             Log.Debug($"{nameof(OnStateStart)} (enter)");
-
-            var request = MessageFactory.GetMessage<StockStreamRequestMessage>(Config.GetInt(Config.BROKER_PROCESS_NUM), 0);
+                        
+            var processNum= Config.GetInt(Config.BROKER_PROCESS_NUM);//TODO: allow number to be loaded from broker OR client -dsphar 3/3/2019
+            var request = MessageFactory.GetMessage<StockStreamRequestMessage>(processNum, 0);
             var requestEnv = new Envelope(request, Config.GetString(Config.STOCK_SERVER_IP),Config.GetInt(Config.STOCK_SERVER_PORT));
-            PostOffice.GetBox(requestEnv.To.ToString()).Send(requestEnv);
+            PostOffice.GetBox(requestEnv.To?.ToString()).Send(requestEnv);
 
             Log.Debug($"{nameof(OnStateStart)} (exit)");
         }

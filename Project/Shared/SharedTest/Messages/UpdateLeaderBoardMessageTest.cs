@@ -65,7 +65,7 @@ namespace SharedTest.Messages
                 MessageID = "2"
             };
 
-            var serializedMessage = MessageFactory.GetMessage(updateLeaderboardMessage.Encode()) as UpdateLeaderBoardMessage;
+            var serializedMessage = MessageFactory.GetMessage(updateLeaderboardMessage.Encode(), false) as UpdateLeaderBoardMessage;
 
             Assert.AreEqual(updateLeaderboardMessage.Records.Count, serializedMessage.Records.Count);
             Assert.AreEqual(updateLeaderboardMessage.Records.GetKey(0).ToString(), serializedMessage.Records.GetKey(0));

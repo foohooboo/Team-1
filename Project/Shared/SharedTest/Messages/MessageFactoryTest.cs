@@ -77,7 +77,7 @@ namespace SharedTest.Messages
             string testReferenceID = "1-2-3";
             a.ReferenceMessageID = testReferenceID;
 
-            var test = MessageFactory.GetMessage(a.Encode()) as AckMessage;
+            var test = MessageFactory.GetMessage(a.Encode(), false) as AckMessage;
 
 
             Assert.AreEqual(typeof(AckMessage), test.GetType());

@@ -76,7 +76,7 @@ namespace SharedTest.Messages
             var stockPriceUpdate = new StockPriceUpdate(marketDay);
 
             var serializedMessage = stockPriceUpdate.Encode();
-            var deserializedMessage = MessageFactory.GetMessage(serializedMessage) as StockPriceUpdate;
+            var deserializedMessage = MessageFactory.GetMessage(serializedMessage, false) as StockPriceUpdate;
 
             Assert.AreEqual(stockPriceUpdate.StocksList.TradedCompanies.Count, deserializedMessage.StocksList.TradedCompanies.Count);
             Assert.AreEqual(stockPriceUpdate.StocksList.Date, deserializedMessage.StocksList.Date);

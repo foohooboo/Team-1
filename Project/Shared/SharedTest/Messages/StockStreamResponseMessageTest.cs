@@ -77,7 +77,7 @@ namespace SharedTest.Messages
             };
 
             var serializedMessage = stockStreamResponse.Encode();
-            var deserializedMessage = MessageFactory.GetMessage(serializedMessage) as StockStreamResponseMessage;
+            var deserializedMessage = MessageFactory.GetMessage(serializedMessage, false) as StockStreamResponseMessage;
 
             Assert.AreEqual(stockStreamResponse.RecentHistory[0].TradedCompanies.Count, deserializedMessage.RecentHistory[0].TradedCompanies.Count);
             Assert.AreEqual(stockStreamResponse.RecentHistory[0].TradedCompanies[0].Close, deserializedMessage.RecentHistory[0].TradedCompanies[0].Close);

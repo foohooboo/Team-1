@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Shared;
 using Shared.Comms.MailService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
@@ -7,12 +8,24 @@ using Shared.Conversations.StockStreamRequest.Initiator;
 
 namespace SharedTest.Conversations
 {
-    /// <summary>
-    /// Summary description for MessageFactoryTest
-    /// </summary>
+
+
     [TestClass]
     public class Test_ConvI_StockStreamRequest
     {
+        string address = $"{Config.GetString(Config.STOCK_SERVER_IP)}:{Config.GetInt(Config.STOCK_SERVER_PORT)}";
+
+        [TestInitialize]
+        public void TestInitialize(){
+            PostOffice.AddBox(address);
+        }
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            PostOffice.RemoveBox(address);
+        }
+
         [TestMethod]
         public void SucessfulStockStreamRequestTest()
         {

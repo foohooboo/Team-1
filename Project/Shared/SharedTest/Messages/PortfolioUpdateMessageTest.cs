@@ -83,7 +83,7 @@ namespace SharedTest.Messages
                 RequestWriteAuthority = true
             };
 
-            var serializedMessage = MessageFactory.GetMessage(updateMessage.Encode()) as PortfolioUpdateMessage;
+            var serializedMessage = MessageFactory.GetMessage(updateMessage.Encode(), false) as PortfolioUpdateMessage;
 
             Assert.AreEqual(updateMessage.PortfolioID, serializedMessage.PortfolioID);
             Assert.AreEqual(updateMessage.RequestWriteAuthority, serializedMessage.RequestWriteAuthority);

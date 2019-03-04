@@ -53,7 +53,7 @@ namespace SharedTest.Messages
                 AckHello = hello
             };
 
-            var serailizedMessage = MessageFactory.GetMessage(m.Encode()) as AckMessage;
+            var serailizedMessage = MessageFactory.GetMessage(m.Encode(),false) as AckMessage;
 
             Assert.AreEqual(serailizedMessage.ReferenceMessageID, m.ReferenceMessageID);
             Assert.AreEqual(serailizedMessage.AckHello, m.AckHello);

@@ -40,6 +40,7 @@ namespace Shared.Comms.MailService
 
         public static void RemoveBox(string address)
         {
+            PostBoxes[address].Close();
             PostBoxes.Remove(address);
         }
 

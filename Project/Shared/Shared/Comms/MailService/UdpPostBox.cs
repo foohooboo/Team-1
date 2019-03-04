@@ -26,13 +26,7 @@ namespace Shared.Comms.MailService
 
         ~UdpPostBox()
         {
-            isActive = false;
-            myUdpClient.Close();
-        }
-
-        public void StopListening()
-        {
-            isActive = false;
+            Close();
         }
 
         public override void Send(Envelope envelope)
@@ -75,7 +69,7 @@ namespace Shared.Comms.MailService
             if (receivedBytes != null &&
                 receivedBytes.Length > 0)
             {
-                var message = MessageFactory.GetMessage(receivedBytes);
+                var message = MessageFactory.GetMessage(receivedBytes,true);
                 newEnvelope = new Envelope(message)
                 {
                     To = endPoint
@@ -106,6 +100,12 @@ namespace Shared.Comms.MailService
             
             Log.Debug($"{nameof(ReceiveBytes)} (exit)");
             return receivedBytes;
+        }
+
+        public override void Close()
+        {
+            isActive = false;
+            myUdpClient?.Close();
         }
     }
 }

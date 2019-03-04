@@ -11,8 +11,10 @@ namespace SharedTest.MailService
         {
             var a1 = @"127.0.0.1:231";
 
+            Assert.IsFalse(PostOffice.HasPostBox());
             PostOffice.AddBox(a1);
             Assert.IsTrue(PostOffice.HasPostBox());
+            PostOffice.RemoveBox(a1);
         }
 
         [TestMethod]
@@ -31,6 +33,10 @@ namespace SharedTest.MailService
 
             Assert.AreEqual(addressParts[0], pb.LocalEndPoint.Address.ToString());
             Assert.AreEqual(addressParts[1], pb.LocalEndPoint.Port.ToString());
+
+            PostOffice.RemoveBox(a1);
+            PostOffice.RemoveBox(a2);
+            PostOffice.RemoveBox(a3);
         }
 
         [TestMethod]
@@ -44,6 +50,8 @@ namespace SharedTest.MailService
 
             PostOffice.RemoveBox(a2);
             Assert.IsNull(PostOffice.GetBox(a2));
+
+            PostOffice.RemoveBox(a1);
         }
     }
 }

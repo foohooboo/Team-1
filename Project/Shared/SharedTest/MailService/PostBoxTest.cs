@@ -13,14 +13,19 @@ namespace SharedTest.MailService
 
             }
 
-            public override void CollectMail()
+            public override void Close()
             {
                 throw new System.NotImplementedException();
             }
 
+            public override void CollectMail()
+            {
+                //throw new System.NotImplementedException();
+            }
+
             public override void Send(Envelope envelope)
             {
-                throw new System.NotImplementedException();
+                //throw new System.NotImplementedException();
             }
         }
 

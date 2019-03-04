@@ -13,22 +13,23 @@ namespace Shared.Comms.Messages
             TypeNameHandling = TypeNameHandling.All
         };
 
-        private static readonly string ProjectName = System.Reflection.Assembly.GetEntryAssembly().GetName().Name;
+        private static readonly string ProjectName = System.Reflection.Assembly.GetEntryAssembly()?.GetName()?.Name;
 
         public static int MessageCount
         {
             get; private set;
         }
 
-        public static Message GetMessage(byte[] bytes)
+        public static Message GetMessage(byte[] bytes, bool scrubJson = true)
         {
             string readData = Encoding.Default.GetString(bytes);
-            return (GetMessage(readData));
+            return (GetMessage(readData, scrubJson));
         }
 
-        public static Message GetMessage(string json)
+        public static Message GetMessage(string json, bool scrubJson = true)
         {
             Log.Debug($"{nameof(GetMessage)} (enter)");
+
 
             //Note: The following hack was added because we are using the Newtonsoft serializer on different projects.
             //It adds the project name to the Type field in JSON, and this causes an exception to be thrown when
@@ -36,10 +37,13 @@ namespace Shared.Comms.Messages
             //that allows cross-project serialization, I just couldn't find that setting after a 20 minute Google-fu
             //session. Hence I decided to hack this before the assignment is due.
             //-dsphar 3/3/2019
-            int startHackIndex = json.IndexOf(',') + 1;
-            int endHackIndex = json.Substring(startHackIndex).IndexOf('"');
-            var hackedjson = $"{json.Substring(0, startHackIndex)} {ProjectName}{json.Substring(endHackIndex + startHackIndex)}";
-
+            var hackedjson = json;
+            if (scrubJson)
+            {
+                int startHackIndex = json.IndexOf(',') + 1;
+                int endHackIndex = json.Substring(startHackIndex).IndexOf('"');
+                hackedjson = $"{json.Substring(0, startHackIndex)} {ProjectName}{json.Substring(endHackIndex + startHackIndex)}";
+            }
             var v = JsonConvert.DeserializeObject<Message>(hackedjson, settings);
 
             Log.Debug($"{nameof(GetMessage)} (exit)");

@@ -36,11 +36,16 @@ namespace Shared.Comms.MailService
         }
 
         /// <summary>
-        /// Used to insert an envelope that is recieved.
+        /// Used to insert an envelope that is received.
         /// </summary>
         public abstract void CollectMail();
 
-        public Envelope GetMail()
+        /// <summary>
+        /// Used to shutdown the socket.
+        /// </summary>
+        public abstract void Close();
+
+    public Envelope GetMail()
         {
             var startTime = DateTime.Now;
 

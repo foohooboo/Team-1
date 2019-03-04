@@ -134,7 +134,7 @@ namespace SharedTest.Messages
             var request1 = new TransactionRequestMessage(2, stock);
 
             var serializedMessage = request1.Encode();
-            var deserializedMessage = MessageFactory.GetMessage(serializedMessage) as TransactionRequestMessage;
+            var deserializedMessage = MessageFactory.GetMessage(serializedMessage, false) as TransactionRequestMessage;
 
             Assert.AreEqual(request1.Quantity, deserializedMessage.Quantity);
             Assert.AreEqual(request1.StockValue.Close, deserializedMessage.StockValue.Close);

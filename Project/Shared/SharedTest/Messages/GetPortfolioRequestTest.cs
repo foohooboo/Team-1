@@ -61,7 +61,7 @@ namespace SharedTest.Messages
                 Account = acc,
             };
 
-            var serializedMessage = MessageFactory.GetMessage(m.Encode()) as GetPortfolioRequest;
+            var serializedMessage = MessageFactory.GetMessage(m.Encode(), false) as GetPortfolioRequest;
 
             Assert.IsNotNull(serializedMessage);
             Assert.AreEqual(serializedMessage.Account.Assets.Count, 1);
