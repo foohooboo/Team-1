@@ -20,6 +20,8 @@ namespace StockServer.Conversations.StockStreamRequest
 
             var responseMessage = MessageFactory.GetMessage<StockStreamResponseMessage>(Config.GetInt(Config.STOCK_SERVER_PROCESS_NUM), 0) as StockStreamResponseMessage;
             responseMessage.RecentHistory = StockData.GetRecentHistory(5);
+            new Temp().LogStockHistory(responseMessage.RecentHistory);
+            StockData.AdvanceDay();
             responseMessage.ConversationID = e.Contents?.ConversationID;
             
             var responseEnvelope = new Envelope(responseMessage) { To=e.To};

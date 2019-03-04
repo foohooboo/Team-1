@@ -21,10 +21,10 @@ namespace Shared.Conversations.SharedStates
                 case StockStreamResponseMessage m:
                     var stockHistory = m.RecentHistory;
                     Log.Info($"Received stock stream response with {stockHistory.Count} days of recent trading.");
-                    for (int i=0; i<5 && i < stockHistory.Count; i++)
-                    {
-                        Log.Info(stockHistory[i].ToString());
-                    }
+
+                    Temp t = new Temp();
+                    t.LogStockHistory(stockHistory);
+
                     nextState = new EndConversationState(ConversationID);
                     break;
                 case ErrorMessage m:
