@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading;
@@ -41,9 +42,12 @@ namespace Shared.Comms.MailService
 
         public Envelope GetMail()
         {
+            var startTime = DateTime.Now;
+
             Envelope envelope = null;
 
-            while (envelope is null)
+            while (envelope is null &&
+                   DateTime.Now.Subtract(startTime).TotalMilliseconds < 1000)
             {
                 if (!HasMail())
                 {
