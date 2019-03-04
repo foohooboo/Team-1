@@ -1,7 +1,12 @@
 ﻿using log4net;
+using Shared;
+using Shared.Comms.MailService;
+using Shared.Comms.Messages;
+using Shared.Conversations;
+using Shared.Conversations.StockStreamRequest;
 using StockServer.Data;
 using System;
-using System.Collections.Generic;
+using System.Net;
 
 namespace StockServer
 {
@@ -14,25 +19,30 @@ namespace StockServer
             Log.Debug($"{nameof(Main)} (enter)");
 
             StockData.Init();
-            var comm = new CommSystemWrapper();
-
-            Log.Info("Hello World! From the StockServer.");
-            Log.Info(comm.HelloText);
-            Log.Info("Now waiting for something to change shared resource value. Please wait...");
-
-            while (comm.WaitingForUpdate)
-            {
-
-            }
-
-            Log.Info(comm.HelloText);
-            Log.Info("Something should have changed in the above text.");
-            Log.Info("Pres any key to finish.");
+            ConversationManager.Start(HandleIncomingMesage);
+            var listenEndpoint = new IPEndPoint(IPAddress.Any, Config.GetInt(Config.STOCK_SERVER_PORT));
+            PostOffice.AddBox(listenEndpoint.ToString());
+            
+            Log.Info("Waiting for StockStreamRequestMessages.");
+            Log.Info("Pres any key to close program.");
             Console.ReadKey();
+
 
             Log.Debug($"{nameof(Main)} (exit)");
         }
         
-        
+        public static Conversation HandleIncomingMesage(Envelope e)
+        {
+            Conversation conv = null;
+
+            switch (e.Contents)
+            {
+                case StockStreamRequestMessage m:
+                    conv = new ConvR_StockStreamRequest(e);
+                    break;
+            }
+            
+            return conv;
+        }
     }
 }

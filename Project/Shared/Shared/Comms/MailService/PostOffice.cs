@@ -17,9 +17,15 @@ namespace Shared.Comms.MailService
             return PostBoxes.Count > 0;
         }
 
-        public static void AddBox(string address)
+        public static PostBox AddBox(string address)
         {
-            PostBoxes.Add(address, new UdpPostBox(address));
+            Log.Debug($"{nameof(AddBox)} (enter)");
+
+            var box = new UdpPostBox(address);
+            PostBoxes.Add(address, box);
+
+            Log.Debug($"{nameof(AddBox)} (exit)");
+            return box;
         }
 
         public static PostBox GetBox(string address)

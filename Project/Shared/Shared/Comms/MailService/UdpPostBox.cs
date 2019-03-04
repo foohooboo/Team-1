@@ -1,12 +1,17 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
+using log4net;
 using Shared.Comms.Messages;
 
 namespace Shared.Comms.MailService
 {
     public class UdpPostBox : PostBox
     {
+        private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         public readonly UdpClient myUdpClient;
         private bool isActive;
         private Task receiveTask;
@@ -16,61 +21,90 @@ namespace Shared.Comms.MailService
             myUdpClient = new UdpClient(LocalEndPoint);
             isActive = true;
             receiveTask = new Task(() => CollectMail());
-            
+            receiveTask.Start();
+        }
+
+        ~UdpPostBox()
+        {
+            isActive = false;
+            myUdpClient.Close();
+        }
+
+        public void StopListening()
+        {
+            isActive = false;
         }
 
         public override void Send(Envelope envelope)
         {
             byte[] bytesToSend = envelope.Remove().Encode();
-            myUdpClient.Send(bytesToSend, bytesToSend.Length, envelope.To);            
+            try
+            {
+                myUdpClient.Send(bytesToSend, bytesToSend.Length, envelope.To);
+            }
+            catch (Exception e)
+            {
+                Log.Error($"Error sending message to {envelope.To}");
+                Log.Error(e.Message);
+            }
         }
 
         public override void CollectMail()
         {
+            
             while (isActive)
             {
-                var envelope = GetEncomingMail();
+                var envelope = GetIncomingMail();
                 if (envelope != null)
                 {
                     Mail.Enqueue(envelope);
+                    PostOffice.HandleIncomingMessage(envelope);
                     waitHandle.Set();
                 }
+                
             }
         }
 
-        private Envelope GetEncomingMail()
+        private Envelope GetIncomingMail()
         {
-            var receivedBytes = ReceiveBytes(1000, out IPEndPoint endPoint);
+            Log.Debug($"{nameof(GetIncomingMail)} (enter)");
 
-            if (receivedBytes == null ||
-                receivedBytes.Length <= 0)
+            Envelope newEnvelope = null;
+
+            var receivedBytes = ReceiveBytes(1000, out IPEndPoint endPoint);
+            if (receivedBytes != null &&
+                receivedBytes.Length > 0)
             {
-                return null;
+                var message = MessageFactory.GetMessage(receivedBytes);
+                newEnvelope = new Envelope(message)
+                {
+                    To = endPoint
+                };
             }
 
-            var message = MessageFactory.GetMessage(receivedBytes);
-
-            var newEnvelope = new Envelope(message)
-            {
-                To = endPoint
-            };
-
+            Log.Debug($"{nameof(GetIncomingMail)} (exit)");
             return newEnvelope;
         }
 
         private byte[] ReceiveBytes(int timeout, out IPEndPoint endPoint)
         {
-            endPoint = null;
-            if (myUdpClient is null)
+            Log.Debug($"{nameof(ReceiveBytes)} (enter)");
+
+            while (isActive && myUdpClient?.Available <= 0 && timeout > 0)
             {
-                return null;
+                Thread.Sleep(10);
+                timeout -= 10;
             }
 
+            endPoint = null;
             byte[] receivedBytes = null;
-            myUdpClient.Client.ReceiveTimeout = timeout;
-            endPoint = new IPEndPoint(IPAddress.Any, 0);
-            receivedBytes = myUdpClient.Receive(ref endPoint);
 
+            if (isActive && myUdpClient!=null)
+            {
+                receivedBytes = myUdpClient.Receive(ref endPoint);
+            }
+            
+            Log.Debug($"{nameof(ReceiveBytes)} (exit)");
             return receivedBytes;
         }
     }

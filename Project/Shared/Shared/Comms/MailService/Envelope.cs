@@ -30,6 +30,7 @@ namespace Shared.Comms.MailService
         {
             Insert(message);
             To = new IPEndPoint(IPAddress.Parse(ip), port);
+            Contents = message;
         }
 
         public bool HasMessage()

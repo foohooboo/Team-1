@@ -40,7 +40,7 @@ namespace Shared.Comms.Messages
             int endHackIndex = json.Substring(startHackIndex).IndexOf('"');
             var hackedjson = $"{json.Substring(0, startHackIndex)} {ProjectName}{json.Substring(endHackIndex + startHackIndex)}";
 
-            var v = JsonConvert.DeserializeObject<Message>(json, settings);
+            var v = JsonConvert.DeserializeObject<Message>(hackedjson, settings);
 
             Log.Debug($"{nameof(GetMessage)} (exit)");
             return v;

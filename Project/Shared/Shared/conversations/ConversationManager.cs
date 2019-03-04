@@ -99,7 +99,11 @@ namespace Shared.Conversations
 
             Conversation conv = null;
 
-            if (conversations.ContainsKey(m.Contents.ConversationID))
+            if( string.IsNullOrEmpty(m.Contents?.ConversationID))
+            {
+                Log.Warn("Incoming message does not contain a conversation id.");
+            }
+            else if (conversations.ContainsKey(m.Contents.ConversationID))
             {
                 conv = conversations[m.Contents.ConversationID];
                 conv.UpdateState(m);
