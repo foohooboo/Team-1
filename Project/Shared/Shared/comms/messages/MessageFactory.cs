@@ -37,17 +37,28 @@ namespace Shared.Comms.Messages
             //that allows cross-project serialization, I just couldn't find that setting after a 20 minute Google-fu
             //session. Hence I decided to hack this before the assignment is due.
             //-dsphar 3/3/2019
-            var hackedjson = json;
-            if (scrubJson)
+             if (scrubJson)
             {
-                int startHackIndex = json.IndexOf(',') + 1;
-                int endHackIndex = json.Substring(startHackIndex).IndexOf('"');
-                hackedjson = $"{json.Substring(0, startHackIndex)} {ProjectName}{json.Substring(endHackIndex + startHackIndex)}";
+                json = !ProjectName.Equals("Broker")? json.Replace("Broker", ProjectName) :json;
+                json = !ProjectName.Equals("StockServer") ? json.Replace("StockServer", ProjectName) : json;
+                json = !ProjectName.Equals("Client") ? json.Replace("Client", ProjectName) : json;
             }
-            var v = JsonConvert.DeserializeObject<Message>(hackedjson, settings);
+
+            Message message = null;
+
+            try
+            {
+                message = JsonConvert.DeserializeObject<Message>(json, settings);
+            }
+            catch (Exception e)
+            {
+                Log.Error("Error when deserializing message.");
+                Log.Error(e.Message);
+                Log.Error(e.StackTrace);
+            }
 
             Log.Debug($"{nameof(GetMessage)} (exit)");
-            return v;
+            return message;
         }
 
         public static Message GetMessage<TMessage>(int processID, int portfolioID)
