@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="StockDataTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StockStreamRequestTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -13,17 +13,15 @@ namespace SharedTest.Conversations
     [TestClass]
     public class Test_ConvI_StockStreamRequest
     {
-        string address = $"{Config.GetString(Config.STOCK_SERVER_IP)}:{Config.GetInt(Config.STOCK_SERVER_PORT)}";
-
         [TestInitialize]
         public void TestInitialize(){
-            PostOffice.AddBox(address);
+            PostOffice.AddBox("0.0.0.0:0");
         }
 
         [TestCleanup]
         public void TestCleanup()
         {
-            PostOffice.RemoveBox(address);
+            PostOffice.RemoveBox("0.0.0.0:0");
         }
 
         [TestMethod]

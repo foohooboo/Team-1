@@ -17,13 +17,13 @@ namespace BrokerTest
         [TestInitialize]
         public void TestInitialize()
         {
-            PostOffice.AddBox(destAddress);
+            PostOffice.AddBox("0.0.0.0:0");
         }
 
         [TestCleanup]
         public void TestCleanup()
         {
-            PostOffice.RemoveBox(destAddress);
+            PostOffice.RemoveBox("0.0.0.0:0");
         }
 
         [TestMethod]
