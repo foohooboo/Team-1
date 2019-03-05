@@ -8,7 +8,7 @@ namespace Shared.Conversations
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        private ConversationState CurrentState;
+        public ConversationState CurrentState { get; private set; }
         public readonly string ConversationId;
         public bool ConversationStarted { get; private set; }
         public DateTime LastUpdateTime { get; private set; }
@@ -59,6 +59,22 @@ namespace Shared.Conversations
             var nextState = CurrentState.GetNextStateFromMessage(incomingEnvelope);
             if (nextState != null)
             {
+                UpdateState(nextState);
+            }
+            else
+            {
+                Log.Warn($"Cannot create next {ConversationId} conversation state from message {incomingEnvelope.Contents.MessageID}.");
+            }
+
+            Log.Debug($"{nameof(UpdateState)} (exit)");
+        }
+
+        public void UpdateState(ConversationState nextState)
+        {
+            Log.Debug($"{nameof(UpdateState)} (enter)");
+            
+            if (nextState != null)
+            {
                 LastUpdateTime = DateTime.Now;
                 CurrentState.OnStateEnd();
                 CurrentState = nextState;
@@ -66,7 +82,7 @@ namespace Shared.Conversations
             }
             else
             {
-                Log.Warn($"Unable to advance conversation to next state with message {incomingEnvelope.Contents.MessageID}.");
+                Log.Warn($"Cannot update conversation to a null state.");
             }
 
             Log.Debug($"{nameof(UpdateState)} (exit)");

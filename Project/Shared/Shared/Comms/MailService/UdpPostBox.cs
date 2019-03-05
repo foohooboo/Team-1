@@ -31,7 +31,7 @@ namespace Shared.Comms.MailService
 
         public override void Send(Envelope envelope)
         {
-            Log.Info($"Sending message to {envelope.To}");
+            Log.Info($"Sending message {envelope?.Contents?.MessageID} to {envelope.To}");
             byte[] bytesToSend = envelope.Remove().Encode();
             try
             {
@@ -98,7 +98,7 @@ namespace Shared.Comms.MailService
             }
             catch (Exception err)
             {
-                Log.ErrorFormat($"Unexpected exception while receiving datagram: {err} ");
+                Log.Warn($"Unexpected exception while receiving datagram: {err.Message} ");
             }
 
             return receivedBytes;

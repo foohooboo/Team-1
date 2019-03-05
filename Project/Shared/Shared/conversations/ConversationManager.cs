@@ -16,9 +16,6 @@ namespace Shared.Conversations
         private static int NextConversationCount => Interlocked.Increment(ref count);
         public static bool IsRunning { get; private set; }
 
-        //TODO: Add timeout system for conversations. One idea is to periodically traverse conversations, and remove ones with an old LastUpdateTime.
-        //Make sure we log the timeout. -Dsphar 2/21/2019
-
         public static void Start(Func<Envelope, Conversation> conversationFromMessageBuilderFunction)
         {
             Log.Debug($"{nameof(Start)} (enter)");
@@ -37,8 +34,8 @@ namespace Shared.Conversations
                         {
                             var timeSinceUpdate = (int)(DateTime.Now - conv.Value.LastUpdateTime).TotalMilliseconds;
                             if (timeSinceUpdate > timeout){
-                                Log.Warn($"Conversation {conv.Key} timed out.");
-                                RemoveConversation(conv.Key);
+                                Log.Warn($"Raising timeout event for Conversation {conv.Key}.");
+                                conv.Value.CurrentState.HandleTimeout();
                             }
                         }
                         Thread.Sleep(timeout);
@@ -136,6 +133,24 @@ namespace Shared.Conversations
             }
 
             Log.Debug($"{nameof(RemoveConversation)} (exit)");
+        }
+
+        public static Conversation GetConversation(string conversationId)
+        {
+            Log.Debug($"{nameof(GetConversation)} (enter)");
+
+            Conversation conv = null;
+            if (conversations.ContainsKey(conversationId))
+            {
+                conv = conversations[conversationId];
+            }
+            else
+            {
+                Log.Warn($"Could not find {conversationId} in conversations.");
+            }
+
+            Log.Debug($"{nameof(GetConversation)} (exit)");
+            return conv;
         }
 
         public static bool ConversationExists(string conversationId)

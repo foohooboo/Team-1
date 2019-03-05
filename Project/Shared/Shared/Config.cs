@@ -10,6 +10,7 @@ namespace Shared
 
         public const string
             DEFAULT_TIMEOUT = "defaultTimeout",
+            DEFAULT_RETRY_COUNT = "defaultRetryCount",
             CLIENT_PROCESS_NUM = "clientProcessNum",
             BROKER_IP = "brokerIp",
             BROKER_PORT = "brokerPort",
