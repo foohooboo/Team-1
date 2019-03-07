@@ -33,6 +33,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\InitiatorConversation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\ResponderConversationBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\SharedStates\ConversationDoneState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Conversations\SharedStates\Template_ConvState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\StockStreamRequest\InitialState_ConvI_StockStreamRequest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\StockStreamRequest\ConvI_StockStreamRequest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HelloWorld.cs" />

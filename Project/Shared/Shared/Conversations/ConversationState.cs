@@ -41,8 +41,8 @@ namespace Shared.Conversations
         public abstract void OnStateStart();
 
         /// <summary>
-        /// Override this function is a given conversation state needs to some sort of cleanup on its
-        /// end event.
+        /// Override this function if a given conversation state needs to do some sort of cleanup
+        /// during the end of its life.
         /// </summary>
         public virtual void OnStateEnd() {
         
