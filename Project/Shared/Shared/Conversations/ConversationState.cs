@@ -31,14 +31,21 @@ namespace Shared.Conversations
             }
             else
             {
-                Log.Error($"Timeout event forced conversation {ConversationID} to end.");
-                ConversationManager.GetConversation(ConversationID).UpdateState(new EndConversationState(ConversationID));
+                Log.Warn($"Timeout event is forcing conversation {ConversationID} into the Done state.");
+                ConversationManager.GetConversation(ConversationID).UpdateState(new ConversationDoneState(ConversationID, this));
             }
             
         }
 
         public abstract ConversationState GetNextStateFromMessage(Envelope newMessage);
         public abstract void OnStateStart();
-        public abstract void OnStateEnd();
+
+        /// <summary>
+        /// Override this function is a given conversation state needs to some sort of cleanup on its
+        /// end event.
+        /// </summary>
+        public virtual void OnStateEnd() {
+        
+        }
     }
 }

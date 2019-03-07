@@ -25,30 +25,21 @@ namespace Shared.Conversations.SharedStates
                     Temp t = new Temp();
                     t.LogStockHistory(stockHistory);
 
-                    nextState = new EndConversationState(ConversationID);
+                    nextState = new ConversationDoneState(ConversationID, this);
                     break;
                 case ErrorMessage m:
                     Log.Error($"Received error message as reply...\n{m.ErrorText}");
-                    nextState = new EndConversationState(ConversationID);
+                    nextState = new ConversationDoneState(ConversationID, this);
                     break;
                 default:
                     Log.Error($"No logic to process incoming message of type {incomingMessage.Contents?.GetType()}.");
                     Log.Error($"Ending conversation {ConversationID}.");
-                    nextState = new EndConversationState(ConversationID);
+                    nextState = new ConversationDoneState(ConversationID, this);
                     break;
             }
 
             Log.Debug($"{nameof(GetNextStateFromMessage)} (exit)");
             return nextState;
-        }
-        
-        public override void OnStateEnd()
-        {
-            Log.Debug($"{nameof(OnStateEnd)} (enter)");
-
-            //Do nothing
-
-            Log.Debug($"{nameof(OnStateEnd)} (exit)");
         }
 
         public override void OnStateStart()

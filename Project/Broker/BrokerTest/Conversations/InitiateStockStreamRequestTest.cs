@@ -5,6 +5,7 @@ using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
 using Shared.Conversations.StockStreamRequest.Initiator;
+using System.Threading;
 
 namespace BrokerTest
 {
@@ -18,6 +19,7 @@ namespace BrokerTest
         public void TestInitialize()
         {
             PostOffice.AddBox("0.0.0.0:0");
+            ConversationManager.Start(null);
         }
 
         [TestCleanup]
@@ -43,7 +45,15 @@ namespace BrokerTest
             stockStreamResponse.Contents.ConversationID = stockStreamConv.ConversationId;
             ConversationManager.ProcessIncomingMessage(stockStreamResponse);
 
-            //Conversation over, ensure it has been removed from Conversation Manager
+            //Conversation over but we hold onto the done state for a little...
+            //ensure it has not yet been removed from Conversation Manager
+            Assert.IsTrue(ConversationManager.ConversationExists(conversationId));
+
+            var retrycount = Config.GetInt(Config.DEFAULT_RETRY_COUNT);
+            var timeout = Config.GetInt(Config.DEFAULT_TIMEOUT);
+            Thread.Sleep(retrycount * timeout * 2);
+
+            //Conversation should have cleaned itself up now...
             Assert.IsFalse(ConversationManager.ConversationExists(conversationId));
         }
     }

@@ -1,5 +1,6 @@
 ﻿using log4net;
 using Shared.Comms.MailService;
+using Shared.Conversations.SharedStates;
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
@@ -34,8 +35,12 @@ namespace Shared.Conversations
                         {
                             var timeSinceUpdate = (int)(DateTime.Now - conv.Value.LastUpdateTime).TotalMilliseconds;
                             if (timeSinceUpdate > timeout){
-                                Log.Warn($"Raising timeout event for Conversation {conv.Key}.");
-                                conv.Value.CurrentState.HandleTimeout();
+                                var currentState = conv.Value.CurrentState;
+                                if (!(currentState is ConversationDoneState))
+                                {
+                                    Log.Warn($"Raising timeout event for Conversation {conv.Key}.");
+                                }
+                                currentState.HandleTimeout();
                             }
                         }
                         Thread.Sleep(timeout);
@@ -52,6 +57,8 @@ namespace Shared.Conversations
 
         public static void Stop()
         {
+            Log.Debug($"{nameof(Stop)} (enter)");
+
             if (IsRunning)
             {
                 IsRunning = false;
@@ -63,7 +70,8 @@ namespace Shared.Conversations
             {
                 Log.Warn("ConversationManager already stopped.");
             }
-            
+
+            Log.Debug($"{nameof(Stop)} (exit)");
         }
 
         public static void AddConversation(Conversation conversation)
