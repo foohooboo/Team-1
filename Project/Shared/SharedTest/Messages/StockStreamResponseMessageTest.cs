@@ -32,9 +32,11 @@ namespace SharedTest.Messages
             MarketDay day1 = new MarketDay(date1,stocks);
             MarketDay day2 = new MarketDay(date2,stocks);//not important that has same valuated stocks
 
-            var recentHistory = new MarketSegment();
-            recentHistory.Add(day1);
-            recentHistory.Add(day2);
+            var recentHistory = new MarketSegment
+            {
+                day1,
+                day2
+            };
 
             var stockStreamResponse = new StockStreamResponseMessage
             {
@@ -67,10 +69,12 @@ namespace SharedTest.Messages
             string date1 = "1990-02-20";
 
             MarketDay day1 = new MarketDay(date1, stocks);
-            
-            var recentHistory = new MarketSegment();
-            recentHistory.Add(day1);
-            
+
+            var recentHistory = new MarketSegment
+            {
+                day1
+            };
+
             var stockStreamResponse = new StockStreamResponseMessage
             {
                 RecentHistory = recentHistory

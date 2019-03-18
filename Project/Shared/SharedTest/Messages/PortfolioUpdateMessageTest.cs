@@ -32,8 +32,10 @@ namespace SharedTest.Messages
                 Quantity = 1,
                 RelatedStock = new Stock("GOOGL", "GOOGLE")
             };
-            var assets = new Dictionary<string, Asset>();
-            assets.Add(ass1.RelatedStock.Symbol, ass1);
+            var assets = new Dictionary<string, Asset>
+            {
+                { ass1.RelatedStock.Symbol, ass1 }
+            };
 
             var updateMessage = new PortfolioUpdateMessage(assets);
 
@@ -50,8 +52,10 @@ namespace SharedTest.Messages
                 Quantity = 1,
                 RelatedStock = new Stock("GOOGL", "GOOGLE")
             };
-            var assets = new Dictionary<string, Asset>();
-            assets.Add(ass1.RelatedStock.Symbol, ass1);
+            var assets = new Dictionary<string, Asset>
+            {
+                { ass1.RelatedStock.Symbol, ass1 }
+            };
 
             var updateMessage = new PortfolioUpdateMessage
             {
@@ -73,8 +77,10 @@ namespace SharedTest.Messages
                 Quantity = 1,
                 RelatedStock = new Stock("GOOGL", "GOOGLE")
             };
-            var assets = new Dictionary<string, Asset>();
-            assets.Add(ass1.RelatedStock.Symbol, ass1);
+            var assets = new Dictionary<string, Asset>
+            {
+                { ass1.RelatedStock.Symbol, ass1 }
+            };
 
             var updateMessage = new PortfolioUpdateMessage
             {

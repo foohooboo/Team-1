@@ -30,15 +30,16 @@ namespace SharedTest.Messages
         [TestMethod]
         public void CopyConstructorTest()
         {
-            ValuatedStock stock = new ValuatedStock();
-
-            stock.Close = 1.0F;
-            stock.Open = 1.1F;
-            stock.High = 1.2F;
-            stock.Low = 1.3F;
-            stock.Volume = 2;
-            stock.Symbol = "GOOGL";
-            stock.Name = "GOOGLE";
+            ValuatedStock stock = new ValuatedStock
+            {
+                Close = 1.0F,
+                Open = 1.1F,
+                High = 1.2F,
+                Low = 1.3F,
+                Volume = 2,
+                Symbol = "GOOGL",
+                Name = "GOOGLE"
+            };
 
             var request1 = new TransactionRequestMessage(2, stock);
             var request2 = new TransactionRequestMessage(request1);
@@ -56,15 +57,16 @@ namespace SharedTest.Messages
         [TestMethod]
         public void LoadedConstructorTest()
         {
-            ValuatedStock stock = new ValuatedStock();
-            
-            stock.Close = 1.0F;
-            stock.Open = 1.1F;
-            stock.High = 1.2F;
-            stock.Low = 1.3F;
-            stock.Volume = 2;
-            stock.Symbol = "GOOGL";
-            stock.Name = "GOOGLE";
+            ValuatedStock stock = new ValuatedStock
+            {
+                Close = 1.0F,
+                Open = 1.1F,
+                High = 1.2F,
+                Low = 1.3F,
+                Volume = 2,
+                Symbol = "GOOGL",
+                Name = "GOOGLE"
+            };
 
             var transactionRequest = new TransactionRequestMessage(2, stock);
 
@@ -121,15 +123,16 @@ namespace SharedTest.Messages
         [TestMethod]
         public void SerializerTest()
         {
-            ValuatedStock stock = new ValuatedStock();
-
-            stock.Close = 1.0F;
-            stock.Open = 1.1F;
-            stock.High = 1.2F;
-            stock.Low = 1.3F;
-            stock.Volume = 2;
-            stock.Symbol = "GOOGL";
-            stock.Name = "GOOGLE";
+            ValuatedStock stock = new ValuatedStock
+            {
+                Close = 1.0F,
+                Open = 1.1F,
+                High = 1.2F,
+                Low = 1.3F,
+                Volume = 2,
+                Symbol = "GOOGL",
+                Name = "GOOGLE"
+            };
 
             var request1 = new TransactionRequestMessage(2, stock);
 

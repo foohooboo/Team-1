@@ -44,8 +44,10 @@ namespace SharedTest.Messages
         [TestMethod]
         public void SerilaizeTest()
         {
-            var assets = new Dictionary<string, Asset>();
-            assets.Add("CASH", new Asset());
+            var assets = new Dictionary<string, Asset>
+            {
+                { "CASH", new Asset() }
+            };
 
             var acc = new Shared.Portfolio.Portfolio
             {

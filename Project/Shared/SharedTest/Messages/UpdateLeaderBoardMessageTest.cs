@@ -23,9 +23,11 @@ namespace SharedTest.Messages
         [TestMethod]
         public void InitializerTest()
         {
-            var leaderboard = new SortedList();
-            leaderboard.Add(1.1, "foohooboo");
-            leaderboard.Add(2.1, "dsphar");
+            var leaderboard = new SortedList
+            {
+                { 1.1, "foohooboo" },
+                { 2.1, "dsphar" }
+            };
 
             var updateLeaderboardMessage = new UpdateLeaderBoardMessage
             {
@@ -53,9 +55,11 @@ namespace SharedTest.Messages
         [TestMethod]
         public void SerializerTest()
         {
-            var leaderboard = new SortedList();
-            leaderboard.Add(1.1, "foohooboo");
-            leaderboard.Add(2.1, "dsphar");
+            var leaderboard = new SortedList
+            {
+                { 1.1, "foohooboo" },
+                { 2.1, "dsphar" }
+            };
 
             var updateLeaderboardMessage = new UpdateLeaderBoardMessage
             {
