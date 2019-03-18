@@ -30,7 +30,6 @@ namespace SharedTest.Conversations
         public void SucessfulStockStreamRequestTest()
         {
             //Simulate application-level ids
-            //TODO: Should these be moved into the TestContext?? -Dsphar 2/22/19
             int processId = 1;
 
             //Create a new StockStreamRequestConv_Initor conversation
@@ -46,8 +45,9 @@ namespace SharedTest.Conversations
             stockStreamResponse.Contents.ConversationID = stockStreamConv.ConversationId;
             ConversationManager.ProcessIncomingMessage(stockStreamResponse);
 
-            //Conversation over but we hold onto the done state for a little...
-            //ensure it has not yet been removed from Conversation Manager
+            //Conversation over but we hold onto the done state for a little
+            //in case we need to handle a retry. Ensure it has not yet been
+            //removed from Conversation Manager
             Assert.IsTrue(ConversationManager.ConversationExists(conversationId));
 
             var retrycount = Config.GetInt(Config.DEFAULT_RETRY_COUNT);

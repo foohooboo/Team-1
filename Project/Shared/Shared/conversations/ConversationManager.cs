@@ -5,6 +5,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
+using static Shared.Conversations.ResponderConversationBuilder;
 
 namespace Shared.Conversations
 {
@@ -17,13 +18,13 @@ namespace Shared.Conversations
         private static int NextConversationCount => Interlocked.Increment(ref count);
         public static bool IsRunning { get; private set; }
 
-        public static void Start(Func<Envelope, Conversation> conversationFromMessageBuilderFunction)
+        public static void Start(ConversationBuilder method)
         {
             Log.Debug($"{nameof(Start)} (enter)");
 
             if (!IsRunning)
             {
-                ResponderConversationBuilder.SetConversationFromMessageBuilder(conversationFromMessageBuilderFunction);
+                SetConversationBuilder(method);
                 PostOffice.SetIncomingMessageHandler(ProcessIncomingMessage);
 
                 IsRunning = true;
@@ -62,7 +63,7 @@ namespace Shared.Conversations
             if (IsRunning)
             {
                 IsRunning = false;
-                ResponderConversationBuilder.SetConversationFromMessageBuilder(null);
+                SetConversationBuilder(null);
                 PostOffice.SetIncomingMessageHandler(null);
                 conversations.Clear();
             }

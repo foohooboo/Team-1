@@ -19,30 +19,32 @@ namespace Shared.Conversations
         {
             Conversation conv = null;
 
-            if (_conversationFromMessageBuilder == null)
+            if (conversationBuilder.GetInvocationList().Length == 0)
             {
-                Log.Error("ConversationFromMessageBuilder not set. Ignoring message.");
+                Log.Error("ConversationBuilder not set. Ignoring message.");
             }
             else
             {
-                conv = _conversationFromMessageBuilder(e);
+                conv = conversationBuilder(e);
                 if (conv == null)
                 {
-                    Log.Warn($"ConversationFromMessageBuilder failed to create new conversation out of incoming message...\n{e.Contents}.");
+                    Log.Warn($"ConversationFromMessageBuilder failed to create new conversation from incoming message...\n{e.Contents}.");
                 }
             }
 
             return conv;
         }
 
-        private static Func<Envelope, Conversation> _conversationFromMessageBuilder = null;
-
-        public static void SetConversationFromMessageBuilder(Func<Envelope, Conversation> func)
+        public delegate Conversation ConversationBuilder(Envelope e);
+        private static ConversationBuilder conversationBuilder;
+        public static void SetConversationBuilder(ConversationBuilder method)
         {
-            if (_conversationFromMessageBuilder != null)
+            if (conversationBuilder?.GetInvocationList().Length > 0)
                 throw new Exception("ConversationFromMessageBuilder can only be set once.");
+            else if (method != null)
+                conversationBuilder = new ConversationBuilder(method);
             else
-                _conversationFromMessageBuilder = func;
+                Log.Warn($"SetConversationBuilder was given a null ConversationBuilder.");
         }
     }
 }
