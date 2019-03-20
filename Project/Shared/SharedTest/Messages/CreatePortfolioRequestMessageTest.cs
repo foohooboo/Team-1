@@ -48,7 +48,7 @@ namespace SharedTest.Messages
                 ConfirmPassword = password
             };
 
-            var serializedMessage = MessageFactory.GetMessage(newCreatePortfolioRequest.Encode()) as CreatePortfolioRequestMessage;
+            var serializedMessage = MessageFactory.GetMessage(newCreatePortfolioRequest.Encode(), false) as CreatePortfolioRequestMessage;
 
             Assert.AreEqual(newCreatePortfolioRequest.ConfirmPassword, serializedMessage.ConfirmPassword);
         }

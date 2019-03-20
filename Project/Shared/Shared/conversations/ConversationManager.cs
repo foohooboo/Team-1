@@ -1,5 +1,6 @@
 ﻿using log4net;
 using Shared.Comms.MailService;
+using Shared.Conversations.SharedStates;
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
@@ -16,16 +17,13 @@ namespace Shared.Conversations
         private static int NextConversationCount => Interlocked.Increment(ref count);
         public static bool IsRunning { get; private set; }
 
-        //TODO: Add timeout system for conversations. One idea is to periodically traverse conversations, and remove ones with an old LastUpdateTime.
-        //Make sure we log the timeout. -Dsphar 2/21/2019
-
-        public static void Start(Func<Envelope, Conversation> conversationFromMessageBuilderFunction)
+        public static void Start(ConversationBuilder method)
         {
             Log.Debug($"{nameof(Start)} (enter)");
 
             if (!IsRunning)
             {
-                ResponderConversationBuilder.SetConversationFromMessageBuilder(conversationFromMessageBuilderFunction);
+                SetConversationBuilder(method);
                 PostOffice.SetIncomingMessageHandler(ProcessIncomingMessage);
 
                 IsRunning = true;
@@ -37,8 +35,12 @@ namespace Shared.Conversations
                         {
                             var timeSinceUpdate = (int)(DateTime.Now - conv.Value.LastUpdateTime).TotalMilliseconds;
                             if (timeSinceUpdate > timeout){
-                                Log.Warn($"Conversation {conv.Key} timed out.");
-                                RemoveConversation(conv.Key);
+                                var currentState = conv.Value.CurrentState;
+                                if (!(currentState is ConversationDoneState))
+                                {
+                                    Log.Warn($"Raising timeout event for Conversation {conv.Key}.");
+                                }
+                                currentState.HandleTimeout();
                             }
                         }
                         Thread.Sleep(timeout);
@@ -55,10 +57,12 @@ namespace Shared.Conversations
 
         public static void Stop()
         {
+            Log.Debug($"{nameof(Stop)} (enter)");
+
             if (IsRunning)
             {
                 IsRunning = false;
-                ResponderConversationBuilder.SetConversationFromMessageBuilder(null);
+                SetConversationBuilder(null);
                 PostOffice.SetIncomingMessageHandler(null);
                 conversations.Clear();
             }
@@ -66,7 +70,8 @@ namespace Shared.Conversations
             {
                 Log.Warn("ConversationManager already stopped.");
             }
-            
+
+            Log.Debug($"{nameof(Stop)} (exit)");
         }
 
         public static void AddConversation(Conversation conversation)
@@ -98,20 +103,25 @@ namespace Shared.Conversations
             Log.Debug($"{nameof(ProcessIncomingMessage)} (enter)");
 
             Conversation conv = null;
+            Log.Info($"Processing message {m.Contents?.MessageID} for conversation {m.Contents?.ConversationID}.");
 
-            if (conversations.ContainsKey(m.Contents.ConversationID))
+            if( string.IsNullOrEmpty(m.Contents?.ConversationID))
+            {
+                Log.Warn("Incoming message does not contain a conversation id.");
+            }
+            else if (conversations.ContainsKey(m.Contents.ConversationID))
             {
                 conv = conversations[m.Contents.ConversationID];
                 conv.UpdateState(m);
             }
             else
             {
-                conv = ResponderConversationBuilder.BuildConversation(m);
+                conv = BuildConversation(m);
                 if (conv != null)
                 {
                     AddConversation(conv);
                 }
-            }
+            }            
 
             Log.Debug($"{nameof(ProcessIncomingMessage)} (exit)");
             return conv;
@@ -131,6 +141,56 @@ namespace Shared.Conversations
             }
 
             Log.Debug($"{nameof(RemoveConversation)} (exit)");
+        }
+
+        public static Conversation GetConversation(string conversationId)
+        {
+            Log.Debug($"{nameof(GetConversation)} (enter)");
+
+            Conversation conv = null;
+            if (conversations.ContainsKey(conversationId))
+            {
+                conv = conversations[conversationId];
+            }
+            else
+            {
+                Log.Warn($"Could not find {conversationId} in conversations.");
+            }
+
+            Log.Debug($"{nameof(GetConversation)} (exit)");
+            return conv;
+        }
+
+        public static Conversation BuildConversation(Envelope e)
+        {
+            Conversation conv = null;
+
+            if (conversationBuilder.GetInvocationList().Length == 0)
+            {
+                Log.Error("ConversationBuilder not set. Ignoring message.");
+            }
+            else
+            {
+                conv = conversationBuilder(e);
+                if (conv == null)
+                {
+                    Log.Warn($"ConversationFromMessageBuilder failed to create new conversation from incoming message...\n{e.Contents}.");
+                }
+            }
+
+            return conv;
+        }
+
+        public delegate Conversation ConversationBuilder(Envelope e);
+        private static ConversationBuilder conversationBuilder;
+        public static void SetConversationBuilder(ConversationBuilder method)
+        {
+            if (conversationBuilder?.GetInvocationList().Length > 0)
+                throw new Exception("ConversationFromMessageBuilder can only be set once.");
+            else if (method != null)
+                conversationBuilder = new ConversationBuilder(method);
+            else
+                Log.Warn($"SetConversationBuilder was given a null ConversationBuilder.");
         }
 
         public static bool ConversationExists(string conversationId)

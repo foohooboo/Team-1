@@ -75,7 +75,7 @@ namespace SharedTest.Messages
                 MessageID = mid
             };
 
-            var serailizedMessage = MessageFactory.GetMessage(m.Encode());
+            var serailizedMessage = MessageFactory.GetMessage(m.Encode(), false);
 
             Assert.AreEqual(serailizedMessage.SourceID, m.SourceID);
             Assert.AreEqual(serailizedMessage.ConversationID, m.ConversationID);

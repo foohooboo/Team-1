@@ -1,7 +1,10 @@
 ﻿using System;
-using Broker.Conversations.States;
 using log4net;
+using Shared;
+using Shared.Comms.MailService;
+using Shared.Comms.Messages;
 using Shared.Conversations;
+using Shared.Conversations.SharedStates;
 using Shared.Conversations.StockStreamRequest.Initiator;
 
 namespace Broker
@@ -15,16 +18,16 @@ namespace Broker
             Log.Debug($"{nameof(Main)} (enter)");
 
             ConversationManager.Start(null);
-            var comm = new CommSystemWrapper(); //TODO: Update this example once Post Office allows us to open a listener.
-
+            PostOffice.AddBox("0.0.0.0:0");
             PrintMenu();
             var input = Console.ReadLine();
 
             while (!input.Equals("exit"))
             {
-                var c = new ConvI_StockStreamRequest(new InitialSate_ConvI_StockStreamRequest());
-                Log.Info($"Starting new conversation: {c.ConversationId}");
-                ConversationManager.AddConversation(c);
+                var conv = new ConvI_StockStreamRequest(new InitialState_ConvI_StockStreamRequest(Config.GetInt(Config.BROKER_PROCESS_NUM)));
+                Log.Info($"Starting new conversation: {conv.ConversationId}");
+
+                ConversationManager.AddConversation(conv);
 
                 PrintMenu();
                 input = Console.ReadLine();

@@ -55,7 +55,7 @@ namespace SharedTest.Messages
                 MessageID = "1"
             };
 
-            var serializedMessage = MessageFactory.GetMessage(streamRequestMessage.Encode()) as StockStreamRequestMessage;
+            var serializedMessage = MessageFactory.GetMessage(streamRequestMessage.Encode(), false) as StockStreamRequestMessage;
 
             Assert.AreEqual(streamRequestMessage.TicksRequested, serializedMessage.TicksRequested);
         }

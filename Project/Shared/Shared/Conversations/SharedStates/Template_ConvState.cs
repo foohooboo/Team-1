@@ -4,11 +4,11 @@ using Shared.Comms.Messages;
 
 namespace Shared.Conversations.SharedStates
 {
-    class InitialState_ConvI_StockStreamRequest : ConversationState
+    class Template_ConvState : ConversationState
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public InitialState_ConvI_StockStreamRequest(int processNum) : base(ConversationManager.GenerateNextId(processNum)) { }
+        public Template_ConvState(int processNum) : base(ConversationManager.GenerateNextId(processNum)) { }
 
         public override ConversationState GetNextStateFromMessage(Envelope incomingMessage)
         {
@@ -18,22 +18,15 @@ namespace Shared.Conversations.SharedStates
 
             switch (incomingMessage.Contents)
             {
-                case StockStreamResponseMessage m:
-                    var stockHistory = m.RecentHistory;
-                    Log.Info($"Received stock stream response with {stockHistory.Count} days of recent trading.");
-
-                    Temp t = new Temp();
-                    t.LogStockHistory(stockHistory);
-
-                    nextState = new ConversationDoneState(ConversationID, this);
-                    break;
+                //TODO: Add state-specific message handling here. Given the incoming message,
+                //you should set nextState to the next ConversationState expected in the conversation.
                 case ErrorMessage m:
                     Log.Error($"Received error message as reply...\n{m.ErrorText}");
                     nextState = new ConversationDoneState(ConversationID, this);
                     break;
                 default:
                     Log.Error($"No logic to process incoming message of type {incomingMessage.Contents?.GetType()}.");
-                    Log.Error($"Ending conversation {ConversationID}.");
+                    Log.Error($"Forcing conversation {ConversationID} into done state.");
                     nextState = new ConversationDoneState(ConversationID, this);
                     break;
             }
@@ -46,16 +39,18 @@ namespace Shared.Conversations.SharedStates
         {
             Log.Debug($"{nameof(OnStateStart)} (enter)");
 
-            //Build request message
-            var processNum = Config.GetInt(Config.BROKER_PROCESS_NUM);//TODO: allow number to be loaded from broker OR client -dsphar 3/3/2019
-            var message = MessageFactory.GetMessage<StockStreamRequestMessage>(processNum, 0);
-            message.ConversationID = ConversationID;
-            var stockServerIp = Config.GetString(Config.STOCK_SERVER_IP);
-            var stockSerevrPort = Config.GetInt(Config.STOCK_SERVER_PORT);
-            var env = new Envelope(message, stockServerIp, stockSerevrPort);
-            PostOffice.GetBox("0.0.0.0:0").Send(env);
+            //TODO: Add any logic this state needs to perform when first started.
+            //This logic is likely building and sending a message.
 
             Log.Debug($"{nameof(OnStateStart)} (exit)");
         }
+
+        //OPTIONAL: function to add logic when state is ending. Default is do nothing.
+        //public override void OnStateEnd() { }
+
+        //OPTIONAL: function to handle a state timeout event. Default is to
+        //re-call the OnStateStart method up to the configured number of retries,
+        //then force the conversation into the done state.
+        //public override void HandleTimeout() { }
     }
 }

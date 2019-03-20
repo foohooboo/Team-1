@@ -17,7 +17,7 @@ namespace SharedTest.Messages
         {
             var stockPriceUpdate = new StockPriceUpdate();
 
-            Assert.AreEqual(stockPriceUpdate.StocksList.Data.Count, 0);
+            Assert.AreEqual(stockPriceUpdate.StocksList.TradedCompanies.Count, 0);
             Assert.IsNull(stockPriceUpdate.StocksList.Date);
         }
 
@@ -32,7 +32,7 @@ namespace SharedTest.Messages
             var marketDay = new MarketDay(date, stocks);
             var stockPriceUpdate = new StockPriceUpdate(marketDay);
 
-            Assert.AreEqual(stockPriceUpdate.StocksList.Data.Count, 2);
+            Assert.AreEqual(stockPriceUpdate.StocksList.TradedCompanies.Count, 2);
             Assert.AreEqual(stockPriceUpdate.StocksList.Date, date);
         }
 
@@ -50,7 +50,7 @@ namespace SharedTest.Messages
                 StocksList = marketDay
             };
 
-            Assert.AreEqual(stockPriceUpdate.StocksList.Data.Count, 2);
+            Assert.AreEqual(stockPriceUpdate.StocksList.TradedCompanies.Count, 2);
             Assert.AreEqual(stockPriceUpdate.StocksList.Date, date);
         }
 
@@ -76,9 +76,9 @@ namespace SharedTest.Messages
             var stockPriceUpdate = new StockPriceUpdate(marketDay);
 
             var serializedMessage = stockPriceUpdate.Encode();
-            var deserializedMessage = MessageFactory.GetMessage(serializedMessage) as StockPriceUpdate;
+            var deserializedMessage = MessageFactory.GetMessage(serializedMessage, false) as StockPriceUpdate;
 
-            Assert.AreEqual(stockPriceUpdate.StocksList.Data.Count, deserializedMessage.StocksList.Data.Count);
+            Assert.AreEqual(stockPriceUpdate.StocksList.TradedCompanies.Count, deserializedMessage.StocksList.TradedCompanies.Count);
             Assert.AreEqual(stockPriceUpdate.StocksList.Date, deserializedMessage.StocksList.Date);
         }
     }

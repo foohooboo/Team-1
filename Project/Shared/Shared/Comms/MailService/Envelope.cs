@@ -26,6 +26,13 @@ namespace Shared.Comms.MailService
             Insert(message);
         }
 
+        public Envelope(Message message, string ip, int port)
+        {
+            Insert(message);
+            To = new IPEndPoint(IPAddress.Parse(ip), port);
+            Contents = message;
+        }
+
         public bool HasMessage()
         {
             return Contents != null;

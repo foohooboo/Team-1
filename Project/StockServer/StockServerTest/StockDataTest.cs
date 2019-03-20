@@ -5,9 +5,6 @@ using Shared.MarketStructures;
 namespace StockServerTest
 {
 
-    //TODO: Add more tests. I added this as a very basic START to the test project.
-    //Dsphar 2/27/2019
-
     [TestClass]
     public class StockDataTest
     {
@@ -40,15 +37,15 @@ namespace StockServerTest
             StockData.Init();
             var marketDay = StockData.GetCurrentDay();
             var numDays = StockData.GetSize();
-            var numCompanies = marketDay.Data.Count;
+            var numCompanies = marketDay.TradedCompanies.Count;
 
-            for(int i=0; i<numDays; i++)
+            for (int i=0; i<numDays; i++)
             {
-                Assert.AreEqual("Apple Inc.", marketDay.Data[0].Name);
-                Assert.AreEqual("AAPL", marketDay.Data[0].Symbol);
-                Assert.AreEqual("Amazon.com Inc", marketDay.Data[1].Name);
-                Assert.AreEqual("AMZN", marketDay.Data[1].Symbol);
-                Assert.AreEqual(numCompanies, marketDay.Data.Count);
+                Assert.AreEqual("Apple Inc.", marketDay.TradedCompanies[0].Name);
+                Assert.AreEqual("AAPL", marketDay.TradedCompanies[0].Symbol);
+                Assert.AreEqual("Amazon.com Inc", marketDay.TradedCompanies[1].Name);
+                Assert.AreEqual("AMZN", marketDay.TradedCompanies[1].Symbol);
+                Assert.AreEqual(numCompanies, marketDay.TradedCompanies.Count);
                 marketDay = StockData.AdvanceDay();
             }
         }

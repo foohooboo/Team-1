@@ -44,8 +44,10 @@ namespace SharedTest.Messages
         [TestMethod]
         public void SerilaizeTest()
         {
-            var assets = new Dictionary<string, Asset>();
-            assets.Add("CASH", new Asset());
+            var assets = new Dictionary<string, Asset>
+            {
+                { "CASH", new Asset() }
+            };
 
             var acc = new Shared.Portfolio.Portfolio
             {
@@ -61,7 +63,7 @@ namespace SharedTest.Messages
                 Account = acc,
             };
 
-            var serializedMessage = MessageFactory.GetMessage(m.Encode()) as GetPortfolioRequest;
+            var serializedMessage = MessageFactory.GetMessage(m.Encode(), false) as GetPortfolioRequest;
 
             Assert.IsNotNull(serializedMessage);
             Assert.AreEqual(serializedMessage.Account.Assets.Count, 1);

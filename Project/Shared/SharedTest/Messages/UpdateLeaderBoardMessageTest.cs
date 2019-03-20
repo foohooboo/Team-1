@@ -23,9 +23,11 @@ namespace SharedTest.Messages
         [TestMethod]
         public void InitializerTest()
         {
-            var leaderboard = new SortedList();
-            leaderboard.Add(1.1, "foohooboo");
-            leaderboard.Add(2.1, "dsphar");
+            var leaderboard = new SortedList
+            {
+                { 1.1, "foohooboo" },
+                { 2.1, "dsphar" }
+            };
 
             var updateLeaderboardMessage = new UpdateLeaderBoardMessage
             {
@@ -53,9 +55,11 @@ namespace SharedTest.Messages
         [TestMethod]
         public void SerializerTest()
         {
-            var leaderboard = new SortedList();
-            leaderboard.Add(1.1, "foohooboo");
-            leaderboard.Add(2.1, "dsphar");
+            var leaderboard = new SortedList
+            {
+                { 1.1, "foohooboo" },
+                { 2.1, "dsphar" }
+            };
 
             var updateLeaderboardMessage = new UpdateLeaderBoardMessage
             {
@@ -65,7 +69,7 @@ namespace SharedTest.Messages
                 MessageID = "2"
             };
 
-            var serializedMessage = MessageFactory.GetMessage(updateLeaderboardMessage.Encode()) as UpdateLeaderBoardMessage;
+            var serializedMessage = MessageFactory.GetMessage(updateLeaderboardMessage.Encode(), false) as UpdateLeaderBoardMessage;
 
             Assert.AreEqual(updateLeaderboardMessage.Records.Count, serializedMessage.Records.Count);
             Assert.AreEqual(updateLeaderboardMessage.Records.GetKey(0).ToString(), serializedMessage.Records.GetKey(0));

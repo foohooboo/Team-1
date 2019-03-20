@@ -10,6 +10,7 @@ namespace Shared
 
         public const string
             DEFAULT_TIMEOUT = "defaultTimeout",
+            DEFAULT_RETRY_COUNT = "defaultRetryCount",
             CLIENT_PROCESS_NUM = "clientProcessNum",
             BROKER_IP = "brokerIp",
             BROKER_PORT = "brokerPort",
@@ -37,8 +38,7 @@ namespace Shared
 
         public static int GetInt(string key)
         {
-            int val;
-            if(int.TryParse(GetString(key),out val))
+            if (int.TryParse(GetString(key), out int val))
             {
                 return val;
             }

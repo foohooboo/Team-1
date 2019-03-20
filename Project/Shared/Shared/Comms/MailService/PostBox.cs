@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading;
@@ -35,15 +36,23 @@ namespace Shared.Comms.MailService
         }
 
         /// <summary>
-        /// Used to insert an envelope that is recieved.
+        /// Used to insert an envelope that is received.
         /// </summary>
         public abstract void CollectMail();
 
-        public Envelope GetMail()
+        /// <summary>
+        /// Used to shutdown the socket.
+        /// </summary>
+        public abstract void Close();
+
+    public Envelope GetMail()
         {
+            var startTime = DateTime.Now;
+
             Envelope envelope = null;
 
-            while (envelope is null)
+            while (envelope is null &&
+                   DateTime.Now.Subtract(startTime).TotalMilliseconds < 1000)
             {
                 if (!HasMail())
                 {
