@@ -96,7 +96,6 @@ namespace Shared.Conversations
                 LastUpdateTime = DateTime.Now;
                 CurrentState.Cleanup();
                 CurrentState = nextState;
-                CurrentState.Prepare();
                 CurrentState.Send();
             }
             else
