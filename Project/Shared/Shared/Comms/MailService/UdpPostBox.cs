@@ -32,7 +32,7 @@ namespace Shared.Comms.MailService
         public override void Send(Envelope envelope)
         {
             Log.Info($"Sending message {envelope?.Contents?.MessageID} to {envelope.To}");
-            byte[] bytesToSend = envelope.Remove().Encode();
+            byte[] bytesToSend = envelope.Contents.Encode();
             try
             {
                 myUdpClient.Send(bytesToSend, bytesToSend.Length, envelope.To);
@@ -56,7 +56,6 @@ namespace Shared.Comms.MailService
                     PostOffice.HandleIncomingMessage(envelope);
                     waitHandle.Set();
                 }
-
             }
         }
 
@@ -74,7 +73,6 @@ namespace Shared.Comms.MailService
                     To = endPoint
                 };
             }
-
             return newEnvelope;
         }
 

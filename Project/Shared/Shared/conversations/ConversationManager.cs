@@ -31,19 +31,14 @@ namespace Shared.Conversations
                     var timeout = Config.GetInt(Config.DEFAULT_TIMEOUT);
                     while (IsRunning)
                     {
-                        foreach(var conv in conversations)
+                        foreach(var conv in conversations.Values)
                         {
-                            var timeSinceUpdate = (int)(DateTime.Now - conv.Value.LastUpdateTime).TotalMilliseconds;
+                            var timeSinceUpdate = (int)(DateTime.Now - conv.LastUpdateTime).TotalMilliseconds;
                             if (timeSinceUpdate > timeout){
-                                var currentState = conv.Value.CurrentState;
-                                if (!(currentState is ConversationDoneState))
-                                {
-                                    Log.Warn($"Raising timeout event for Conversation {conv.Key}.");
-                                }
-                                currentState.HandleTimeout();
+                                conv.HandleTimeout();
                             }
                         }
-                        Thread.Sleep(timeout);
+                        Thread.Sleep(500);
                     }
                 }).Start();
             }

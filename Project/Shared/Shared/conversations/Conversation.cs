@@ -1,5 +1,6 @@
 ﻿using log4net;
 using Shared.Comms.MailService;
+using Shared.Conversations.SharedStates;
 using System;
 
 namespace Shared.Conversations
@@ -44,10 +45,14 @@ namespace Shared.Conversations
             {
                 Log.Error("Cannot start conversation more than once.");
             }
+            else if (CurrentState == null)
+            {
+                Log.Error("Cannot start conversation without setting an initial state.");
+            }
             else
             {
                 LastUpdateTime = DateTime.Now;
-                CurrentState.OnStateStart();
+                CurrentState.Send();
                 ConversationStarted = true;
             }
         }
@@ -56,7 +61,7 @@ namespace Shared.Conversations
         {
             Log.Debug($"{nameof(UpdateState)} (enter)");
 
-            var nextState = CurrentState.GetNextStateFromMessage(incomingEnvelope);
+            var nextState = CurrentState.HandleMessage(incomingEnvelope);
             if (nextState != null)
             {
                 UpdateState(nextState);
@@ -76,9 +81,10 @@ namespace Shared.Conversations
             if (nextState != null)
             {
                 LastUpdateTime = DateTime.Now;
-                CurrentState.OnStateEnd();
+                CurrentState.Cleanup();
                 CurrentState = nextState;
-                CurrentState.OnStateStart();
+                CurrentState.Prepare();
+                CurrentState.Send();
             }
             else
             {
@@ -86,6 +92,16 @@ namespace Shared.Conversations
             }
 
             Log.Debug($"{nameof(UpdateState)} (exit)");
+        }
+
+        public void HandleTimeout()
+        {
+            if (!(CurrentState is ConversationDoneState))
+            {
+                Log.Warn($"Raising timeout event for Conversation {ConversationId}.");
+            }
+            LastUpdateTime = DateTime.Now;
+            CurrentState.HandleTimeout();
         }
     }
 }
