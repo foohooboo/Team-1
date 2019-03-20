@@ -7,12 +7,17 @@
         mc:Ignorable="d"
         Title="Stock Portfolio Portal" Height="450" Width="800">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="17*"/>
-            <ColumnDefinition Width="181*"/>
+            <ColumnDefinition Width="565*"/>
+            <ColumnDefinition Width="227*"/>
         </Grid.ColumnDefinitions>
-        <Label Content="Hello World! From the client." HorizontalAlignment="Left" Margin="15,71,0,0" VerticalAlignment="Top" Width="368" Grid.ColumnSpan="2"/>
-        <TextBlock Text="{Binding HelloTextLocal}" TextWrapping="WrapWithOverflow" HorizontalAlignment="Left" Margin="15,170,0,0" VerticalAlignment="Top" Width="368" Height="59" Grid.ColumnSpan="2"/>
-        <TextBox Text="{Binding HelloTextLocal, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="59" Margin="319.737,170,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="358" Grid.Column="1"/>
+        <Label Content="Hello World! From the client." HorizontalAlignment="Left" Margin="15,71,0,0" VerticalAlignment="Top" Width="368" Height="26"/>
+        <TextBlock Text="{Binding HelloTextLocal}" TextWrapping="WrapWithOverflow" HorizontalAlignment="Left" Margin="15,170,0,0" VerticalAlignment="Top" Width="368" Height="59"/>
+        <TextBlock Text="Symbol     Closing     Change     Owned" TextWrapping="WrapWithOverflow" HorizontalAlignment="Left" VerticalAlignment="Top" Width="227" Height="38" Grid.Column="1"/>
+        
+        <TextBox Text="AAPL         215.12      +1.25%      14" HorizontalAlignment="Left" Height="59" TextWrapping="Wrap" VerticalAlignment="Top" Width="227" Grid.Column="1" Margin="0,38,0,0"/>
     </Grid>
 </Window>

@@ -162,10 +162,6 @@ namespace StockServer.Data
                         SingleStockUpdates[j].High = (float)Math.Round((double)(SingleStockUpdates[j].High * mult), 2);
                         SingleStockUpdates[j].Low = (float)Math.Round((double)(SingleStockUpdates[j].Low * mult), 2);
                         SingleStockUpdates[j].Volume = (int)((float)SingleStockUpdates[j].Volume / mult);
-                        if (SingleStockUpdates[j].Close <= 0.02)
-                        {
-
-                        }
                         ret[j].Data.Add(SingleStockUpdates[j]);
                     }
                 }
