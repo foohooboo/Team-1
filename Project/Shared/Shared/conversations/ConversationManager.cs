@@ -73,16 +73,16 @@ namespace Shared.Conversations
         {
             Log.Debug($"{nameof(AddConversation)} (enter)");
 
-            if (conversations.ContainsKey(conversation.ConversationId))
+            if (conversations.ContainsKey(conversation.Id))
             {
-                Log.Error($"Conversation Manager already has a conversation for {conversation.ConversationId}.");
+                Log.Error($"Conversation Manager already has a conversation for {conversation.Id}.");
             }
             else
             {
-                if (conversations.TryAdd(conversation.ConversationId, conversation))
+                if (conversations.TryAdd(conversation.Id, conversation))
                     conversation.StartConversation();
                 else
-                    Log.Error($"Could not add {conversation.ConversationId} to conversations.");
+                    Log.Error($"Could not add {conversation.Id} to conversations.");
             }
 
             Log.Debug($"{nameof(AddConversation)} (exit)");

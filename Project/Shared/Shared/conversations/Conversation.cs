@@ -10,19 +10,32 @@ namespace Shared.Conversations
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public ConversationState CurrentState { get; private set; }
-        public readonly string ConversationId;
+        public readonly string Id;
         public bool ConversationStarted { get; private set; }
         public DateTime LastUpdateTime { get; private set; }
 
+
+        /// <summary>
+        /// Creates a conversation with a newly generated ConversationId.
+        /// </summary>
+        public Conversation(int processId)
+        {
+            Id = ConversationManager.GenerateNextId(processId);
+        }
+
+        /// <summary>
+        /// Creates a new conversation and assigns it the provided ConversationId.
+        /// </summary>
+        /// <param name="conversationId"></param>
         public Conversation(string conversationId)
         {
-            if(string.IsNullOrEmpty(conversationId))
+            if (string.IsNullOrEmpty(conversationId))
             {
-                throw new NullReferenceException();
+                throw new ArgumentException("Conversation constructor was given an empty ConversationId.");
             }
             else
             {
-                ConversationId = conversationId;
+                Id = conversationId;
             }
         }
 
@@ -68,7 +81,7 @@ namespace Shared.Conversations
             }
             else
             {
-                Log.Warn($"Cannot create next {ConversationId} conversation state from message {incomingEnvelope.Contents.MessageID}.");
+                Log.Warn($"Cannot create next {Id} conversation state from message {incomingEnvelope.Contents.MessageID}.");
             }
 
             Log.Debug($"{nameof(UpdateState)} (exit)");
@@ -98,7 +111,7 @@ namespace Shared.Conversations
         {
             if (!(CurrentState is ConversationDoneState))
             {
-                Log.Warn($"Raising timeout event for Conversation {ConversationId}.");
+                Log.Warn($"Raising timeout event for Conversation {Id}.");
             }
             LastUpdateTime = DateTime.Now;
             CurrentState.HandleTimeout();

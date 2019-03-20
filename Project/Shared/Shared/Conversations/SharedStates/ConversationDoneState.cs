@@ -25,7 +25,7 @@ namespace Shared.Conversations.SharedStates
             Log.Debug($"{nameof(HandleMessage)} (enter)");
 
             ConversationState state = null;
-            Log.Warn($"Conversation {ConversationID} received message while in the Done state. Processing message as if conversation was in the previous state.");
+            Log.Warn($"Conversation {ParentConversation.Id} received message while in the Done state. Processing message as if conversation was in the previous state.");
             state = PreviousState?.HandleMessage(newMessage);
 
             Log.Debug($"{nameof(HandleMessage)} (exit)");
@@ -38,9 +38,9 @@ namespace Shared.Conversations.SharedStates
             
             if (++CountRetrys > Config.GetInt(Config.DEFAULT_RETRY_COUNT))
             {
-                Log.Debug($"Conversation {ConversationID} being cleaned up.");
+                Log.Debug($"Conversation {ParentConversation.Id} being cleaned up.");
                 PreviousState = null;
-                ConversationManager.RemoveConversation(ConversationID);
+                ConversationManager.RemoveConversation(ParentConversation.Id);
             }
 
             Log.Debug($"{nameof(HandleTimeout)} (exit)");

@@ -19,8 +19,7 @@ namespace Shared.Comms.MailService
             if (addressParts.Length == 2)
             {
                 int port = ParsePort(addressParts[1]);
-                IPAddress ip;
-                if(IPAddress.TryParse(addressParts[0], out ip)){
+                if(IPAddress.TryParse(addressParts[0], out IPAddress ip)){
                     endpoint = new IPEndPoint(ip, port);
                 }
                 else

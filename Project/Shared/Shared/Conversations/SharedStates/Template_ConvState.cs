@@ -22,7 +22,7 @@ namespace Shared.Conversations.SharedStates
                 //you should set nextState to the next ConversationState expected in the conversation.
                 case ErrorMessage m:
                     Log.Error($"Received error message as reply...\n{m.ErrorText}");
-                    nextState = new ConversationDoneState(ConversationID, this);
+                    nextState = new ConversationDoneState(ParentConversation.Id, this);
                     break;
                 default:
                     Log.Error($"No logic to process incoming message of type {incomingMessage.Contents?.GetType()}. Ignoring message.");

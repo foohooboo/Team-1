@@ -8,13 +8,19 @@ namespace Shared.Conversations
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public readonly string ConversationID;
+        protected readonly Conversation ParentConversation;
         private readonly Envelope Env;
         protected int CountRetrys;
 
-        public ConversationState(string conversationID)
+        public ConversationState(Conversation conversation)
         {
-            ConversationID = conversationID;
+            ParentConversation = conversation;
+            Env = Prepare();
+        }
+
+        public ConversationState(string conversationId)
+        {
+            ParentConversation = ConversationManager.GetConversation(conversationId);
             Env = Prepare();
         }
 
@@ -28,15 +34,14 @@ namespace Shared.Conversations
         {
             if(++CountRetrys <= Config.GetInt(Config.DEFAULT_RETRY_COUNT))
             {
-                Log.Warn($"Initiating retry for conversation {ConversationID}.");
+                Log.Warn($"Initiating retry for conversation {ParentConversation.Id}.");
                 Send();
             }
             else
             {
-                Log.Warn($"Timeout event is forcing conversation {ConversationID} into the Done state.");
-                ConversationManager.GetConversation(ConversationID).UpdateState(new ConversationDoneState(ConversationID, this));
+                Log.Warn($"Timeout event is forcing conversation {ParentConversation.Id} into the Done state.");
+                ConversationManager.GetConversation(ParentConversation.Id).UpdateState(new ConversationDoneState(ParentConversation.Id, this));
             }
-            
         }
 
         /// <summary>
