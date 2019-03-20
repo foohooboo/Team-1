@@ -28,7 +28,7 @@ namespace StockServer.Conversations.StockStreamRequest
             var box = PostOffice.GetBox($"0.0.0.0:{Config.GetInt(Config.STOCK_SERVER_PORT)}");
             box.Send(responseEnvelope);
 
-            SetInitialState(new ConversationDoneState(ConversationId, null));
+            SetInitialState(new ConversationDoneState(Id, null));
             //^Since there is no response to this conversation's first message, we can end the conversation immediately.
 
             Log.Debug($"{nameof(ConvR_StockStreamRequest)} (exit)");

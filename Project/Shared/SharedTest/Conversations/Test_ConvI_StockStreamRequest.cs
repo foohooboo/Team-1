@@ -33,16 +33,17 @@ namespace SharedTest.Conversations
             int processId = 1;
 
             //Create a new StockStreamRequestConv_Initor conversation
-            var stockStreamConv = new ConvI_StockStreamRequest(new InitialState_ConvI_StockStreamRequest(processId));
+            var stockStreamConv = new ConvI_StockStreamRequest(processId);
+            stockStreamConv.SetInitialState(new InitialState_ConvI_StockStreamRequest(stockStreamConv));
             ConversationManager.AddConversation(stockStreamConv);
-            string conversationId = stockStreamConv.ConversationId;
+            string conversationId = stockStreamConv.Id;
 
             //Verify conversation exists in Conversation Manager
             Assert.IsTrue(ConversationManager.ConversationExists(conversationId));
 
             //Create fake response message and process it
             var stockStreamResponse = new Envelope(new StockStreamResponseMessage());
-            stockStreamResponse.Contents.ConversationID = stockStreamConv.ConversationId;
+            stockStreamResponse.Contents.ConversationID = stockStreamConv.Id;
             ConversationManager.ProcessIncomingMessage(stockStreamResponse);
 
             //Conversation over but we hold onto the done state for a little

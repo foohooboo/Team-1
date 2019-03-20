@@ -30,7 +30,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\ConversationManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\Conversation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\ConversationState.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Conversations\InitiatorConversation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\ResponderConversationBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\SharedStates\ConversationDoneState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Conversations\SharedStates\Template_ConvState.cs" />

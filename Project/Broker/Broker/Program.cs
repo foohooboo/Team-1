@@ -24,8 +24,12 @@ namespace Broker
 
             while (!input.Equals("exit"))
             {
-                var conv = new ConvI_StockStreamRequest(new InitialState_ConvI_StockStreamRequest(Config.GetInt(Config.BROKER_PROCESS_NUM)));
-                Log.Info($"Starting new conversation: {conv.ConversationId}");
+                var conv = new ConvI_StockStreamRequest(
+                    Config.GetInt(Config.BROKER_PROCESS_NUM)
+                    );
+                conv.SetInitialState(new InitialState_ConvI_StockStreamRequest(conv));
+
+                Log.Info($"Starting new conversation: {conv.Id}");
 
                 ConversationManager.AddConversation(conv);
 

@@ -13,7 +13,7 @@ namespace BrokerTest
     public class InitiateStockStreamRequestTest
     {
 
-        string destAddress = $"{Config.GetString(Config.STOCK_SERVER_IP)}:{Config.GetString(Config.STOCK_SERVER_PORT)}";
+        readonly string destAddress = $"{Config.GetString(Config.STOCK_SERVER_IP)}:{Config.GetString(Config.STOCK_SERVER_PORT)}";
 
         [TestInitialize]
         public void TestInitialize()
@@ -32,17 +32,18 @@ namespace BrokerTest
         public void SucessfulStockStreamRequestTest()
         {
             //Create a new StockStreamRequestConv_Initor conversation
-            var initialState  = new InitialState_ConvI_StockStreamRequest(Config.GetInt(Config.BROKER_PROCESS_NUM));
-            var stockStreamConv = new ConvI_StockStreamRequest(initialState);
+            var stockStreamConv = new ConvI_StockStreamRequest(42);
+            var initialState = new InitialState_ConvI_StockStreamRequest(stockStreamConv);
+            stockStreamConv.SetInitialState(initialState);
             ConversationManager.AddConversation(stockStreamConv);
-            string conversationId = stockStreamConv.ConversationId;
+            string conversationId = stockStreamConv.Id;
 
             //Verify conversation exists in Conversation Manager
             Assert.IsTrue(ConversationManager.ConversationExists(conversationId));
 
             //Create fake response message and process it
             var stockStreamResponse = new Envelope(new StockStreamResponseMessage());
-            stockStreamResponse.Contents.ConversationID = stockStreamConv.ConversationId;
+            stockStreamResponse.Contents.ConversationID = stockStreamConv.Id;
             ConversationManager.ProcessIncomingMessage(stockStreamResponse);
 
             //Conversation over but we hold onto the done state for a little...

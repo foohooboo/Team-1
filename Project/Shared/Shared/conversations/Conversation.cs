@@ -1,5 +1,6 @@
 ﻿using log4net;
 using Shared.Comms.MailService;
+using Shared.Conversations.SharedStates;
 using System;
 
 namespace Shared.Conversations
@@ -9,19 +10,32 @@ namespace Shared.Conversations
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public ConversationState CurrentState { get; private set; }
-        public readonly string ConversationId;
+        public readonly string Id;
         public bool ConversationStarted { get; private set; }
         public DateTime LastUpdateTime { get; private set; }
 
+
+        /// <summary>
+        /// Creates a conversation with a newly generated ConversationId.
+        /// </summary>
+        public Conversation(int processId)
+        {
+            Id = ConversationManager.GenerateNextId(processId);
+        }
+
+        /// <summary>
+        /// Creates a new conversation and assigns it the provided ConversationId.
+        /// </summary>
+        /// <param name="conversationId"></param>
         public Conversation(string conversationId)
         {
-            if(string.IsNullOrEmpty(conversationId))
+            if (string.IsNullOrEmpty(conversationId))
             {
-                throw new NullReferenceException();
+                throw new ArgumentException("Conversation constructor was given an empty ConversationId.");
             }
             else
             {
-                ConversationId = conversationId;
+                Id = conversationId;
             }
         }
 
@@ -44,10 +58,14 @@ namespace Shared.Conversations
             {
                 Log.Error("Cannot start conversation more than once.");
             }
+            else if (CurrentState == null)
+            {
+                Log.Error("Cannot start conversation without setting an initial state.");
+            }
             else
             {
                 LastUpdateTime = DateTime.Now;
-                CurrentState.OnStateStart();
+                CurrentState.Send();
                 ConversationStarted = true;
             }
         }
@@ -56,14 +74,14 @@ namespace Shared.Conversations
         {
             Log.Debug($"{nameof(UpdateState)} (enter)");
 
-            var nextState = CurrentState.GetNextStateFromMessage(incomingEnvelope);
+            var nextState = CurrentState.HandleMessage(incomingEnvelope);
             if (nextState != null)
             {
                 UpdateState(nextState);
             }
             else
             {
-                Log.Warn($"Cannot create next {ConversationId} conversation state from message {incomingEnvelope.Contents.MessageID}.");
+                Log.Warn($"Cannot create next {Id} conversation state from message {incomingEnvelope.Contents.MessageID}.");
             }
 
             Log.Debug($"{nameof(UpdateState)} (exit)");
@@ -76,9 +94,9 @@ namespace Shared.Conversations
             if (nextState != null)
             {
                 LastUpdateTime = DateTime.Now;
-                CurrentState.OnStateEnd();
+                CurrentState.Cleanup();
                 CurrentState = nextState;
-                CurrentState.OnStateStart();
+                CurrentState.Send();
             }
             else
             {
@@ -86,6 +104,16 @@ namespace Shared.Conversations
             }
 
             Log.Debug($"{nameof(UpdateState)} (exit)");
+        }
+
+        public void HandleTimeout()
+        {
+            if (!(CurrentState is ConversationDoneState))
+            {
+                Log.Warn($"Raising timeout event for Conversation {Id}.");
+            }
+            LastUpdateTime = DateTime.Now;
+            CurrentState.HandleTimeout();
         }
     }
 }
