@@ -1,14 +1,18 @@
 ﻿using log4net;
 using Shared.Comms.MailService;
 using Shared.Comms.Messages;
+using Shared.Conversations;
+using Shared.Conversations.SharedStates;
 
-namespace Shared.Conversations.SharedStates
+namespace Client.Conversations
 {
-    class Template_ConvState : ConversationState
+    public class InitTransactionStartingState : ConversationState
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public Template_ConvState(Conversation conv) : base(conv) { }
+        public InitTransactionStartingState(Conversation conv) : base(conv) {
+            
+        }
 
         public override ConversationState HandleMessage(Envelope incomingMessage)
         {
@@ -22,7 +26,7 @@ namespace Shared.Conversations.SharedStates
                 //you should set nextState to the next ConversationState expected in the conversation.
                 case ErrorMessage m:
                     Log.Error($"Received error message as reply...\n{m.ErrorText}");
-                    nextState = new ConversationDoneState(ParentConversation, this);
+                    nextState = new ConversationDoneState(ParentConversation.Id, this);
                     break;
                 default:
                     Log.Error($"No logic to process incoming message of type {incomingMessage.Contents?.GetType()}. Ignoring message.");

@@ -10,7 +10,7 @@ namespace Shared.Conversations.SharedStates
 
         private ConversationState PreviousState;
 
-        public ConversationDoneState(string conversationID, ConversationState previousState) : base(conversationID) {
+        public ConversationDoneState(Conversation conv, ConversationState previousState) : base(conv) {
             PreviousState = previousState;
         }
 

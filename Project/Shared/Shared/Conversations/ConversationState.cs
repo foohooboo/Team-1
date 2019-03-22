@@ -18,12 +18,6 @@ namespace Shared.Conversations
             Env = Prepare();
         }
 
-        public ConversationState(string conversationId)
-        {
-            ParentConversation = ConversationManager.GetConversation(conversationId);
-            Env = Prepare();
-        }
-
         /// <summary>
         /// Method used to handle a timeout event. Note: default behavior is to re-send the 
         /// Prepared() envelope as many times as defined in the program configuration file.
@@ -40,7 +34,7 @@ namespace Shared.Conversations
             else
             {
                 Log.Warn($"Timeout event is forcing conversation {ParentConversation.Id} into the Done state.");
-                ConversationManager.GetConversation(ParentConversation.Id).UpdateState(new ConversationDoneState(ParentConversation.Id, this));
+                ConversationManager.GetConversation(ParentConversation.Id).UpdateState(new ConversationDoneState(ParentConversation, this));
             }
         }
 

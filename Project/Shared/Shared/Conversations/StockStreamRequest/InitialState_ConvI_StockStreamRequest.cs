@@ -25,16 +25,16 @@ namespace Shared.Conversations.SharedStates
                     Temp t = new Temp();
                     t.LogStockHistory(stockHistory);
 
-                    nextState = new ConversationDoneState(ParentConversation.Id, this);
+                    nextState = new ConversationDoneState(ParentConversation, this);
                     break;
                 case ErrorMessage m:
                     Log.Error($"Received error message as reply...\n{m.ErrorText}");
-                    nextState = new ConversationDoneState(ParentConversation.Id, this);
+                    nextState = new ConversationDoneState(ParentConversation, this);
                     break;
                 default:
                     Log.Error($"No logic to process incoming message of type {incomingMessage.Contents?.GetType()}.");
                     Log.Error($"Ending conversation {ParentConversation.Id}.");
-                    nextState = new ConversationDoneState(ParentConversation.Id, this);
+                    nextState = new ConversationDoneState(ParentConversation, this);
                     break;
             }
 
