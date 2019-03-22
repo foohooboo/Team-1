@@ -83,11 +83,6 @@ namespace StockServer.Data
             return GetCurrentDay();
         }
 
-        private static DateTime GetDate(string dayLine)
-        {
-            return (DateTime.Parse(dayLine.Substring(0, dayLine.IndexOf(','))));
-        }
-
         private static DateTime NextWeekday(DateTime start)
         {
             var day = start.AddDays(1);
@@ -110,6 +105,7 @@ namespace StockServer.Data
             int range = 15 * 365;
             DateTime coverDate = DateTime.Today.AddDays(random.Next(range));
             coverDate = NextWeekday(coverDate);
+            float mult = (float)Math.Pow(2, (random.NextDouble() * 4 - 2));//gives nice range for multiplier
 
             //Import all .csv files into companiesRaw
             var companiesRaw = new List<CompanyDataRaw>();
@@ -137,10 +133,9 @@ namespace StockServer.Data
 
             //Cache stock data (only when all files have data for the given day)
             var keepParsing = true;
-            float mult = (float)Math.Pow(2, (random.NextDouble() * 4 - 2));//gives nice range for multiplier
             for (int dayIndex = 0; dayIndex < companiesRaw[0].DailyValue.Count - 1 && keepParsing; dayIndex++)
             {
-                DateTime currentDate = GetDate(companiesRaw[0].CurrentDayData());
+                DateTime currentDate = companiesRaw[0].CurrentDate;
                 foreach (var company in companiesRaw)
                 {
                     if (!company.AdvanceTo(currentDate))
@@ -188,44 +183,7 @@ namespace StockServer.Data
                 }
             }
         }
-
-        private sealed class CompanyDataRaw
-        {
-            public Stock MetaData;
-            public DateTime CurrentDate { get; private set; }
-            public List<string> DailyValue = new List<string>();
-
-            private int Index;
-
-            public string CurrentDayData()
-            {
-                return DailyValue[Index];
-            }
-
-            public string AdvanceDay()
-            {
-                ++Index;
-                CurrentDate = GetDate(DailyValue[Index]);
-                return DailyValue[Index];
-            }
-
-            public bool AdvanceTo(DateTime date)
-            {
-                var succeed = true;
-                try
-                {
-                    var currentDate = GetDate(CurrentDayData());
-                    while (currentDate < date)
-                        currentDate = GetDate(AdvanceDay());
-                }
-                catch
-                {
-                    succeed = false;
-                }
-                return succeed;
-            }
-        }
-
+        
         /// <summary>
         /// GetFullHistory is a hack to allow unit testing to get PrivateObject access to the FullHistory,
         /// property. It can probably be cleaned up somehow, but I am ready to move on.
