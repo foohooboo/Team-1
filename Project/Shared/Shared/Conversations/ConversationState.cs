@@ -18,6 +18,8 @@ namespace Shared.Conversations
             Env = Prepare();
         }
 
+
+
         /// <summary>
         /// Method used to handle a timeout event. Note: default behavior is to re-send the 
         /// Prepared() envelope as many times as defined in the program configuration file.
@@ -62,7 +64,7 @@ namespace Shared.Conversations
         
         }
 
-        public void Send()
+        public virtual void Send()
         {
             if (Env != null)
             {
