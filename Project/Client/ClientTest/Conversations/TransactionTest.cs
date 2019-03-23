@@ -39,14 +39,14 @@ namespace ClientTest.Conversations
             var conv = new InitiateTransactionConversation(portfolioId,vStock,1);
 
             //setup response message and mock
-            var responseMessage = new PortfolioUpdateMessage(){ConversationID = conv.Id};
-            var responseEnv = new Envelope(responseMessage);
             var mock = new Mock<InitTransactionStartingState>(conv);
             mock.Setup(st => st.Send()).Callback(()=> {
                 //Pretend a message was sent, and response came back
+                var responseMessage = new PortfolioUpdateMessage() { ConversationID = conv.Id };
+                var responseEnv = new Envelope(responseMessage);
                 ConversationManager.ProcessIncomingMessage(responseEnv); 
             });
-            mock.Setup(st => st.HandleMessage(responseEnv)).CallBase();
+            mock.Setup(st => st.HandleMessage(It.IsAny<Envelope>())).CallBase();
 
             //execute test
             conv.SetInitialState(mock.Object as InitTransactionStartingState);
