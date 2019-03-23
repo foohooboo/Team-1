@@ -38,7 +38,7 @@ namespace Shared.Conversations
                                 conv.HandleTimeout();
                             }
                         }
-                        Thread.Sleep(500);
+                        Thread.Sleep(15);
                     }
                 }).Start();
             }
