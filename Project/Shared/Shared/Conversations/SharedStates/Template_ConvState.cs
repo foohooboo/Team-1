@@ -51,7 +51,7 @@ namespace Shared.Conversations.SharedStates
         //public override void OnStateEnd() { }
 
         //OPTIONAL: function to handle a state timeout event. Default is to
-        //re-call the OnStateStart method up to the configured number of retries,
+        //re-call the Send method up to the configured number of retries,
         //then force the conversation into the done state.
         //public override void HandleTimeout() { }
     }

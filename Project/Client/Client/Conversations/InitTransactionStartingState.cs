@@ -1,8 +1,10 @@
 ﻿using log4net;
+using Shared;
 using Shared.Comms.MailService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
+using System.Net;
 
 namespace Client.Conversations
 {
@@ -22,11 +24,14 @@ namespace Client.Conversations
 
             switch (incomingMessage.Contents)
             {
-                //TODO: Add state-specific message handling here. Given the incoming message,
-                //you should set nextState to the next ConversationState expected in the conversation.
+                case PortfolioUpdateMessage m:
+                    Log.Info($"Received PortfolioUpdate message as reply.");
+                    //TODO: Update portfolio elements
+                    nextState = new ConversationDoneState(ParentConversation, this);
+                    break;
                 case ErrorMessage m:
                     Log.Error($"Received error message as reply...\n{m.ErrorText}");
-                    nextState = new ConversationDoneState(ParentConversation.Id, this);
+                    nextState = new ConversationDoneState(ParentConversation, this);
                     break;
                 default:
                     Log.Error($"No logic to process incoming message of type {incomingMessage.Contents?.GetType()}. Ignoring message.");
@@ -43,20 +48,17 @@ namespace Client.Conversations
 
             Envelope env = null;
 
-            //TODO: Add any logic this state needs to perform when first started.
-            //If this state is going to send a message to another process, set
-            //the env variable.
+            var m = MessageFactory.GetMessage<TransactionRequestMessage>(
+                Config.GetInt(Config.CLIENT_PROCESS_NUM),
+                (ParentConversation as InitiateTransactionConversation).PortfoliId
+                ) as TransactionRequestMessage;
+
+            env.Contents = m;
+            IPAddress.TryParse(Config.GetString(Config.BROKER_IP), out IPAddress ip);
+            env.To = new IPEndPoint(ip, Config.GetInt(Config.BROKER_PORT));
 
             Log.Debug($"{nameof(Prepare)} (exit)");
             return env;
         }
-
-        //OPTIONAL: function to add logic when state is ending. Default is do nothing.
-        //public override void OnStateEnd() { }
-
-        //OPTIONAL: function to handle a state timeout event. Default is to
-        //re-call the OnStateStart method up to the configured number of retries,
-        //then force the conversation into the done state.
-        //public override void HandleTimeout() { }
     }
 }

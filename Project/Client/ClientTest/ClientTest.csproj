@@ -51,7 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Conversations\Transaction.cs" />
+    <Compile Include="Conversations\TransactionTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -71,7 +71,12 @@
       <Version>4.5.0</Version>
     </PackageReference>
   </ItemGroup>
-  <Import Project="..\..\Shared\Shared\Shared.projitems" Label="Shared" />
+  <ItemGroup>
+    <ProjectReference Include="..\Client\Client.csproj">
+      <Project>{2dab74a3-87ea-44da-af09-7e2cc0bb9f4f}</Project>
+      <Name>Client</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
