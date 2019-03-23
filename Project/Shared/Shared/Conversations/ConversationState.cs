@@ -9,13 +9,12 @@ namespace Shared.Conversations
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         protected readonly Conversation ParentConversation;
-        private readonly Envelope Env;
+        public Envelope Env { get; private set; }
         protected int CountRetrys;
 
         public ConversationState(Conversation conversation)
         {
             ParentConversation = conversation;
-            Env = Prepare();
         }
 
 
@@ -55,6 +54,9 @@ namespace Shared.Conversations
         /// method.
         /// </summary>
         public abstract Envelope Prepare();
+
+        public virtual void DoPrepare() { Env = Prepare(); }
+        public virtual void DoPrepare(string test) { Env = Prepare(); }
 
         /// <summary>
         /// Override this function if a given conversation state needs to do some sort of cleanup

@@ -65,8 +65,9 @@ namespace Shared.Conversations
             else
             {
                 LastUpdateTime = DateTime.Now;
-                CurrentState.Send();
                 ConversationStarted = true;
+                CurrentState.DoPrepare();
+                CurrentState.Send();
             }
         }
 
@@ -96,6 +97,7 @@ namespace Shared.Conversations
                 LastUpdateTime = DateTime.Now;
                 CurrentState.Cleanup();
                 CurrentState = nextState;
+                CurrentState.DoPrepare();
                 CurrentState.Send();
             }
             else

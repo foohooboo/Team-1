@@ -66,6 +66,13 @@ namespace Shared.Comms.MailService
 
             Log.Debug($"{nameof(SetIncomingMessageHandler)} (exit)");
         }
+
+        public static void ClearIncomingMessageHandler()
+        {
+            _incomingMessageHandler = null;
+        }
+
+
         public static Conversation HandleIncomingMessage(Envelope e)
         {
             Log.Debug($"{nameof(HandleIncomingMessage)} (enter)");

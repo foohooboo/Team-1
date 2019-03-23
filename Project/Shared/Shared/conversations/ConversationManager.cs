@@ -58,7 +58,7 @@ namespace Shared.Conversations
             {
                 IsRunning = false;
                 SetConversationBuilder(null);
-                PostOffice.SetIncomingMessageHandler(null);
+                PostOffice.ClearIncomingMessageHandler();
                 conversations.Clear();
             }
             else
