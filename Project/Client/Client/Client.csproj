@@ -94,9 +94,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="log4net">
       <Version>2.0.8</Version>
     </PackageReference>
