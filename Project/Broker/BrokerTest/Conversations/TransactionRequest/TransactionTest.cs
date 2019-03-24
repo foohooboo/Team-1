@@ -1,4 +1,5 @@
-﻿using Broker.Conversations.TransactionRequest;
+﻿using Broker;
+using Broker.Conversations.TransactionRequest;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Shared.Comms.MailService;
@@ -13,7 +14,7 @@ namespace BrokerTest
     [TestClass]
     public class TransactionTest
     {
-        Mock<RespondTransaction_InitialState> mock;
+        private Mock<RespondTransaction_InitialState> mock;
 
         public Conversation ConversationBuilder(Envelope env)
         {
@@ -31,7 +32,7 @@ namespace BrokerTest
                     mock.Setup(st => st.Send()).CallBase().Verifiable();
 
                     conv.SetInitialState(mock.Object as RespondTransaction_InitialState);
-                                       
+
                     break;
             }
 
@@ -59,7 +60,8 @@ namespace BrokerTest
             string ClientIp = "192.168.1.31";
             int ClientPort = 5682;
             int RequestQuanitity = 12;
-            var portfolio = PortfolioManager.CreatePortfolio("TestRequestSucceed", "password");
+            PortfolioManager.TryToCreatePortfolio("TestRequestSucceed", "password", out Portfolio portfolio);
+            //var portfolio = PortfolioManager.CreatePortfolio("TestRequestSucceed", "password");
 
             var testStock = new Stock("TST", "Test Stock");
             var vStock = new ValuatedStock(("1984-02-22,1,2,3,100,5").Split(','), testStock);
@@ -93,7 +95,8 @@ namespace BrokerTest
             string ClientIp = "192.168.1.31";
             int ClientPort = 5682;
             int RequestQuanitity = 12;
-            var portfolio = PortfolioManager.CreatePortfolio("TestRequestSucceedAfterRetry", "password");
+            PortfolioManager.TryToCreatePortfolio("TestRequestSucceedAfterRetry", "password", out Portfolio portfolio);
+            //var portfolio = PortfolioManager.CreatePortfolio("TestRequestSucceedAfterRetry", "password");
 
             var testStock = new Stock("TST", "Test Stock");
             var vStock = new ValuatedStock(("1984-02-22,1,2,3,100,5").Split(','), testStock);

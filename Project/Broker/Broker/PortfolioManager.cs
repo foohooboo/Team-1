@@ -5,20 +5,15 @@ using log4net;
 using Shared.MarketStructures;
 using Shared.Portfolio;
 
-namespace PortfolioManager
+namespace Broker
 {
-    public class Manager
+    public static class PortfolioManager
     {
-        private readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        protected readonly ConcurrentDictionary<int, Portfolio> portfolios;
+        public static ConcurrentDictionary<int, Portfolio> portfolios = new ConcurrentDictionary<int, Portfolio>();
 
-        public Manager()
-        {
-            portfolios = new ConcurrentDictionary<int, Portfolio>();
-        }
-
-        public bool TryToCreatePortfolio(string username, string password, out Portfolio portfolio)
+        public static bool TryToCreatePortfolio(string username, string password, out Portfolio portfolio)
         {
             Log.Debug($"{nameof(TryToCreatePortfolio)} (enter)");
             portfolio = null;
@@ -36,11 +31,13 @@ namespace PortfolioManager
                 Log.Debug($"Failed to add portfolio for {username}");
             }
 
+            portfolio = newPortfolio;
+
             Log.Debug($"{nameof(TryToCreatePortfolio)} (exit)");
             return true;
         }
 
-        protected Portfolio GetNewPortfolio(string username, string password)
+        public static Portfolio GetNewPortfolio(string username, string password)
         {
             Log.Debug($"{nameof(GetNewPortfolio)} (enter)");
             var portfolio = new Portfolio()
@@ -62,7 +59,7 @@ namespace PortfolioManager
             return portfolio;
         }
 
-        protected bool TryToAdd(Portfolio portfolio)
+        public static bool TryToAdd(Portfolio portfolio)
         {
             Log.Debug($"{nameof(TryToAdd)} (enter)");
             try
@@ -79,7 +76,7 @@ namespace PortfolioManager
             return true;
         }
 
-        public bool TryToUpdate(Portfolio portfolio)
+        public static bool TryToUpdate(Portfolio portfolio)
         {
             Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (enter)");
             try
@@ -107,7 +104,7 @@ namespace PortfolioManager
             }
         }
 
-        public bool TryToRemove(Portfolio portfolio, out string errorMessage)
+        public static bool TryToRemove(Portfolio portfolio, out string errorMessage)
         {
             errorMessage = String.Empty;
 
@@ -124,7 +121,7 @@ namespace PortfolioManager
             return true;
         }
 
-        public bool TryToGetWithLock(int portfolioID, out Portfolio portfolio)
+        public static bool TryToGetWithLock(int portfolioID, out Portfolio portfolio)
         {
             if (!TryToGet(portfolioID, out portfolio))
             {
@@ -136,7 +133,7 @@ namespace PortfolioManager
             return TryToUpdate(portfolio);
         }
 
-        public bool TryToGet(int portfolioID, out Portfolio portfolio)
+        public static bool TryToGet(int portfolioID, out Portfolio portfolio)
         {
 
             if (!portfolios.TryGetValue(portfolioID, out portfolio))

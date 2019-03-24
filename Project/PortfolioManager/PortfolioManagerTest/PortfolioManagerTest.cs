@@ -17,6 +17,16 @@ namespace PortfolioManagerTest
             }
 
             public ConcurrentDictionary<int, Portfolio> GetPortfolios => portfolios;
+
+            public new Portfolio GetNewPortfolio(string username, string password)
+            {
+                return base.GetNewPortfolio(username, password);
+            }
+
+            public new bool TryToAdd(Portfolio portfolio)
+            {
+                return base.TryToAdd(portfolio);
+            }
         }
 
         [TestMethod]
@@ -35,9 +45,9 @@ namespace PortfolioManagerTest
         [TestMethod]
         public void AddPortfolioSuccessTest()
         {
-            var manager = new Manager();
-            var localPortfolio = GetPortfolio(false);
-            manager.TryToAdd(localPortfolio, out string error);
+            var manager = new TestManager();
+            var localPortfolio = manager.GetNewPortfolio(GetRandomString(3), GetRandomString(6));
+            manager.TryToAdd(localPortfolio);
 
             Assert.IsTrue(manager.TryToGet(localPortfolio.PortfolioID, out Portfolio portfolio));
             Assert.AreSame(localPortfolio, portfolio);
@@ -56,13 +66,13 @@ namespace PortfolioManagerTest
         [TestMethod]
         public void GetPortfolioSuccessTest()
         {
-            var manager = new Manager();
-            var portfolio1 = GetPortfolio(false);
-            var portfolio2 = GetPortfolio(false);
-            var portfolio3 = GetPortfolio(false);
-            manager.TryToAdd(portfolio1, out string error1);
-            manager.TryToAdd(portfolio2, out string error2);
-            manager.TryToAdd(portfolio3, out string error3);
+            var manager = new TestManager();
+            var portfolio1 = manager.GetNewPortfolio(GetRandomString(3), GetRandomString(6));
+            manager.TryToAdd(portfolio1);
+            var portfolio2 = manager.GetNewPortfolio(GetRandomString(3), GetRandomString(6));
+            manager.TryToAdd(portfolio2);
+            var portfolio3 = manager.GetNewPortfolio(GetRandomString(3), GetRandomString(6));
+            manager.TryToAdd(portfolio3);
 
             Assert.IsTrue(manager.TryToGet(portfolio2.PortfolioID, out Portfolio portfolio));
             Assert.AreSame(portfolio2, portfolio);
@@ -78,18 +88,6 @@ namespace PortfolioManagerTest
         public void UpdatePortfolioSuccessTest()
         {
 
-        }
-
-        private Portfolio GetPortfolio(bool writeAuthority)
-        {
-            var account = new Portfolio
-            {
-                Username = GetRandomString(5),
-                Password = GetRandomString(4),
-                RequestWriteAuthority = writeAuthority
-            };
-
-            return account;
         }
 
         private static Random rand = new Random();

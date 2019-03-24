@@ -1,18 +1,17 @@
-﻿using log4net;
+﻿using System;
+using log4net;
 using Shared;
 using Shared.Comms.MailService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
 using Shared.Portfolio;
-using System;
 
 namespace Broker.Conversations.TransactionRequest
 {
     public class RespondTransaction_InitialState : ConversationState
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
         private readonly string InitMessageId;
 
         public RespondTransaction_InitialState(Conversation conversation, string initMessageId) : base(conversation)
@@ -26,7 +25,7 @@ namespace Broker.Conversations.TransactionRequest
 
             ConversationState state = null;
 
-            if(newMessage.Contents.MessageID == InitMessageId)
+            if (newMessage.Contents.MessageID == InitMessageId)
             {
                 //client sent a retry message, resend transaction
                 Send();
@@ -46,11 +45,12 @@ namespace Broker.Conversations.TransactionRequest
 
             var processId = Config.GetInt(Config.BROKER_PROCESS_NUM);
             var conv = ParentConversation as RespondTransactionConversation;
-            var portfolio = PortfolioManager.GetPortfolio(conv.PortfoliId);
+
+
+            PortfolioManager.TryToGet(conv.PortfoliId, out Portfolio portfolio);
             Asset change = new Asset(conv.VStock, conv.Quantity);
 
             //TODO: confirm vStock price is in recent update history
-
             var totalCost = conv.Quantity * conv.VStock.Close;
 
             //buying stock
@@ -67,7 +67,7 @@ namespace Broker.Conversations.TransactionRequest
             else
             {
                 var qtyOwned = portfolio.GetAsset(conv.VStock.Symbol)?.Quantity;
-                if(qtyOwned > Math.Abs(conv.Quantity))
+                if (qtyOwned > Math.Abs(conv.Quantity))
                 {
                     portfolio.ModifyAsset(change);
                     success = true;

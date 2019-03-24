@@ -41,7 +41,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)MarketStructures\MarketDay.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Portfolio\Asset.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Portfolio\Portfolio.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Portfolio\PortfolioManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Temp.cs" />
   </ItemGroup>
   <ItemGroup>

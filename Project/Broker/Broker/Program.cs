@@ -2,7 +2,6 @@
 using log4net;
 using Shared;
 using Shared.Comms.MailService;
-using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
 using Shared.Conversations.StockStreamRequest.Initiator;
@@ -16,7 +15,6 @@ namespace Broker
         private static void Main(string[] args)
         {
             Log.Debug($"{nameof(Main)} (enter)");
-
             ConversationManager.Start(null);
             PostOffice.AddBox("0.0.0.0:0");
             PrintMenu();
@@ -42,7 +40,7 @@ namespace Broker
             Log.Debug($"{nameof(Main)} (exit)");
         }
 
-        static void PrintMenu()
+        private static void PrintMenu()
         {
             Console.WriteLine("Input Options:");
             Console.WriteLine("   -\"exit\" to end");

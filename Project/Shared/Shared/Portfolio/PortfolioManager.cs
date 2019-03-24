@@ -51,6 +51,7 @@ namespace Shared.Portfolio
             }
 
             Log.Debug($"{nameof(CreatePortfolio)} (exit)");
+
             return portfolio;
         }
 

@@ -48,6 +48,7 @@
     <Compile Include="CommSystemWrapper.cs" />
     <Compile Include="Conversations\TransactionRequest\RespondTransactionConversation.cs" />
     <Compile Include="Conversations\TransactionRequest\RespondTransaction_InitialState.cs" />
+    <Compile Include="PortfolioManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -62,7 +63,6 @@
       <Version>4.5.0</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="..\..\Shared\Shared\Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
