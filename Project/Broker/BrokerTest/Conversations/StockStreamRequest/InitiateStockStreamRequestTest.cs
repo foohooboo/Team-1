@@ -1,19 +1,18 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Threading;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Shared;
 using Shared.Comms.MailService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
 using Shared.Conversations.StockStreamRequest.Initiator;
-using System.Threading;
 
 namespace BrokerTest
 {
     [TestClass]
     public class InitiateStockStreamRequestTest
     {
-
-        readonly string destAddress = $"{Config.GetString(Config.STOCK_SERVER_IP)}:{Config.GetString(Config.STOCK_SERVER_PORT)}";
+        private readonly string destAddress = $"{Config.GetString(Config.STOCK_SERVER_IP)}:{Config.GetString(Config.STOCK_SERVER_PORT)}";
 
         [TestInitialize]
         public void TestInitialize()
@@ -60,4 +59,3 @@ namespace BrokerTest
         }
     }
 }
-

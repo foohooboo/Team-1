@@ -43,22 +43,20 @@ namespace Shared.Portfolio
         //ass quantity can be < 0 for removal of Assets
         //fails silently
         //These two methods could maybe take a stock symbol and a quantity as parameters instead of an Asset object
-        public void ModifyAsset(Asset ass)
+        public void ModifyAsset(Asset asset)
         {
-            Log.Debug($"{nameof(ModifyAsset)} (enter)");
-
-            if (Assets.ContainsKey(ass.RelatedStock.Symbol))
+            if(Assets.ContainsKey(asset.RelatedStock.Symbol))
             {
-                Assets[ass.RelatedStock.Symbol].Quantity += ass.Quantity;
+                Assets[asset.RelatedStock.Symbol].Quantity += asset.Quantity;
 
-                if (Assets[ass.RelatedStock.Symbol].Quantity <= 0)
+                if (Assets[asset.RelatedStock.Symbol].Quantity <= 0)
                 {
-                    Assets.Remove(ass.RelatedStock.Symbol);
+                    Assets.Remove(asset.RelatedStock.Symbol);
                 }
             }
-            else if(ass.Quantity > 0)
+            else if(asset.Quantity > 0)
             {
-                Assets.Add(ass.RelatedStock.Symbol, ass);
+                Assets.Add(asset.RelatedStock.Symbol, asset);
             }
 
             Log.Debug($"{nameof(ModifyAsset)} (exit)");
