@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Shared.Portfolio;
 using Shared.MarketStructures;
+using Shared.Portfolio;
 
 namespace SharedTest.PortfolioTests
 {
@@ -21,15 +21,15 @@ namespace SharedTest.PortfolioTests
         {
             var testStock = new Stock("CASH", "MONEY");
 
-            var ass = new Asset
+            var asset = new Asset
             {
                 Quantity = 10,
                 RelatedStock = testStock
             };
 
-            Assert.IsNotNull(ass);
-            Assert.AreEqual(10, ass.Quantity);
-            Assert.AreEqual(ass.RelatedStock, testStock);
+            Assert.IsNotNull(asset);
+            Assert.AreEqual(10, asset.Quantity);
+            Assert.AreEqual(asset.RelatedStock, testStock);
         }
     }
 }
