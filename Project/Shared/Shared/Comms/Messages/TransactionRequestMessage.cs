@@ -4,6 +4,10 @@ namespace Shared.Comms.Messages
 {
     public class TransactionRequestMessage : Message
     {
+        public int Quantity { get; set; }//Positive value for buy, negative value for sell
+        public ValuatedStock StockValue { get; set; }
+        public int PortfolioId { get; set; }
+
         public TransactionRequestMessage()
         {
             StockValue = new ValuatedStock();
@@ -19,17 +23,6 @@ namespace Shared.Comms.Messages
         {
             Quantity = quantity;
             StockValue = stockValue;
-        }
-
-        //Positive value for buy, negative value for sell
-        public int Quantity
-        {
-            get; set;
-        }
-
-        public ValuatedStock StockValue
-        {
-            get; set;
         }
     }
 }

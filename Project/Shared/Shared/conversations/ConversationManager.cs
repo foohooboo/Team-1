@@ -1,6 +1,5 @@
 ﻿using log4net;
 using Shared.Comms.MailService;
-using Shared.Conversations.SharedStates;
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
@@ -57,7 +56,7 @@ namespace Shared.Conversations
             if (IsRunning)
             {
                 IsRunning = false;
-                SetConversationBuilder(null);
+                conversationBuilder = null;
                 PostOffice.ClearIncomingMessageHandler();
                 conversations.Clear();
             }

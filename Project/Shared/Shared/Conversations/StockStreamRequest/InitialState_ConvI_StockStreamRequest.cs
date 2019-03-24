@@ -4,7 +4,7 @@ using Shared.Comms.Messages;
 
 namespace Shared.Conversations.SharedStates
 {
-    class InitialState_ConvI_StockStreamRequest : ConversationState
+    public class InitialState_ConvI_StockStreamRequest : ConversationState
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 

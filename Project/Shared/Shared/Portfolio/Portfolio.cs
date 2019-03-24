@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using log4net;
+using System.Collections.Generic;
 
 namespace Shared.Portfolio
 {
     public class Portfolio
     {
+        private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         public Portfolio()
         {
             Assets = new Dictionary<string, Asset>();
@@ -30,7 +33,6 @@ namespace Shared.Portfolio
         }
 
         //private Dictionary<string, Asset> Assets;
-
         public Dictionary<string, Asset> Assets
         {
             get; set;
@@ -43,7 +45,9 @@ namespace Shared.Portfolio
         //These two methods could maybe take a stock symbol and a quantity as parameters instead of an Asset object
         public void ModifyAsset(Asset ass)
         {
-            if(Assets.ContainsKey(ass.RelatedStock.Symbol))
+            Log.Debug($"{nameof(ModifyAsset)} (enter)");
+
+            if (Assets.ContainsKey(ass.RelatedStock.Symbol))
             {
                 Assets[ass.RelatedStock.Symbol].Quantity += ass.Quantity;
 
@@ -56,6 +60,26 @@ namespace Shared.Portfolio
             {
                 Assets.Add(ass.RelatedStock.Symbol, ass);
             }
+
+            Log.Debug($"{nameof(ModifyAsset)} (exit)");
+        }
+
+        public Asset GetAsset(string symbol)
+        {
+            Log.Debug($"{nameof(GetAsset)} (enter)");
+
+            Asset asset = null;
+            if (Assets.TryGetValue(symbol, out asset))
+            {
+                asset = new Asset(asset);//Prepare deep copy so original can't be modified except through ModifyAsset method.
+            }
+            else
+            {
+                Log.Warn($"{Username}'s portfolio does not have an asset with symbol {symbol}");
+            }
+                
+            Log.Debug($"{nameof(GetAsset)} (exit)");
+            return asset;
         }
     }
 }

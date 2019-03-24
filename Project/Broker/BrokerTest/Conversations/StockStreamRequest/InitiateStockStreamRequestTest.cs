@@ -26,6 +26,7 @@ namespace BrokerTest
         public void TestCleanup()
         {
             PostOffice.RemoveBox("0.0.0.0:0");
+            ConversationManager.Stop();
         }
 
         [TestMethod]
