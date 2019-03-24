@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Linq;
 using log4net;
 using Shared.MarketStructures;
@@ -11,14 +10,14 @@ namespace Broker
     {
         private static ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public static ConcurrentDictionary<int, Portfolio> portfolios = new ConcurrentDictionary<int, Portfolio>();
+        public static ConcurrentDictionary<int, Portfolio> Portfolios = new ConcurrentDictionary<int, Portfolio>();
 
-        public static bool TryToCreatePortfolio(string username, string password, out Portfolio portfolio)
+        public static bool TryToCreate(string username, string password, out Portfolio portfolio)
         {
-            Log.Debug($"{nameof(TryToCreatePortfolio)} (enter)");
+            Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (enter)");
             portfolio = null;
 
-            if (portfolios.Values.Any(p => p.Username.Equals(username)))
+            if (Portfolios.Values.Any(p => p.Username.Equals(username)))
             {
                 Log.Warn($"Already a portfolio with Username: {username}");
                 return false;
@@ -26,23 +25,25 @@ namespace Broker
 
             var newPortfolio = GetNewPortfolio(username, password);
 
-            if (!portfolios.TryAdd(newPortfolio.PortfolioID, newPortfolio))
+            if (!Portfolios.TryAdd(newPortfolio.PortfolioID, newPortfolio))
             {
                 Log.Debug($"Failed to add portfolio for {username}");
+                return false;
             }
 
             portfolio = newPortfolio;
+            portfolio.WriteAuthority = true;
 
-            Log.Debug($"{nameof(TryToCreatePortfolio)} (exit)");
+            Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (exit)");
             return true;
         }
 
-        public static Portfolio GetNewPortfolio(string username, string password)
+        private static Portfolio GetNewPortfolio(string username, string password)
         {
-            Log.Debug($"{nameof(GetNewPortfolio)} (enter)");
+            Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (enter)");
             var portfolio = new Portfolio()
             {
-                PortfolioID = portfolios.Count + 1,
+                PortfolioID = Portfolios.Count + 1,
                 Username = username,
                 Password = password
             };
@@ -55,99 +56,64 @@ namespace Broker
 
             portfolio.ModifyAsset(cash);
 
-            Log.Debug($"{nameof(GetNewPortfolio)} (exit)");
+            Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (exit)");
             return portfolio;
-        }
-
-        public static bool TryToAdd(Portfolio portfolio)
-        {
-            Log.Debug($"{nameof(TryToAdd)} (enter)");
-            try
-            {
-                portfolios.TryAdd(portfolio.PortfolioID, portfolio);
-            }
-            catch (OverflowException)
-            {
-                Log.Debug($"Portfolios are at max capacity");
-                return false;
-            }
-
-            Log.Debug($"{nameof(TryToAdd)} (exit)");
-            return true;
-        }
-
-        public static bool TryToUpdate(Portfolio portfolio)
-        {
-            Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (enter)");
-            try
-            {
-                if (!portfolios.TryGetValue(portfolio.PortfolioID, out Portfolio storedPortfolio))
-                {
-                    Log.Debug($"The portfolio does not exist");
-                    return false;
-                }
-
-                // Unlock the portfolio on update.
-                if (portfolio.RequestWriteAuthority)
-                {
-                    portfolio.RequestWriteAuthority = false;
-                }
-
-                portfolios.TryUpdate(portfolio.PortfolioID, portfolio, storedPortfolio);
-                Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (exit)");
-                return true;
-            }
-            catch (OverflowException)
-            {
-                Log.Debug($"Portfolios are at max capacity");
-                return false;
-            }
-        }
-
-        public static bool TryToRemove(Portfolio portfolio, out string errorMessage)
-        {
-            errorMessage = String.Empty;
-
-            try
-            {
-                portfolios.TryRemove(portfolio.PortfolioID, out Portfolio removedPortfolio);
-            }
-            catch (OverflowException)
-            {
-                errorMessage = "Portfolios are at max capacity";
-                return false;
-            }
-
-            return true;
-        }
-
-        public static bool TryToGetWithLock(int portfolioID, out Portfolio portfolio)
-        {
-            if (!TryToGet(portfolioID, out portfolio))
-            {
-                return false;
-            }
-
-            portfolio.RequestWriteAuthority = true;
-
-            return TryToUpdate(portfolio);
         }
 
         public static bool TryToGet(int portfolioID, out Portfolio portfolio)
         {
+            Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (enter)");
 
-            if (!portfolios.TryGetValue(portfolioID, out portfolio))
+            if (!Portfolios.TryGetValue(portfolioID, out portfolio))
             {
+                Log.Debug($"Failed to get portfolio for id: {portfolioID}");
                 return false;
             }
 
-            //
-            if (portfolio.RequestWriteAuthority)
+            if (portfolio.WriteAuthority)
             {
+                Log.Debug($"Portfolio for {portfolio.Username} is currently locked.");
+                portfolio = null;
                 return false;
             }
 
+            Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (exit)");
+            portfolio.WriteAuthority = true;
             return true;
+        }
+
+        public static bool TryToRemove(int portfolioID)
+        {
+            Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (enter)");
+
+            if (!Portfolios.TryGetValue(portfolioID, out Portfolio portfolio))
+            {
+                Log.Debug($"Failed to get portfolio for id: {portfolioID}");
+                return false;
+            }
+
+            if (portfolio.WriteAuthority)
+            {
+                Log.Debug($"Portfolio for {portfolio.Username} is currently locked.");
+                return false;
+            }
+
+            if (!Portfolios.TryRemove(portfolio.PortfolioID, out Portfolio removedPortfolio))
+            {
+                Log.Debug($"Failed to remove portfolio for id: {portfolio.PortfolioID}");
+                return false;
+            }
+
+            Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (exit)");
+            return true;
+        }
+
+        public static void ReleaseLock(Portfolio portfolio)
+        {
+            Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (enter)");
+            portfolio.WriteAuthority = false;
+            portfolio = null;
+            Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (exit)");
         }
     }
 }

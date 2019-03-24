@@ -27,7 +27,7 @@ namespace Shared.Portfolio
             get; set;
         }
 
-        public bool RequestWriteAuthority
+        public bool WriteAuthority
         {
             get; set;
         }

@@ -9,53 +9,65 @@ namespace BrokerTest
     public class PortfolioManagerTest
     {
         [TestMethod]
-        public void AddPortfolioFailTest()
-        {
-        }
-
-        [TestMethod]
         public void AddPortfolioSuccessTest()
         {
-            var localPortfolio = PortfolioManager.GetNewPortfolio(GetRandomString(3), GetRandomString(6));
-            PortfolioManager.TryToAdd(localPortfolio);
-
-            Assert.IsTrue(PortfolioManager.TryToGet(localPortfolio.PortfolioID, out Portfolio portfolio));
-            Assert.AreSame(localPortfolio, portfolio);
+            Assert.IsTrue(PortfolioManager.TryToCreate(GetRandomString(3), GetRandomString(6), out Portfolio portfolio));
+            PortfolioManager.ReleaseLock(portfolio);
         }
 
         [TestMethod]
-        public void GetPortfolioFailTest()
+        public void AddPortfolioFailTest()
         {
-            var portfolioID = 1;
+            PortfolioManager.TryToCreate(GetRandomString(3), GetRandomString(6), out Portfolio portfolio);
 
-            Assert.IsFalse(PortfolioManager.TryToGet(portfolioID, out Portfolio portfolio));
-            Assert.IsNull(portfolio);
+            Assert.IsFalse(PortfolioManager.TryToCreate(portfolio.Username, GetRandomString(6), out Portfolio newPortfolio));
+            Assert.IsNull(newPortfolio);
         }
 
         [TestMethod]
         public void GetPortfolioSuccessTest()
         {
-            var portfolio1 = PortfolioManager.GetNewPortfolio(GetRandomString(3), GetRandomString(6));
-            PortfolioManager.TryToAdd(portfolio1);
-            var portfolio2 = PortfolioManager.GetNewPortfolio(GetRandomString(3), GetRandomString(6));
-            PortfolioManager.TryToAdd(portfolio2);
-            var portfolio3 = PortfolioManager.GetNewPortfolio(GetRandomString(3), GetRandomString(6));
-            PortfolioManager.TryToAdd(portfolio3);
+            PortfolioManager.TryToCreate(GetRandomString(3), GetRandomString(6), out Portfolio portfolio);
 
-            Assert.IsTrue(PortfolioManager.TryToGet(portfolio2.PortfolioID, out Portfolio portfolio));
-            Assert.AreSame(portfolio2, portfolio);
+            var id = portfolio.PortfolioID;
+            var username = portfolio.Username;
+            var password = portfolio.Password;
+
+            PortfolioManager.ReleaseLock(portfolio);
+
+            Assert.IsTrue(PortfolioManager.TryToGet(id, out Portfolio newPullPortfolio));
+            Assert.AreEqual(id, newPullPortfolio.PortfolioID);
+            Assert.AreEqual(username, newPullPortfolio.Username);
+            Assert.AreEqual(password, newPullPortfolio.Password);
         }
 
         [TestMethod]
-        public void UpdatePortfolioFailTest()
+        public void GetPortfolioFailTest()
         {
-
+            Assert.IsFalse(PortfolioManager.TryToGet(PortfolioManager.Portfolios.Count + 1, out Portfolio portfolio));
+            Assert.IsNull(portfolio);
         }
 
         [TestMethod]
-        public void UpdatePortfolioSuccessTest()
+        public void RemovePortfolioFailTest()
         {
+            PortfolioManager.TryToCreate(GetRandomString(3), GetRandomString(6), out Portfolio portfolio);
+            var count = PortfolioManager.Portfolios.Count;
 
+            Assert.IsFalse(PortfolioManager.TryToRemove(portfolio.PortfolioID));
+            Assert.AreEqual(count, PortfolioManager.Portfolios.Count);
+        }
+
+        [TestMethod]
+        public void RemovePortfolioSuccessTest()
+        {
+            PortfolioManager.TryToCreate(GetRandomString(3), GetRandomString(6), out Portfolio portfolio);
+            var count = PortfolioManager.Portfolios.Count;
+            var id = portfolio.PortfolioID;
+            PortfolioManager.ReleaseLock(portfolio);
+
+            Assert.IsTrue(PortfolioManager.TryToRemove(id));
+            Assert.AreEqual(count - 1, PortfolioManager.Portfolios.Count);
         }
 
         private static Random rand = new Random();

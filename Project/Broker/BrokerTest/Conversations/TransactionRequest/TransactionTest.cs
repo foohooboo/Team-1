@@ -60,7 +60,7 @@ namespace BrokerTest
             string ClientIp = "192.168.1.31";
             int ClientPort = 5682;
             int RequestQuanitity = 12;
-            PortfolioManager.TryToCreatePortfolio("TestRequestSucceed", "password", out Portfolio portfolio);
+            PortfolioManager.TryToCreate("TestRequestSucceed", "password", out Portfolio portfolio);
             //var portfolio = PortfolioManager.CreatePortfolio("TestRequestSucceed", "password");
 
             var testStock = new Stock("TST", "Test Stock");
@@ -95,7 +95,7 @@ namespace BrokerTest
             string ClientIp = "192.168.1.31";
             int ClientPort = 5682;
             int RequestQuanitity = 12;
-            PortfolioManager.TryToCreatePortfolio("TestRequestSucceedAfterRetry", "password", out Portfolio portfolio);
+            PortfolioManager.TryToCreate("TestRequestSucceedAfterRetry", "password", out Portfolio portfolio);
             //var portfolio = PortfolioManager.CreatePortfolio("TestRequestSucceedAfterRetry", "password");
 
             var testStock = new Stock("TST", "Test Stock");
