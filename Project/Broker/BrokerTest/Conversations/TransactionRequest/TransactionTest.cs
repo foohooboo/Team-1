@@ -61,10 +61,10 @@ namespace BrokerTest
             int ClientPort = 5682;
             int RequestQuanitity = 12;
             PortfolioManager.TryToCreate("TestRequestSucceed", "password", out Portfolio portfolio);
-            //var portfolio = PortfolioManager.CreatePortfolio("TestRequestSucceed", "password");
 
             var testStock = new Stock("TST", "Test Stock");
             var vStock = new ValuatedStock(("1984-02-22,1,2,3,100,5").Split(','), testStock);
+
             var RequestMessage = new TransactionRequestMessage(RequestQuanitity, vStock)
             {
                 ConversationID = RequestConvId,
@@ -96,7 +96,6 @@ namespace BrokerTest
             int ClientPort = 5682;
             int RequestQuanitity = 12;
             PortfolioManager.TryToCreate("TestRequestSucceedAfterRetry", "password", out Portfolio portfolio);
-            //var portfolio = PortfolioManager.CreatePortfolio("TestRequestSucceedAfterRetry", "password");
 
             var testStock = new Stock("TST", "Test Stock");
             var vStock = new ValuatedStock(("1984-02-22,1,2,3,100,5").Split(','), testStock);
@@ -133,5 +132,4 @@ namespace BrokerTest
             mock.Verify(state => state.HandleTimeout(), Times.Never);
         }
     }
-
 }

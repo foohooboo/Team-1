@@ -20,7 +20,7 @@ namespace SharedTest.Messages
             var updateMessage = new PortfolioUpdateMessage();
 
             Assert.AreEqual(updateMessage.PortfolioID, 0);
-            Assert.IsFalse(updateMessage.RequestWriteAuthority);
+            Assert.IsFalse(updateMessage.WriteAuthority);
             Assert.AreEqual(updateMessage.Assets.Count, 0);
         }
 
@@ -40,7 +40,7 @@ namespace SharedTest.Messages
             var updateMessage = new PortfolioUpdateMessage(assets);
 
             Assert.AreEqual(updateMessage.PortfolioID, 0);
-            Assert.IsFalse(updateMessage.RequestWriteAuthority);
+            Assert.IsFalse(updateMessage.WriteAuthority);
             Assert.AreEqual(updateMessage.Assets.Count, 1);
         }
 
@@ -61,11 +61,11 @@ namespace SharedTest.Messages
             {
                 Assets = assets,
                 PortfolioID = 1,
-                RequestWriteAuthority = true
+                WriteAuthority = true
             };
 
             Assert.AreEqual(updateMessage.PortfolioID, 1);
-            Assert.IsTrue(updateMessage.RequestWriteAuthority);
+            Assert.IsTrue(updateMessage.WriteAuthority);
             Assert.AreEqual(updateMessage.Assets.Count, 1);
         }
 
@@ -86,13 +86,13 @@ namespace SharedTest.Messages
             {
                 Assets = assets,
                 PortfolioID = 1,
-                RequestWriteAuthority = true
+                WriteAuthority = true
             };
 
             var serializedMessage = MessageFactory.GetMessage(updateMessage.Encode(), false) as PortfolioUpdateMessage;
 
             Assert.AreEqual(updateMessage.PortfolioID, serializedMessage.PortfolioID);
-            Assert.AreEqual(updateMessage.RequestWriteAuthority, serializedMessage.RequestWriteAuthority);
+            Assert.AreEqual(updateMessage.WriteAuthority, serializedMessage.WriteAuthority);
             Assert.AreEqual(updateMessage.Assets.Count, serializedMessage.Assets.Count);
             Assert.AreEqual(updateMessage.Assets.ContainsKey("GOOGL"), serializedMessage.Assets.ContainsKey("GOOGL"));
             Assert.AreEqual(updateMessage.Assets["GOOGL"].Quantity, serializedMessage.Assets["GOOGL"].Quantity);

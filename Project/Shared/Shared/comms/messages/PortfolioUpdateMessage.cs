@@ -32,7 +32,7 @@ namespace Shared.Comms.Messages
         }
         */
 
-        public bool RequestWriteAuthority
+        public bool WriteAuthority
         {
             get; set;
         }
