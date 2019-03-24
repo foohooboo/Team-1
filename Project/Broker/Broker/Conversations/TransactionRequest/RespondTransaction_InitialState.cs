@@ -13,13 +13,28 @@ namespace Broker.Conversations.TransactionRequest
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public RespondTransaction_InitialState(Conversation conversation) : base(conversation)
+        private readonly string InitMessageId;
+
+        public RespondTransaction_InitialState(Conversation conversation, string initMessageId) : base(conversation)
         {
+            InitMessageId = initMessageId;
         }
 
         public override ConversationState HandleMessage(Envelope newMessage)
         {
-            throw new NotImplementedException();
+            Log.Debug($"{nameof(HandleMessage)} (enter)");
+
+            ConversationState state = null;
+
+            if(newMessage.Contents.MessageID == InitMessageId)
+            {
+                //client sent a retry message, resend transaction
+                Send();
+                state = new ConversationDoneState(ParentConversation, this);
+            }
+
+            Log.Debug($"{nameof(HandleMessage)} (exit)");
+            return state;
         }
 
         public override Envelope Prepare()
@@ -76,7 +91,7 @@ namespace Broker.Conversations.TransactionRequest
                     portfolio.PortfolioID
                     ) as ErrorMessage;
                 message.ConversationID = conv.Id;
-                (message as ErrorMessage).ErrorText = "Could not complete transaction.";
+                (message as ErrorMessage).ErrorText = "Broker could not complete transaction.";
             }
 
             env = new Envelope()
