@@ -52,5 +52,10 @@ namespace Client
 
             Log.Debug(string.Format("Exit - {0}", method));
         }
+
+        private void BuyBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+
+        }
     }
 }
