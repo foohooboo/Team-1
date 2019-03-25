@@ -4,15 +4,15 @@ using Shared.Comms.Messages;
 
 namespace Shared.Conversations.SharedStates
 {
-    class InitialState_ConvI_StockStreamRequest : ConversationState
+    public class InitialState_ConvI_StockStreamRequest : ConversationState
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public InitialState_ConvI_StockStreamRequest(int processNum) : base(ConversationManager.GenerateNextId(processNum)) { }
+        public InitialState_ConvI_StockStreamRequest(Conversation conv) : base(conv) { }
 
-        public override ConversationState GetNextStateFromMessage(Envelope incomingMessage)
+        public override ConversationState HandleMessage(Envelope incomingMessage)
         {
-            Log.Debug($"{nameof(GetNextStateFromMessage)} (enter)");
+            Log.Debug($"{nameof(HandleMessage)} (enter)");
 
             ConversationState nextState = null;
 
@@ -25,37 +25,39 @@ namespace Shared.Conversations.SharedStates
                     Temp t = new Temp();
                     t.LogStockHistory(stockHistory);
 
-                    nextState = new ConversationDoneState(ConversationID, this);
+                    nextState = new ConversationDoneState(ParentConversation, this);
                     break;
                 case ErrorMessage m:
                     Log.Error($"Received error message as reply...\n{m.ErrorText}");
-                    nextState = new ConversationDoneState(ConversationID, this);
+                    nextState = new ConversationDoneState(ParentConversation, this);
                     break;
                 default:
                     Log.Error($"No logic to process incoming message of type {incomingMessage.Contents?.GetType()}.");
-                    Log.Error($"Ending conversation {ConversationID}.");
-                    nextState = new ConversationDoneState(ConversationID, this);
+                    Log.Error($"Ending conversation {ParentConversation.Id}.");
+                    nextState = new ConversationDoneState(ParentConversation, this);
                     break;
             }
 
-            Log.Debug($"{nameof(GetNextStateFromMessage)} (exit)");
+            Log.Debug($"{nameof(HandleMessage)} (exit)");
             return nextState;
         }
 
-        public override void OnStateStart()
+        public override Envelope Prepare()
         {
-            Log.Debug($"{nameof(OnStateStart)} (enter)");
+            Log.Debug($"{nameof(Prepare)} (enter)");
+
+            Envelope env = null;
 
             //Build request message
             var processNum = Config.GetInt(Config.BROKER_PROCESS_NUM);//TODO: allow number to be loaded from broker OR client -dsphar 3/3/2019
             var message = MessageFactory.GetMessage<StockStreamRequestMessage>(processNum, 0);
-            message.ConversationID = ConversationID;
+            message.ConversationID = ParentConversation.Id;
             var stockServerIp = Config.GetString(Config.STOCK_SERVER_IP);
             var stockSerevrPort = Config.GetInt(Config.STOCK_SERVER_PORT);
-            var env = new Envelope(message, stockServerIp, stockSerevrPort);
-            PostOffice.GetBox("0.0.0.0:0").Send(env);
+            env = new Envelope(message, stockServerIp, stockSerevrPort);
 
-            Log.Debug($"{nameof(OnStateStart)} (exit)");
+            Log.Debug($"{nameof(Prepare)} (exit)");
+            return env;
         }
     }
 }

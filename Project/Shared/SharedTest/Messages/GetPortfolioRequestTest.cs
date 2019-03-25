@@ -54,7 +54,7 @@ namespace SharedTest.Messages
                 Assets = assets,
                 Username = "foohooboo",
                 Password = "yolo",
-                RequestWriteAuthority = true,
+                WriteAuthority = true,
                 PortfolioID = 1
             };
 
@@ -70,7 +70,7 @@ namespace SharedTest.Messages
             Assert.AreEqual(serializedMessage.Account.Password, "yolo");
             Assert.AreEqual(serializedMessage.Account.Username, "foohooboo");
             Assert.AreEqual(serializedMessage.Account.PortfolioID, 1);
-            Assert.IsTrue(serializedMessage.Account.RequestWriteAuthority);
+            Assert.IsTrue(serializedMessage.Account.WriteAuthority);
         }
     }
 }

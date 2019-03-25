@@ -10,24 +10,25 @@ namespace Shared.Conversations.SharedStates
 
         private ConversationState PreviousState;
 
-        public ConversationDoneState(string conversationID, ConversationState previousStat) : base(conversationID) {
-            PreviousState = previousStat;
+        public ConversationDoneState(Conversation conv, ConversationState previousState) : base(conv) {
+            PreviousState = previousState;
         }
 
-        public override void OnStateStart()
+        public override Envelope Prepare()
         {
             //Conversation should be over, do nothing.
+            return null;
         }
 
-        public override ConversationState GetNextStateFromMessage(Envelope newMessage)
+        public override ConversationState HandleMessage(Envelope newMessage)
         {
-            Log.Debug($"{nameof(GetNextStateFromMessage)} (enter)");
+            Log.Debug($"{nameof(HandleMessage)} (enter)");
 
             ConversationState state = null;
-            Log.Warn($"Conversation {ConversationID} received message while in the Done state. Processing message as if conversation was in the previous state.");
-            state = PreviousState?.GetNextStateFromMessage(newMessage);
+            Log.Warn($"Conversation {ParentConversation.Id} received message while in the Done state. Processing message as if conversation was in the previous state.");
+            state = PreviousState?.HandleMessage(newMessage);
 
-            Log.Debug($"{nameof(GetNextStateFromMessage)} (exit)");
+            Log.Debug($"{nameof(HandleMessage)} (exit)");
             return state;
         }
 
@@ -37,9 +38,9 @@ namespace Shared.Conversations.SharedStates
             
             if (++CountRetrys > Config.GetInt(Config.DEFAULT_RETRY_COUNT))
             {
-                Log.Debug($"Conversation {ConversationID} being cleaned up.");
+                Log.Debug($"Conversation {ParentConversation.Id} being cleaned up.");
                 PreviousState = null;
-                ConversationManager.RemoveConversation(ConversationID);
+                ConversationManager.RemoveConversation(ParentConversation.Id);
             }
 
             Log.Debug($"{nameof(HandleTimeout)} (exit)");

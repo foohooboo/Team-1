@@ -3,6 +3,7 @@ using Shared.Conversations;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Linq;
 
 namespace Shared.Comms.MailService
 {
@@ -65,6 +66,13 @@ namespace Shared.Comms.MailService
 
             Log.Debug($"{nameof(SetIncomingMessageHandler)} (exit)");
         }
+
+        public static void ClearIncomingMessageHandler()
+        {
+            _incomingMessageHandler = null;
+        }
+
+
         public static Conversation HandleIncomingMessage(Envelope e)
         {
             Log.Debug($"{nameof(HandleIncomingMessage)} (enter)");
@@ -78,6 +86,33 @@ namespace Shared.Comms.MailService
 
             Log.Debug($"{nameof(HandleIncomingMessage)} (exit)");
             return conv;
+        }
+
+        public static void Send(Envelope env)
+        {
+            Log.Debug($"{nameof(Send)} (enter)");
+
+            //TODO: We need to cleanup this hack when we refactor the comm system and add TCP.
+            //Ideally, envelopes themselves have enough information for the comm system to determine
+            //which communicator to use. That way we can keep this method generic.
+            //Dsphar 3/20/19
+            if (PostBoxes.Count == 0)
+            {
+                Log.Error("Cannot send envelope. No valid postbox found.");
+            }
+            else
+            {
+                try
+                {
+                    PostBoxes.Values.First().Send(env);//<<----- HACK ALERT, sends envelope through any arbitrary box.
+                }
+                catch (Exception e)
+                {
+                    Log.Error($"Error sending message to {env.To}");
+                    Log.Error(e.Message);
+                }
+            }
+            Log.Debug($"{nameof(Send)} (exit)");
         }
     }
 }

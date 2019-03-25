@@ -17,6 +17,8 @@ namespace StockServer.Conversations.StockStreamRequest
             Log.Debug($"{nameof(ConvR_StockStreamRequest)} (enter)");
 
             //TODO: save endpoint/connection/postbox for future stock price updates
+            //TODO: move following code into an initial state, as all conversation logic should be done in states
+            //this ensures proper behavior in the timeout/ retry system.  -Dsphar 3/22/2019
 
             var responseMessage = MessageFactory.GetMessage<StockStreamResponseMessage>(Config.GetInt(Config.STOCK_SERVER_PROCESS_NUM), 0) as StockStreamResponseMessage;
             responseMessage.RecentHistory = StockData.GetRecentHistory(5);
@@ -28,7 +30,7 @@ namespace StockServer.Conversations.StockStreamRequest
             var box = PostOffice.GetBox($"0.0.0.0:{Config.GetInt(Config.STOCK_SERVER_PORT)}");
             box.Send(responseEnvelope);
 
-            SetInitialState(new ConversationDoneState(ConversationId, null));
+            SetInitialState(new ConversationDoneState(this, null));
             //^Since there is no response to this conversation's first message, we can end the conversation immediately.
 
             Log.Debug($"{nameof(ConvR_StockStreamRequest)} (exit)");

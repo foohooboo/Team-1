@@ -22,7 +22,7 @@ namespace SharedTest.PortfolioTests
             Assert.AreEqual(account.PortfolioID, 0);
             Assert.IsNull(account.Password);
             Assert.IsNull(account.Username);
-            Assert.IsFalse(account.RequestWriteAuthority);
+            Assert.IsFalse(account.WriteAuthority);
         }
 
         [TestMethod]
@@ -52,7 +52,7 @@ namespace SharedTest.PortfolioTests
                 Assets = assets,
                 Username = "foohooboo",
                 Password = "yolo",
-                RequestWriteAuthority = true,
+                WriteAuthority = true,
                 PortfolioID = 1
             };
 
@@ -60,7 +60,7 @@ namespace SharedTest.PortfolioTests
             Assert.AreEqual(account.PortfolioID, 1);
             Assert.AreEqual(account.Username, "foohooboo");
             Assert.AreEqual(account.Password, "yolo");
-            Assert.IsTrue(account.RequestWriteAuthority);
+            Assert.IsTrue(account.WriteAuthority);
         }
 
         [TestMethod]

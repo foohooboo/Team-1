@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csp
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Shared", "..\Shared\Shared\Shared.shproj", "{AC426B38-A9C8-4649-B9B2-3E755BD5AAB0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientTest", "ClientTest\ClientTest.csproj", "{A65FD4BD-C7F2-48A3-88A5-E35F119D70CA}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		..\Shared\Shared\Shared.projitems*{2dab74a3-87ea-44da-af09-7e2cc0bb9f4f}*SharedItemsImports = 4
@@ -21,6 +23,10 @@ Global
 		{2DAB74A3-87EA-44DA-AF09-7E2CC0BB9F4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2DAB74A3-87EA-44DA-AF09-7E2CC0BB9F4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2DAB74A3-87EA-44DA-AF09-7E2CC0BB9F4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A65FD4BD-C7F2-48A3-88A5-E35F119D70CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A65FD4BD-C7F2-48A3-88A5-E35F119D70CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A65FD4BD-C7F2-48A3-88A5-E35F119D70CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A65FD4BD-C7F2-48A3-88A5-E35F119D70CA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

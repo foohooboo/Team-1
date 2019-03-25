@@ -1,6 +1,5 @@
 ﻿using log4net;
 using Shared.Comms.MailService;
-using Shared.Conversations.SharedStates;
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
@@ -31,19 +30,14 @@ namespace Shared.Conversations
                     var timeout = Config.GetInt(Config.DEFAULT_TIMEOUT);
                     while (IsRunning)
                     {
-                        foreach(var conv in conversations)
+                        foreach(var conv in conversations.Values)
                         {
-                            var timeSinceUpdate = (int)(DateTime.Now - conv.Value.LastUpdateTime).TotalMilliseconds;
+                            var timeSinceUpdate = (int)(DateTime.Now - conv.LastUpdateTime).TotalMilliseconds;
                             if (timeSinceUpdate > timeout){
-                                var currentState = conv.Value.CurrentState;
-                                if (!(currentState is ConversationDoneState))
-                                {
-                                    Log.Warn($"Raising timeout event for Conversation {conv.Key}.");
-                                }
-                                currentState.HandleTimeout();
+                                conv.HandleTimeout();
                             }
                         }
-                        Thread.Sleep(timeout);
+                        Thread.Sleep(15);
                     }
                 }).Start();
             }
@@ -62,8 +56,8 @@ namespace Shared.Conversations
             if (IsRunning)
             {
                 IsRunning = false;
-                SetConversationBuilder(null);
-                PostOffice.SetIncomingMessageHandler(null);
+                conversationBuilder = null;
+                PostOffice.ClearIncomingMessageHandler();
                 conversations.Clear();
             }
             else
@@ -78,16 +72,16 @@ namespace Shared.Conversations
         {
             Log.Debug($"{nameof(AddConversation)} (enter)");
 
-            if (conversations.ContainsKey(conversation.ConversationId))
+            if (conversations.ContainsKey(conversation.Id))
             {
-                Log.Error($"Conversation Manager already has a conversation for {conversation.ConversationId}.");
+                Log.Error($"Conversation Manager already has a conversation for {conversation.Id}.");
             }
             else
             {
-                if (conversations.TryAdd(conversation.ConversationId, conversation))
+                if (conversations.TryAdd(conversation.Id, conversation))
                     conversation.StartConversation();
                 else
-                    Log.Error($"Could not add {conversation.ConversationId} to conversations.");
+                    Log.Error($"Could not add {conversation.Id} to conversations.");
             }
 
             Log.Debug($"{nameof(AddConversation)} (exit)");

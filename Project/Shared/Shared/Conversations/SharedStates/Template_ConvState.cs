@@ -8,11 +8,11 @@ namespace Shared.Conversations.SharedStates
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public Template_ConvState(int processNum) : base(ConversationManager.GenerateNextId(processNum)) { }
+        public Template_ConvState(Conversation conv) : base(conv) { }
 
-        public override ConversationState GetNextStateFromMessage(Envelope incomingMessage)
+        public override ConversationState HandleMessage(Envelope incomingMessage)
         {
-            Log.Debug($"{nameof(GetNextStateFromMessage)} (enter)");
+            Log.Debug($"{nameof(HandleMessage)} (enter)");
 
             ConversationState nextState = null;
 
@@ -22,34 +22,36 @@ namespace Shared.Conversations.SharedStates
                 //you should set nextState to the next ConversationState expected in the conversation.
                 case ErrorMessage m:
                     Log.Error($"Received error message as reply...\n{m.ErrorText}");
-                    nextState = new ConversationDoneState(ConversationID, this);
+                    nextState = new ConversationDoneState(ParentConversation, this);
                     break;
                 default:
-                    Log.Error($"No logic to process incoming message of type {incomingMessage.Contents?.GetType()}.");
-                    Log.Error($"Forcing conversation {ConversationID} into done state.");
-                    nextState = new ConversationDoneState(ConversationID, this);
+                    Log.Error($"No logic to process incoming message of type {incomingMessage.Contents?.GetType()}. Ignoring message.");
                     break;
             }
 
-            Log.Debug($"{nameof(GetNextStateFromMessage)} (exit)");
+            Log.Debug($"{nameof(HandleMessage)} (exit)");
             return nextState;
         }
 
-        public override void OnStateStart()
+        public override Envelope Prepare()
         {
-            Log.Debug($"{nameof(OnStateStart)} (enter)");
+            Log.Debug($"{nameof(Prepare)} (enter)");
+
+            Envelope env = null;
 
             //TODO: Add any logic this state needs to perform when first started.
-            //This logic is likely building and sending a message.
+            //If this state is going to send a message to another process, set
+            //the env variable.
 
-            Log.Debug($"{nameof(OnStateStart)} (exit)");
+            Log.Debug($"{nameof(Prepare)} (exit)");
+            return env;
         }
 
         //OPTIONAL: function to add logic when state is ending. Default is do nothing.
         //public override void OnStateEnd() { }
 
         //OPTIONAL: function to handle a state timeout event. Default is to
-        //re-call the OnStateStart method up to the configured number of retries,
+        //re-call the Send method up to the configured number of retries,
         //then force the conversation into the done state.
         //public override void HandleTimeout() { }
     }
