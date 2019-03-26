@@ -45,17 +45,12 @@ namespace Client.Conversations
         public override Envelope Prepare()
         {
             Log.Debug($"{nameof(Prepare)} (enter)");
-
-            Envelope env = null;
-
+                       
             var m = MessageFactory.GetMessage<TransactionRequestMessage>(
                 Config.GetInt(Config.CLIENT_PROCESS_NUM),
                 (Conversation as InitiateTransactionConversation).PortfoliId
                 ) as TransactionRequestMessage;
-
-            env.Contents = m;
-            IPAddress.TryParse(Config.GetString(Config.BROKER_IP), out IPAddress ip);
-            env.To = new IPEndPoint(ip, Config.GetInt(Config.BROKER_PORT));
+            Envelope env = new Envelope(m, Config.GetString(Config.BROKER_IP), Config.GetInt(Config.BROKER_PORT));
 
             Log.Debug($"{nameof(Prepare)} (exit)");
             return env;

@@ -42,8 +42,6 @@ namespace ClientTest.Conversations
 
             //setup response message and mock
             var mock = new Mock<InitTransactionStartingState>(conv) { CallBase = true };
-            mock.Setup(prep => prep.DoPrepare()).Verifiable();//ensure DoPrepare is called.
-            mock.Setup(st => st.OnHandleMessage(It.IsAny<Envelope>())).CallBase().Verifiable(); ;
             mock.Setup(st => st.Send())//Pretend message is sent and response comes back...
                 .Callback(()=> {
                 var responseMessage = new PortfolioUpdateMessage() { ConversationID = conv.Id, MessageID = "responceMessageID1234" };
@@ -55,14 +53,14 @@ namespace ClientTest.Conversations
             conv.SetInitialState(mock.Object as InitTransactionStartingState);
 
             Assert.IsTrue(conv.CurrentState is InitTransactionStartingState);
-            mock.Verify(state => state.DoPrepare(), Times.Never);
+            mock.Verify(state => state.Prepare(), Times.Never);
             mock.Verify(state => state.Send(), Times.Never);
 
             ConversationManager.AddConversation(conv);
 
             Assert.IsFalse(conv.CurrentState is InitTransactionStartingState);
             Assert.IsTrue(conv.CurrentState is ConversationDoneState);
-            mock.Verify(state => state.DoPrepare(), Times.Once);
+            mock.Verify(state => state.Prepare(), Times.Once);
             mock.Verify(state => state.Send(), Times.Once);
         }
 
@@ -78,7 +76,7 @@ namespace ClientTest.Conversations
 
             //setup response message and mock
             var mock = new Mock<InitTransactionStartingState>(conv) { CallBase = true };
-            mock.Setup(prep => prep.DoPrepare()).Verifiable();//ensure DoPrepare is called.
+            mock.Setup(prep => prep.Prepare()).Verifiable();//ensure DoPrepare is called.
             mock.Setup(st => st.OnHandleMessage(It.IsAny<Envelope>())).CallBase();//Skip mock's HandleMessage override.
             mock.Setup(st => st.Send())//Pretend message is sent and response comes back...
                 .Callback(() => {
@@ -94,13 +92,13 @@ namespace ClientTest.Conversations
             conv.SetInitialState(mock.Object as InitTransactionStartingState);
 
             Assert.IsTrue(conv.CurrentState is InitTransactionStartingState);
-            mock.Verify(state => state.DoPrepare(), Times.Never);
+            mock.Verify(state => state.Prepare(), Times.Never);
             mock.Verify(state => state.Send(), Times.Never);
 
             ConversationManager.AddConversation(conv);
 
             Assert.IsTrue(conv.CurrentState is InitTransactionStartingState);
-            mock.Verify(state => state.DoPrepare(), Times.Once);
+            mock.Verify(state => state.Prepare(), Times.Once);
             mock.Verify(state => state.Send(), Times.Once);
             mock.Verify(state => state.HandleTimeout(), Times.Never);
 
@@ -108,7 +106,7 @@ namespace ClientTest.Conversations
 
             Assert.IsFalse(conv.CurrentState is InitTransactionStartingState);
             Assert.IsTrue(conv.CurrentState is ConversationDoneState);
-            mock.Verify(state => state.DoPrepare(), Times.Once);
+            mock.Verify(state => state.Prepare(), Times.Once);
             mock.Verify(state => state.Send(), Times.Exactly(2));
             mock.Verify(state => state.HandleTimeout(), Times.Exactly(1));
         }
@@ -124,7 +122,7 @@ namespace ClientTest.Conversations
 
             //setup response message and mock
             var mock = new Mock<InitTransactionStartingState>(conv) { CallBase = true };
-            mock.Setup(prep => prep.DoPrepare()).Verifiable();//ensure DoPrepare is called.
+            mock.Setup(prep => prep.Prepare()).Verifiable();//ensure DoPrepare is called.
             mock.Setup(st => st.OnHandleMessage(It.IsAny<Envelope>())).CallBase();//Skip mock's HandleMessage override.
             mock.Setup(st => st.Send()).CallBase().Verifiable();
 
@@ -132,22 +130,22 @@ namespace ClientTest.Conversations
             conv.SetInitialState(mock.Object as InitTransactionStartingState);
 
             Assert.IsTrue(conv.CurrentState is InitTransactionStartingState);
-            mock.Verify(state => state.DoPrepare(), Times.Never);
+            mock.Verify(state => state.Prepare(), Times.Never);
             mock.Verify(state => state.Send(), Times.Never);
 
             ConversationManager.AddConversation(conv);
 
             Assert.IsTrue(conv.CurrentState is InitTransactionStartingState);
-            mock.Verify(state => state.DoPrepare(), Times.Once);
+            mock.Verify(state => state.Prepare(), Times.Once);
             mock.Verify(state => state.Send(), Times.Once);
             mock.Verify(state => state.HandleTimeout(), Times.Never);
 
-            Thread.Sleep((int)(Config.GetInt(Config.DEFAULT_TIMEOUT) * (Config.GetInt(Config.DEFAULT_RETRY_COUNT)+1)*1.5 ));
+            Thread.Sleep((int)(Config.GetInt(Config.DEFAULT_TIMEOUT) * (Config.GetInt(Config.DEFAULT_RETRY_COUNT)+1)*1.1 ));
 
             Assert.IsFalse(conv.CurrentState is InitTransactionStartingState);
             Assert.IsTrue(conv.CurrentState is ConversationDoneState);
             mock.Verify(state => state.HandleMessage(It.IsAny<Envelope>()), Times.Never);
-            mock.Verify(state => state.DoPrepare(), Times.Once);
+            mock.Verify(state => state.Prepare(), Times.Once);
             mock.Verify(state => state.Send(), Times.Exactly(3));
             mock.Verify(state => state.HandleTimeout(), Times.Exactly(3));
         }

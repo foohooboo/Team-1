@@ -74,8 +74,6 @@ namespace SharedTest.Conversations
 
             //setup mock with response message
             var mock = new Mock<InitialState_ConvI_StockStreamRequest>(conv) { CallBase = true };
-            mock.Setup(prep => prep.DoPrepare()).CallBase().Verifiable();
-            mock.Setup(st => st.OnHandleMessage(It.IsAny<Envelope>())).CallBase();
             mock.Setup(st => st.Send())
                 .Callback(() =>
                 {
@@ -95,14 +93,14 @@ namespace SharedTest.Conversations
             conv.SetInitialState(mock.Object as InitialState_ConvI_StockStreamRequest);
 
             Assert.IsTrue(conv.CurrentState is InitialState_ConvI_StockStreamRequest);
-            mock.Verify(state => state.DoPrepare(), Times.Never);
+            mock.Verify(state => state.Prepare(), Times.Never);
             mock.Verify(state => state.Send(), Times.Never);
             Assert.IsFalse(ConversationManager.ConversationExists(conv.Id));
 
             ConversationManager.AddConversation(conv);
 
             Assert.IsTrue(conv.CurrentState is InitialState_ConvI_StockStreamRequest);
-            mock.Verify(state => state.DoPrepare(), Times.Once);
+            mock.Verify(state => state.Prepare(), Times.Once);
             mock.Verify(state => state.Send(), Times.Once);
             mock.Verify(state => state.HandleTimeout(), Times.Never);
             Assert.IsTrue(ConversationManager.ConversationExists(conv.Id));
@@ -111,7 +109,7 @@ namespace SharedTest.Conversations
 
             Assert.IsFalse(conv.CurrentState is InitialState_ConvI_StockStreamRequest);
             Assert.IsTrue(conv.CurrentState is ConversationDoneState);
-            mock.Verify(state => state.DoPrepare(), Times.Once);
+            mock.Verify(state => state.Prepare(), Times.Once);
             mock.Verify(state => state.Send(), Times.Exactly(2));
             mock.Verify(state => state.HandleTimeout(), Times.Exactly(1));
             Assert.IsTrue(ConversationManager.ConversationExists(conv.Id));
@@ -128,8 +126,6 @@ namespace SharedTest.Conversations
 
             //setup mock with response message
             var mock = new Mock<InitialState_ConvI_StockStreamRequest>(conv) { CallBase = true };
-            mock.Setup(prep => prep.DoPrepare()).CallBase().Verifiable();
-            mock.Setup(st => st.OnHandleMessage(It.IsAny<Envelope>())).CallBase();
             mock.Setup(st => st.Send())
                 .Callback(() =>
                 {
@@ -139,14 +135,14 @@ namespace SharedTest.Conversations
             conv.SetInitialState(mock.Object as InitialState_ConvI_StockStreamRequest);
 
             Assert.IsTrue(conv.CurrentState is InitialState_ConvI_StockStreamRequest);
-            mock.Verify(state => state.DoPrepare(), Times.Never);
+            mock.Verify(state => state.Prepare(), Times.Never);
             mock.Verify(state => state.Send(), Times.Never);
             Assert.IsFalse(ConversationManager.ConversationExists(conv.Id));
 
             ConversationManager.AddConversation(conv);
 
             Assert.IsTrue(conv.CurrentState is InitialState_ConvI_StockStreamRequest);
-            mock.Verify(state => state.DoPrepare(), Times.Once);
+            mock.Verify(state => state.Prepare(), Times.Once);
             mock.Verify(state => state.Send(), Times.Once);
             mock.Verify(state => state.HandleTimeout(), Times.Never);
             Assert.IsTrue(ConversationManager.ConversationExists(conv.Id));
@@ -156,7 +152,7 @@ namespace SharedTest.Conversations
             Assert.IsFalse(conv.CurrentState is InitialState_ConvI_StockStreamRequest);
             Assert.IsTrue(conv.CurrentState is ConversationDoneState);
             mock.Verify(state => state.HandleMessage(It.IsAny<Envelope>()), Times.Never);
-            mock.Verify(state => state.DoPrepare(), Times.Once);
+            mock.Verify(state => state.Prepare(), Times.Once);
             mock.Verify(state => state.Send(), Times.Exactly(3));
             mock.Verify(state => state.HandleTimeout(), Times.Exactly(3));
             Assert.IsTrue(ConversationManager.ConversationExists(conv.Id));

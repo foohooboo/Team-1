@@ -83,7 +83,7 @@ namespace BrokerTest.Conversations.TransasctionRequest
 
             Assert.IsNotNull(localConv);
             Assert.IsTrue(localConv.CurrentState is ConversationDoneState);
-            mock.Verify(state => state.DoPrepare(), Times.Once);
+            mock.Verify(state => state.Prepare(), Times.Once);
             mock.Verify(state => state.Send(), Times.Once);
             mock.Verify(state => state.HandleTimeout(), Times.Never);
         }
@@ -118,7 +118,7 @@ namespace BrokerTest.Conversations.TransasctionRequest
 
             Assert.IsNotNull(localConv);
             Assert.IsTrue(localConv.CurrentState is ConversationDoneState);
-            mock.Verify(state => state.DoPrepare(), Times.Once);
+            mock.Verify(state => state.Prepare(), Times.Once);
             mock.Verify(state => state.Send(), Times.Once);
             mock.Verify(state => state.HandleTimeout(), Times.Never);
 
@@ -128,7 +128,7 @@ namespace BrokerTest.Conversations.TransasctionRequest
 
             Assert.IsNotNull(localConv);
             Assert.IsTrue(localConv.CurrentState is ConversationDoneState);
-            mock.Verify(state => state.DoPrepare(), Times.Once);
+            mock.Verify(state => state.Prepare(), Times.Once);
             mock.Verify(state => state.Send(), Times.Exactly(2));
             mock.Verify(state => state.HandleTimeout(), Times.Never);
         }

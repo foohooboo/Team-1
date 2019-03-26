@@ -38,7 +38,8 @@ namespace Shared
 
         public static int GetInt(string key)
         {
-            if (int.TryParse(GetString(key), out int val))
+            var value = GetString(key);
+            if (int.TryParse(value, out int val))
             {
                 return val;
             }

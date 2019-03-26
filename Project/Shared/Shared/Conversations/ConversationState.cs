@@ -13,6 +13,7 @@ namespace Shared.Conversations
         public Envelope OutboundMessage { get; private set; }
         protected int CountRetrys;
         protected ConversationState PreviousState = null;
+        private bool StatePrepared = false;
 
         protected readonly string MessageId = "";
         protected readonly IPEndPoint To = null;
@@ -111,9 +112,10 @@ namespace Shared.Conversations
 
         public virtual void DoPrepare()
         {
-            if (OutboundMessage == null) //Only do this once. If Env not null, this method has already been called, do nothing.
+            if (!StatePrepared) //Only do this once. If Env not null, this method has already been called, do nothing.
             {
                 OutboundMessage = Prepare();
+                StatePrepared = true;
             }
         }
                
