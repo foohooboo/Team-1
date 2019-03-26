@@ -23,7 +23,7 @@
         </Grid.ColumnDefinitions>
         <Label Content="Hello World! From the client." HorizontalAlignment="Left" Margin="15,71,0,0" VerticalAlignment="Top" Width="368" Height="26" Grid.ColumnSpan="2"/>
         <TextBlock Text="{Binding HelloTextLocal}" TextWrapping="WrapWithOverflow" HorizontalAlignment="Left" Margin="15,170,0,0" VerticalAlignment="Top" Width="368" Height="59" Grid.ColumnSpan="2"/>
-        <ListBox x:Name="listBox" HorizontalAlignment="Left" Height="419" VerticalAlignment="Top" Width="198" RenderTransformOrigin="1.812,0.484" Grid.Column="3" Grid.RowSpan="2" Background=""/>
+        <ListBox x:Name="listBox" HorizontalAlignment="Left" Height="419" VerticalAlignment="Top" Width="198" RenderTransformOrigin="1.812,0.484" Grid.Column="3" Grid.RowSpan="2" />
         <Border Grid.Column="2" Margin="0,0,0,0" Grid.Row="1">
             <Grid HorizontalAlignment="Left" Height="136" VerticalAlignment="Bottom" Width="198" >
                 

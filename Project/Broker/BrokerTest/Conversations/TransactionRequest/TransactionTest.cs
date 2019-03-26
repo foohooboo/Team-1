@@ -9,7 +9,7 @@ using Shared.Conversations.SharedStates;
 using Shared.MarketStructures;
 using Shared.Portfolio;
 
-namespace BrokerTest
+namespace BrokerTest.Conversations.TransasctionRequest
 {
     [TestClass]
     public class TransactionTest
@@ -26,8 +26,7 @@ namespace BrokerTest
                     conv = new RespondTransactionConversation(m, env.To);
 
                     //setup response message as mock
-                    mock = new Mock<RespondTransaction_InitialState>(conv, m.MessageID);
-                    mock.Setup(prep => prep.DoPrepare()).CallBase().Verifiable();
+                    mock = new Mock<RespondTransaction_InitialState>(conv, m.MessageID) { CallBase = true };
                     mock.Setup(st => st.HandleMessage(It.IsAny<Envelope>())).CallBase().Verifiable();
                     mock.Setup(st => st.Send()).CallBase().Verifiable();
 
@@ -61,6 +60,7 @@ namespace BrokerTest
             int ClientPort = 5682;
             int RequestQuanitity = 12;
             PortfolioManager.TryToCreate("TestRequestSucceed", "password", out Portfolio portfolio);
+            PortfolioManager.ReleaseLock(portfolio);
 
             var testStock = new Stock("TST", "Test Stock");
             var vStock = new ValuatedStock(("1984-02-22,1,2,3,100,5").Split(','), testStock);
@@ -96,6 +96,7 @@ namespace BrokerTest
             int ClientPort = 5682;
             int RequestQuanitity = 12;
             PortfolioManager.TryToCreate("TestRequestSucceedAfterRetry", "password", out Portfolio portfolio);
+            PortfolioManager.ReleaseLock(portfolio);
 
             var testStock = new Stock("TST", "Test Stock");
             var vStock = new ValuatedStock(("1984-02-22,1,2,3,100,5").Split(','), testStock);

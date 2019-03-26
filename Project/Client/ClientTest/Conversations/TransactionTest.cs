@@ -41,15 +41,15 @@ namespace ClientTest.Conversations
             var conv = new InitiateTransactionConversation(portfolioId,vStock,1);
 
             //setup response message and mock
-            var mock = new Mock<InitTransactionStartingState>(conv);
+            var mock = new Mock<InitTransactionStartingState>(conv) { CallBase = true };
             mock.Setup(prep => prep.DoPrepare()).Verifiable();//ensure DoPrepare is called.
-            mock.Setup(st => st.HandleMessage(It.IsAny<Envelope>())).CallBase();//Skip mock's HandleMessage override.
+            mock.Setup(st => st.OnHandleMessage(It.IsAny<Envelope>())).CallBase().Verifiable(); ;
             mock.Setup(st => st.Send())//Pretend message is sent and response comes back...
                 .Callback(()=> {
-                var responseMessage = new PortfolioUpdateMessage() { ConversationID = conv.Id };
+                var responseMessage = new PortfolioUpdateMessage() { ConversationID = conv.Id, MessageID = "responceMessageID1234" };
                 var responseEnv = new Envelope(responseMessage);
                 ConversationManager.ProcessIncomingMessage(responseEnv); 
-            });
+            }).CallBase().Verifiable();
             
             //execute test
             conv.SetInitialState(mock.Object as InitTransactionStartingState);
@@ -79,7 +79,7 @@ namespace ClientTest.Conversations
             //setup response message and mock
             var mock = new Mock<InitTransactionStartingState>(conv) { CallBase = true };
             mock.Setup(prep => prep.DoPrepare()).Verifiable();//ensure DoPrepare is called.
-            mock.Setup(st => st.HandleMessage(It.IsAny<Envelope>())).CallBase();//Skip mock's HandleMessage override.
+            mock.Setup(st => st.OnHandleMessage(It.IsAny<Envelope>())).CallBase();//Skip mock's HandleMessage override.
             mock.Setup(st => st.Send())//Pretend message is sent and response comes back...
                 .Callback(() => {
                     if (++requests > 1)
@@ -88,7 +88,7 @@ namespace ClientTest.Conversations
                         var responseEnv = new Envelope(responseMessage);
                         ConversationManager.ProcessIncomingMessage(responseEnv);
                     }
-                });
+                }).CallBase().Verifiable();
 
             //execute test
             conv.SetInitialState(mock.Object as InitTransactionStartingState);
@@ -125,8 +125,8 @@ namespace ClientTest.Conversations
             //setup response message and mock
             var mock = new Mock<InitTransactionStartingState>(conv) { CallBase = true };
             mock.Setup(prep => prep.DoPrepare()).Verifiable();//ensure DoPrepare is called.
-            mock.Setup(st => st.HandleMessage(It.IsAny<Envelope>())).CallBase();//Skip mock's HandleMessage override.
-            mock.Setup(st => st.Send()).Verifiable();
+            mock.Setup(st => st.OnHandleMessage(It.IsAny<Envelope>())).CallBase();//Skip mock's HandleMessage override.
+            mock.Setup(st => st.Send()).CallBase().Verifiable();
 
             //execute test
             conv.SetInitialState(mock.Object as InitTransactionStartingState);
@@ -146,10 +146,10 @@ namespace ClientTest.Conversations
 
             Assert.IsFalse(conv.CurrentState is InitTransactionStartingState);
             Assert.IsTrue(conv.CurrentState is ConversationDoneState);
+            mock.Verify(state => state.HandleMessage(It.IsAny<Envelope>()), Times.Never);
             mock.Verify(state => state.DoPrepare(), Times.Once);
             mock.Verify(state => state.Send(), Times.Exactly(3));
             mock.Verify(state => state.HandleTimeout(), Times.Exactly(3));
-            mock.Verify(state => state.HandleMessage(It.IsAny<Envelope>()), Times.Never);
         }
     }
 }

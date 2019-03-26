@@ -2,7 +2,7 @@
 using StockServer.Data;
 using Shared.MarketStructures;
 
-namespace StockServerTest
+namespace StockServerTest.Data
 {
 
     [TestClass]
