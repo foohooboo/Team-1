@@ -75,14 +75,14 @@ namespace Shared.Conversations
         {
             Log.Debug($"{nameof(UpdateState)} (enter)");
 
-            var nextState = CurrentState.HandleMessage(incomingEnvelope);
+            var nextState = CurrentState?.OnHandleMessage(incomingEnvelope);
             if (nextState != null)
             {
                 UpdateState(nextState);
             }
             else
             {
-                Log.Warn($"Cannot create next {Id} conversation state from message {incomingEnvelope.Contents.MessageID}.");
+                Log.Warn($"Cannot create next {Id} conversation state from message {incomingEnvelope.Contents.MessageID}. Ignoring.");
             }
 
             Log.Debug($"{nameof(UpdateState)} (exit)");
@@ -91,18 +91,25 @@ namespace Shared.Conversations
         public void UpdateState(ConversationState nextState)
         {
             Log.Debug($"{nameof(UpdateState)} (enter)");
-            
-            if (nextState != null)
+
+            if (CurrentState == null)
             {
-                LastUpdateTime = DateTime.Now;
-                CurrentState.Cleanup();
-                CurrentState = nextState;
-                CurrentState.DoPrepare();
-                CurrentState.Send();
+                Log.Error($"Conversation {Id} has no current state set. Ignoring message.");
             }
             else
             {
-                Log.Warn($"Cannot update conversation to a null state.");
+                if (nextState != null)
+                {
+                    LastUpdateTime = DateTime.Now;
+                    CurrentState.Cleanup();
+                    CurrentState = nextState;
+                    CurrentState.DoPrepare();
+                    CurrentState.Send();
+                }
+                else
+                {
+                    Log.Warn($"Cannot update conversation to a null state.");
+                }
             }
 
             Log.Debug($"{nameof(UpdateState)} (exit)");

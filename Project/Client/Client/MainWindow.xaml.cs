@@ -16,9 +16,12 @@ namespace Client
         private Portfolio myPortfolio = new Shared.Portfolio.Portfolio();
         SortedList<string, string> HighScores =new SortedList<string, string>();
         private Shared.MarketStructures.Stock SelectedStock=new Stock("AAPL","Apple Inc.");
-        private float MadeUpValue = 123;
-        private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        public string StockCount { get; set; } = "0";
 
+        
+
+
+        private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private HelloWorld helloWorld = new HelloWorld();
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -67,11 +70,17 @@ namespace Client
             //This function should check if the transaction is possible and if not will just do its best.
             //Instead of selling 100 it just sells what you have.
             //instead of buying 100 it just buys as much as your cash can afford.
-
+            HelloTextLocal=amount.ToString();
         }
         private void SellOutEvent(object sender, RoutedEventArgs e)
         {
-            SendTransaction(-myPortfolio.GetAsset(SelectedStock.Symbol).Quantity);
+            try {
+                Asset holder = myPortfolio.GetAsset(SelectedStock.Symbol);
+                SendTransaction(-holder.Quantity);
+            }
+            catch { HelloTextLocal = SelectedStock.Symbol + " not found in dictionary"; }
+            
+            
         }
 
         private void Sell100Event(object sender, RoutedEventArgs e)
@@ -100,15 +109,22 @@ namespace Client
 
         private void BuyEvent(object sender, RoutedEventArgs e)
         {
-
+            SendTransaction(Int32.Parse(StockCount));
+            
         }
 
         private void SellEvent(object sender, RoutedEventArgs e)
         {
-
+            SendTransaction(-Int32.Parse(StockCount));
+           
         }
 
         private void ListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+
+        }
+
+        public void Button_Click_1(object sender, EventArgs e)
         {
 
         }

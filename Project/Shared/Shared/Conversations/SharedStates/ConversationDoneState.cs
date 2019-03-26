@@ -8,10 +8,8 @@ namespace Shared.Conversations.SharedStates
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        private ConversationState PreviousState;
-
-        public ConversationDoneState(Conversation conv, ConversationState previousState) : base(conv) {
-            PreviousState = previousState;
+        public ConversationDoneState(Conversation conv, ConversationState previousState) : base(conv, previousState) {
+            
         }
 
         public override Envelope Prepare()
@@ -25,8 +23,8 @@ namespace Shared.Conversations.SharedStates
             Log.Debug($"{nameof(HandleMessage)} (enter)");
 
             ConversationState state = null;
-            Log.Warn($"Conversation {ParentConversation.Id} received message while in the Done state. Processing message as if conversation was in the previous state.");
-            state = PreviousState?.HandleMessage(newMessage);
+            Log.Warn($"Conversation {Conversation.Id} received message while in the Done state. Processing message as if conversation was in the previous state.");
+            state = PreviousState?.OnHandleMessage(newMessage);
 
             Log.Debug($"{nameof(HandleMessage)} (exit)");
             return state;
@@ -38,9 +36,9 @@ namespace Shared.Conversations.SharedStates
             
             if (++CountRetrys > Config.GetInt(Config.DEFAULT_RETRY_COUNT))
             {
-                Log.Debug($"Conversation {ParentConversation.Id} being cleaned up.");
+                Log.Debug($"Conversation {Conversation.Id} being cleaned up.");
                 PreviousState = null;
-                ConversationManager.RemoveConversation(ParentConversation.Id);
+                ConversationManager.RemoveConversation(Conversation.Id);
             }
 
             Log.Debug($"{nameof(HandleTimeout)} (exit)");

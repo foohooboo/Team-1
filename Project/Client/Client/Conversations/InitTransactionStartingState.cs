@@ -12,7 +12,7 @@ namespace Client.Conversations
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public InitTransactionStartingState(Conversation conv) : base(conv) {
+        public InitTransactionStartingState(Conversation conv) : base(conv, null) {
             
         }
 
@@ -27,11 +27,11 @@ namespace Client.Conversations
                 case PortfolioUpdateMessage m:
                     Log.Info($"Received PortfolioUpdate message as reply.");
                     //TODO: Update portfolio elements
-                    nextState = new ConversationDoneState(ParentConversation, this);
+                    nextState = new ConversationDoneState(Conversation, this);
                     break;
                 case ErrorMessage m:
                     Log.Error($"Received error message as reply...\n{m.ErrorText}");
-                    nextState = new ConversationDoneState(ParentConversation, this);
+                    nextState = new ConversationDoneState(Conversation, this);
                     break;
                 default:
                     Log.Error($"No logic to process incoming message of type {incomingMessage.Contents?.GetType()}. Ignoring message.");
@@ -45,17 +45,12 @@ namespace Client.Conversations
         public override Envelope Prepare()
         {
             Log.Debug($"{nameof(Prepare)} (enter)");
-
-            Envelope env = null;
-
+                       
             var m = MessageFactory.GetMessage<TransactionRequestMessage>(
                 Config.GetInt(Config.CLIENT_PROCESS_NUM),
-                (ParentConversation as InitiateTransactionConversation).PortfoliId
+                (Conversation as InitiateTransactionConversation).PortfoliId
                 ) as TransactionRequestMessage;
-
-            env.Contents = m;
-            IPAddress.TryParse(Config.GetString(Config.BROKER_IP), out IPAddress ip);
-            env.To = new IPEndPoint(ip, Config.GetInt(Config.BROKER_PORT));
+            Envelope env = new Envelope(m, Config.GetString(Config.BROKER_IP), Config.GetInt(Config.BROKER_PORT));
 
             Log.Debug($"{nameof(Prepare)} (exit)");
             return env;
