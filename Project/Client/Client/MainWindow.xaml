@@ -18,33 +18,50 @@
 
             <ColumnDefinition/>
             <ColumnDefinition/>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="198"/>
             <ColumnDefinition Width="198"/>
         </Grid.ColumnDefinitions>
         <Label Content="Hello World! From the client." HorizontalAlignment="Left" Margin="15,71,0,0" VerticalAlignment="Top" Width="368" Height="26" Grid.ColumnSpan="2"/>
         <TextBlock Text="{Binding HelloTextLocal}" TextWrapping="WrapWithOverflow" HorizontalAlignment="Left" Margin="15,170,0,0" VerticalAlignment="Top" Width="368" Height="59" Grid.ColumnSpan="2"/>
-        <ListBox x:Name="listBox" HorizontalAlignment="Left" Height="419" VerticalAlignment="Top" Width="198" RenderTransformOrigin="1.812,0.484" Grid.Column="3" Grid.RowSpan="2" />
+        <ListBox x:Name="listBox" Grid.Column="3" Grid.RowSpan="2" Background="#00000000" SelectionChanged="ListBox_SelectionChanged">
+            <Canvas Height="52" Width="183">
+                <Rectangle Height="52" Width="183" />
+                <TextBlock x:Name="textBlock1" TextWrapping="Wrap" Text="TextBlock" Margin="2"/>
+            </Canvas>
+            <Canvas Height="52" Width="183">
+                <Rectangle Height="52" Width="183" />
+                <TextBlock x:Name="textBlock2" TextWrapping="Wrap" Text="TextBlock" Margin="2"/>
+            </Canvas>
+            <Canvas Height="52" Width="183">
+                <Rectangle Height="52" Width="183" />
+                <TextBlock x:Name="textBlock3" TextWrapping="Wrap" Text="TextBlock" Margin="2"/>
+            </Canvas>
+
+        </ListBox>
+
         <Border Grid.Column="2" Margin="0,0,0,0" Grid.Row="1">
-            <Grid HorizontalAlignment="Left" Height="136" VerticalAlignment="Bottom" Width="198" >
-                
+            <Grid HorizontalAlignment="Left" Height="136" VerticalAlignment="Bottom" Width="198">
+
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="34*"/>
-                    <RowDefinition Height="34*"/>
-                    <RowDefinition Height="37*"/>
-                    <RowDefinition Height="31*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
+                    <ColumnDefinition Width="99"/>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="49"/>
                 </Grid.ColumnDefinitions>
-                <Button x:Name="SellOut" Content="Sell Out" Click="Button_Click_1" Margin="2"/>
-                <Button x:Name="Sell100" Content="Sell 100" Grid.Row="1" Margin="2"/>
-                <Button x:Name="Sell10" Content="Sell 10" Grid.Row="2" Margin="2"/>
-                <Button x:Name="BuyOut" Content="Buy Out" Click="Button_Click_1" Grid.Column="1" Margin="2"/>
-                <Button x:Name="Buy100" Content="Buy 100" Grid.Column="1" Grid.Row="1" Margin="2"/>
-                <Button x:Name="Buy10" Content="Buy 10" Grid.Column="1" Grid.Row="2" Margin="2"/>
-                <Button x:Name="TextBuyButton" Content="Buy" Grid.Column="1" Grid.Row="3" Margin="2"/>
-                <TextBox x:Name="BuyBox_Copy" TextWrapping="Wrap" Text="0" TextChanged="BuyBox_TextChanged" Grid.Row="3" Margin="2"/>
+                <Button x:Name="SellOut" Content="Sell Out" Click="SellOutEvent" Margin="2"/>
+                <Button x:Name="Sell100" Content="Sell 100" Click="Sell100Event" Grid.Row="1" Margin="2"/>
+                <Button x:Name="Sell10" Content="Sell 10" Click="Sell10Event" Grid.Row="2" Margin="2"/>
+                <Button x:Name="BuyOut" Content="Buy Out" Click="BuyOutEvent" Grid.Column="1" Margin="2" Grid.ColumnSpan="2"/>
+                <Button x:Name="Buy100" Content="Buy 100" Click="Buy100Event" Grid.Column="1" Grid.Row="1" Margin="2" Grid.ColumnSpan="2"/>
+                <Button x:Name="Buy10" Content="Buy 10" Click="Buy10Event" Grid.Column="1" Grid.Row="2" Margin="2" Grid.ColumnSpan="2"/>
+                <Button x:Name="TextBuyButton" Content="Buy" Click="BuyEvent" Grid.Column="2" Grid.Row="3" Margin="2"/>
+                <TextBox x:Name="BuyBox"  TextWrapping="Wrap" Text="{Binding StockCount, UpdateSourceTrigger=PropertyChanged}" Grid.Row="3" Margin="2"/>
+                <Button x:Name="Sell" Content="Sell" Click="SellEvent" Grid.Row="3" Margin="2" Grid.Column="1"/>
             </Grid>
         </Border>
 
