@@ -14,7 +14,7 @@ namespace Broker.Conversations.TransactionRequest
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private readonly string InitMessageId;
 
-        public RespondTransaction_InitialState(Conversation conversation, string initMessageId) : base(conversation)
+        public RespondTransaction_InitialState(Conversation conversation, string initMessageId) : base(conversation, null)
         {
             InitMessageId = initMessageId;
         }
@@ -29,7 +29,7 @@ namespace Broker.Conversations.TransactionRequest
             {
                 //client sent a retry message, resend transaction
                 Send();
-                state = new ConversationDoneState(ParentConversation, this);
+                state = new ConversationDoneState(Conversation, this);
             }
 
             Log.Debug($"{nameof(HandleMessage)} (exit)");
@@ -44,7 +44,7 @@ namespace Broker.Conversations.TransactionRequest
             bool success = false;
 
             var processId = Config.GetInt(Config.BROKER_PROCESS_NUM);
-            var conv = ParentConversation as RespondTransactionConversation;
+            var conv = Conversation as RespondTransactionConversation;
 
 
             PortfolioManager.TryToGet(conv.PortfoliId, out Portfolio portfolio);
@@ -100,6 +100,8 @@ namespace Broker.Conversations.TransactionRequest
                 To = conv.ResponseAddress
             };
 
+            PortfolioManager.ReleaseLock(portfolio);
+
             Log.Debug($"{nameof(Prepare)} (exit)");
             return env;
         }
@@ -107,7 +109,7 @@ namespace Broker.Conversations.TransactionRequest
         public override void Send()
         {
             base.Send();
-            ParentConversation.UpdateState(new ConversationDoneState(ParentConversation, this));
+            Conversation.UpdateState(new ConversationDoneState(Conversation, this));
         }
     }
 }

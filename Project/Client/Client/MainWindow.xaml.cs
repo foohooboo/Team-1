@@ -145,5 +145,10 @@ namespace Client
         {
 
         }
+
+        public void Button_Click_1(object sender, EventArgs e)
+        {
+
+        }
     }
 }

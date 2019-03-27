@@ -19,7 +19,7 @@ namespace StockServer
             Log.Debug($"{nameof(Main)} (enter)");
 
             StockData.Init();
-            ConversationManager.Start(HandleIncomingMesage);
+            ConversationManager.Start(ConversationBuilder);
             var listenEndpoint = new IPEndPoint(IPAddress.Any, Config.GetInt(Config.STOCK_SERVER_PORT));
             PostOffice.AddBox(listenEndpoint.ToString());
             
@@ -31,7 +31,7 @@ namespace StockServer
             Log.Debug($"{nameof(Main)} (exit)");
         }
         
-        public static Conversation HandleIncomingMesage(Envelope e)
+        public static Conversation ConversationBuilder(Envelope e)
         {
             Conversation conv = null;
 
@@ -39,6 +39,7 @@ namespace StockServer
             {
                 case StockStreamRequestMessage m:
                     conv = new ConvR_StockStreamRequest(e);
+                    conv.SetInitialState(new RespondStockStreamRequest_InitialState(e,conv));
                     break;
             }
             

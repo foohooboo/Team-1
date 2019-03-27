@@ -8,7 +8,11 @@ namespace Shared.Conversations.SharedStates
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public Template_ConvState(Conversation conv) : base(conv) { }
+        //Use this constructor if state is created locally and not from incoming message.
+        public Template_ConvState(Conversation conv, ConversationState previousState) : base(conv, previousState) { }
+
+        //OPTIONAL: Use the commented constructor below if state is created from an incoming message and not from some local event or action.
+        //public Template_ConvState(Envelope message, Conversation conv, ConversationState previousState) : base(message, conv, previousState) { }
 
         public override ConversationState HandleMessage(Envelope incomingMessage)
         {
@@ -22,7 +26,7 @@ namespace Shared.Conversations.SharedStates
                 //you should set nextState to the next ConversationState expected in the conversation.
                 case ErrorMessage m:
                     Log.Error($"Received error message as reply...\n{m.ErrorText}");
-                    nextState = new ConversationDoneState(ParentConversation, this);
+                    nextState = new ConversationDoneState(Conversation, this);
                     break;
                 default:
                     Log.Error($"No logic to process incoming message of type {incomingMessage.Contents?.GetType()}. Ignoring message.");
@@ -41,7 +45,7 @@ namespace Shared.Conversations.SharedStates
 
             //TODO: Add any logic this state needs to perform when first started.
             //If this state is going to send a message to another process, set
-            //the env variable.
+            //the env variable. This method is only called once per state.
 
             Log.Debug($"{nameof(Prepare)} (exit)");
             return env;

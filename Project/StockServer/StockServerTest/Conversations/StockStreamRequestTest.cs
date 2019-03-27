@@ -1,20 +1,21 @@
-﻿using Broker;
-using Broker.Conversations.TransactionRequest;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Shared.Comms.MailService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
 using Shared.MarketStructures;
-using Shared.Portfolio;
+using StockServer.Conversations.StockStreamRequest;
 
-namespace BrokerTest.Conversations.TransasctionRequest
+namespace SharedTest.Conversations
 {
+    /// <summary>
+    /// Summary description for MessageFactoryTest
+    /// </summary>
     [TestClass]
-    public class TransactionTest
+    public class StockStreamRequestTest
     {
-        private Mock<RespondTransaction_InitialState> mock;
+        private Mock<RespondStockStreamRequest_InitialState> mock;
 
         public Conversation ConversationBuilder(Envelope env)
         {
@@ -22,16 +23,10 @@ namespace BrokerTest.Conversations.TransasctionRequest
 
             switch (env.Contents)
             {
-                case TransactionRequestMessage m:
-                    conv = new RespondTransactionConversation(m, env.To);
-
-                    //setup response message as mock
-                    mock = new Mock<RespondTransaction_InitialState>(conv, m.MessageID) { CallBase = true };
-                    mock.Setup(st => st.HandleMessage(It.IsAny<Envelope>())).CallBase().Verifiable();
-                    mock.Setup(st => st.Send()).CallBase().Verifiable();
-
-                    conv.SetInitialState(mock.Object as RespondTransaction_InitialState);
-
+                case StockStreamRequestMessage m:
+                    conv = new ConvR_StockStreamRequest(env);
+                    mock = new Mock<RespondStockStreamRequest_InitialState>(env, conv) { CallBase = true };
+                    conv.SetInitialState(mock.Object as RespondStockStreamRequest_InitialState);
                     break;
             }
 
@@ -53,24 +48,39 @@ namespace BrokerTest.Conversations.TransasctionRequest
         }
 
         [TestMethod]
+        public void InvalidMessageResponderTest()
+        {
+            //Simulate remote application-level ids
+            string incomingConversationID = "5-23";
+            int remoteProcessId = 2;
+            int remotePortfolioId = 3;
+
+            //Create a fake incoming message to simulate an ack StockStreamRequest
+            var message = MessageFactory.GetMessage<AckMessage>(remoteProcessId, remotePortfolioId);
+            message.ConversationID = incomingConversationID;
+            var messageEnvelope = new Envelope(message);
+
+            //Handle "incoming" message
+            var replyConversation = PostOffice.HandleIncomingMessage(messageEnvelope);
+
+            //Verify conversation was NOT built from message
+            Assert.IsNull(replyConversation);
+            Assert.IsFalse(ConversationManager.ConversationExists(incomingConversationID));
+        }
+
+        [TestMethod]
         public void RequestSucceed()
         {
             string RequestConvId = "5-562";
+            string RequestMessageId = "5-7-1654";
             string ClientIp = "192.168.1.31";
             int ClientPort = 5682;
-            int RequestQuanitity = 12;
-            PortfolioManager.TryToCreate("TestRequestSucceed", "password", out Portfolio portfolio);
-            PortfolioManager.ReleaseLock(portfolio);
 
-            var testStock = new Stock("TST", "Test Stock");
-            var vStock = new ValuatedStock(("1984-02-22,1,2,3,100,5").Split(','), testStock);
-
-            var RequestMessage = new TransactionRequestMessage(RequestQuanitity, vStock)
+            var RequestMessage = new StockStreamRequestMessage()
             {
                 ConversationID = RequestConvId,
-                PortfolioId = portfolio.PortfolioID
+                MessageID = RequestMessageId
             };
-
             Envelope Request = new Envelope(RequestMessage, ClientIp, ClientPort);
 
             var localConv = ConversationManager.GetConversation(RequestConvId);
@@ -89,23 +99,18 @@ namespace BrokerTest.Conversations.TransasctionRequest
         }
 
         [TestMethod]
-        public void RequestSucceedAfterIncomingRetry()
+        public void RequestSucceedAfterOneIncomingRetry()
         {
-            string RequestConvId = "5-563";
+            string RequestConvId = "5-562";
+            string RequestMessageId = "5-7-1654";
             string ClientIp = "192.168.1.31";
             int ClientPort = 5682;
-            int RequestQuanitity = 12;
-            PortfolioManager.TryToCreate("TestRequestSucceedAfterRetry", "password", out Portfolio portfolio);
-            PortfolioManager.ReleaseLock(portfolio);
 
-            var testStock = new Stock("TST", "Test Stock");
-            var vStock = new ValuatedStock(("1984-02-22,1,2,3,100,5").Split(','), testStock);
-            var RequestMessage = new TransactionRequestMessage(RequestQuanitity, vStock)
+            var RequestMessage = new StockStreamRequestMessage()
             {
                 ConversationID = RequestConvId,
-                PortfolioId = portfolio.PortfolioID
+                MessageID = RequestMessageId
             };
-
             Envelope Request = new Envelope(RequestMessage, ClientIp, ClientPort);
 
             var localConv = ConversationManager.GetConversation(RequestConvId);
@@ -132,5 +137,6 @@ namespace BrokerTest.Conversations.TransasctionRequest
             mock.Verify(state => state.Send(), Times.Exactly(2));
             mock.Verify(state => state.HandleTimeout(), Times.Never);
         }
+
     }
 }
