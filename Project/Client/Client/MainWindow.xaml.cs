@@ -6,19 +6,15 @@ using System.Windows;
 using Shared.MarketStructures;
 using Shared.Portfolio;
 using System.Collections.Generic;
+using System.Windows.Controls;
+using System.Windows.Shapes;
 
 namespace Client
 {
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        private float cash = 100000;
-        private MarketSegment History;
-        private Portfolio myPortfolio = new Shared.Portfolio.Portfolio();
-        SortedList<string, string> HighScores =new SortedList<string, string>();
-        private Shared.MarketStructures.Stock SelectedStock=new Stock("AAPL","Apple Inc.");
-        public string StockCount { get; set; } = "0";
-
-        
+        ManagedData mem = new ManagedData();
+        public string StockCount { get; set; } = "0";//holds the data in textbox
 
 
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
@@ -27,6 +23,7 @@ namespace Client
 
         public MainWindow()
         {
+            
             string method = "MainWindow Constructor";
             Log.Debug(string.Format("Enter - {0}", method));
 
@@ -37,6 +34,8 @@ namespace Client
             HelloTextLocal = helloWorld.HelloText;
 
             Log.Debug(string.Format("Exit - {0}", method));
+            
+            
         }
 
         private string helloTextLocal;
@@ -52,6 +51,29 @@ namespace Client
                     //PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("HelloTextLocal"));
                 }
             }
+        }
+        public void updateStockPanels()
+        {
+            foreach (Canvas i in stockPanels.Items)
+            {
+                stockPanels.Items.Remove(i);
+            }
+            MarketDay day = mem.History[mem.History.Count];
+            foreach(ValuatedStock i in day.TradedCompanies)
+            {
+                Canvas shell = new Canvas();
+                shell.Height = 52;
+                shell.Width = 183;
+                Rectangle back = new Rectangle();
+                back.Height = 52;
+                back.Width = 183;
+                TextBox sym = new TextBox();
+                sym.Text =i.Symbol;
+                shell.Children.Insert(0,back);
+                shell.Children.Insert(1, sym);
+
+            }
+                
         }
 
         public void OnHelloTextChanged(object source, EventArgs args)
@@ -75,10 +97,10 @@ namespace Client
         private void SellOutEvent(object sender, RoutedEventArgs e)
         {
             try {
-                Asset holder = myPortfolio.GetAsset(SelectedStock.Symbol);
+                Asset holder = mem.myPortfolio.GetAsset(mem.SelectedStock.Symbol);
                 SendTransaction(-holder.Quantity);
             }
-            catch { HelloTextLocal = SelectedStock.Symbol + " not found in dictionary"; }
+            catch { HelloTextLocal = mem.SelectedStock.Symbol + " not found in dictionary"; }
             
             
         }
