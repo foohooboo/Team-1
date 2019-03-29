@@ -3,22 +3,33 @@ using Shared;
 using Shared.Comms.MailService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
+using Shared.Portfolio;
 
 namespace Broker.Conversations.GetPortfolio
 {
     public class GetPortfolioReceiveState : ConversationState
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        private readonly int portfolioID;
-        //TODO look at conversation builder in broker
 
-        //TODO update to use the construcor with an envelope
+
+        private int PortfolioID
+        {
+            get; set;
+        }
+
         public GetPortfolioReceiveState(Conversation conversation) : base(conversation, null)
         {
+
         }
 
         public override ConversationState HandleMessage(Envelope incomingMessage)
         {
+
+            if (incomingMessage.Contents is GetPortfolioRequest m)
+            {
+                PortfolioID = m.Account.PortfolioID;
+            }
+
             return null;
         }
 
@@ -26,23 +37,22 @@ namespace Broker.Conversations.GetPortfolio
         {
             Log.Debug($"{nameof(Prepare)} (enter)");
 
-            // Get the portfolio from the portfolio manager.
-            //if (!PortfolioManager.TryToGet()
-            //if(!PortfolioManager.)
+            if (!PortfolioManager.TryToGet(PortfolioID, out Portfolio portfolio))
+            {
+                // Add handling.
+            }
 
-            var message = MessageFactory.GetMessage<PortfolioUpdateMessage>(Config.GetInt(Config.BROKER_PROCESS_NUM), 0);
+            var message = MessageFactory.GetMessage<PortfolioUpdateMessage>(Config.GetInt(Config.BROKER_PROCESS_NUM), PortfolioID) as PortfolioUpdateMessage;
 
-            // Deep copy of portfolio
-
-            // populate the message -- add more
             message.ConversationID = Conversation.Id;
+            message.Assets = portfolio.CloneAssets();
 
-            // Dismiss portfolio?
+            PortfolioManager.ReleaseLock(portfolio);
 
-            //TODO Get the TO from the received message
-            // this will be stored by the constructor after push.
-
-            var env = new Envelope(message, Config.GetString(Config.BROKER_IP), Config.GetInt(Config.BROKER_PORT));
+            var env = new Envelope(message, Config.GetString(Config.BROKER_IP), Config.GetInt(Config.BROKER_PORT))
+            {
+                To = this.To
+            };
 
             Log.Debug($"{nameof(Prepare)} (exit)");
             return env;

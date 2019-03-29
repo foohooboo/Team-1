@@ -1,4 +1,5 @@
 ﻿using log4net;
+using System;
 using System.Collections.Generic;
 
 namespace Shared.Portfolio
@@ -32,7 +33,6 @@ namespace Shared.Portfolio
             get; set;
         }
 
-        //private Dictionary<string, Asset> Assets;
         public Dictionary<string, Asset> Assets
         {
             get; set;
@@ -61,7 +61,7 @@ namespace Shared.Portfolio
 
             Log.Debug($"{nameof(ModifyAsset)} (exit)");
         }
-
+        
         public Asset GetAsset(string symbol)
         {
             Log.Debug($"{nameof(GetAsset)} (enter)");
@@ -78,6 +78,11 @@ namespace Shared.Portfolio
                 
             Log.Debug($"{nameof(GetAsset)} (exit)");
             return asset;
+        }
+
+        public Dictionary<string, Asset> CloneAssets()
+        {
+            return new Dictionary<string, Asset>(Assets);
         }
     }
 }

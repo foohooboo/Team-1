@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Client.Conversations.StockUpdate
+﻿namespace Client.Conversations.StockUpdate
 {
-    class ReceiveStockUpdateConversation
+    public class ReceiveStockUpdateConversation : Shared.Conversations.Conversation
     {
+        public ReceiveStockUpdateConversation(string conversationId) : base(conversationId)
+        {
+        }
     }
 }

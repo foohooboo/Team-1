@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Client.Conversations.CreatePortfolio
+﻿namespace Client.Conversations.CreatePortfolio
 {
-    class CreatePortfolioRequestConversation
+    public class CreatePortfolioRequestConversation : Shared.Conversations.Conversation
     {
+        public CreatePortfolioRequestConversation(int processId) : base(processId)
+        {
+        }
     }
 }

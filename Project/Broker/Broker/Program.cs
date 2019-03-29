@@ -1,5 +1,6 @@
 ﻿using System;
 using Broker.Conversations.GetPortfolio;
+using Broker.Conversations.GetPortfolioResponse;
 using log4net;
 using Shared;
 using Shared.Comms.MailService;
@@ -56,13 +57,12 @@ namespace Broker
             switch (e.Contents)
             {
                 case CreatePortfolioRequestMessage m
-                    when (m.GetType() is CreatePortfolioRequestMessage):
-
-                    //conv = new CreatePortFolioResponseConversation();
+                    when (m is CreatePortfolioRequestMessage):
+                    conv = new CreatePortfoliolResponseConversation(m.ConversationID);
                     conv.SetInitialState(new GetPortfolioReceiveState(conv));
                     break;
                 case GetPortfolioRequest m:
-                    //conv = new GetPortfoliolResponseConversation();
+                    conv = new GetPortfoliolResponseConversation(m.ConversationID);
                     conv.SetInitialState(new GetPortfolioReceiveState(conv));
                     break;
             }
