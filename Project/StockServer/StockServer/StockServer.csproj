@@ -46,6 +46,8 @@
     <Compile Include="CommSystemWrapper.cs" />
     <Compile Include="Conversations\StockStreamRequest\ConvR_StockStreamRequest.cs" />
     <Compile Include="Conversations\StockStreamRequest\RespondStockStreamRequest_InitialState.cs" />
+    <Compile Include="Conversations\StockUpdate\StockUpdateSendConversation.cs" />
+    <Compile Include="Conversations\StockUpdate\StockUpdateSendState.cs" />
     <Compile Include="Data\CompanyDataRaw.cs" />
     <Compile Include="Data\StockData.cs" />
     <Compile Include="Program.cs" />

@@ -1,16 +1,17 @@
-﻿using System;
-using log4net;
+﻿using log4net;
+using Shared;
 using Shared.Comms.MailService;
 using Shared.Comms.Messages;
+using Shared.Conversations;
 using Shared.Conversations.SharedStates;
 
-namespace Shared.Conversations.GetPortfolio
+namespace Client.Conversations.GetPortfolio
 {
-    public class GetPortfolioInitialState : ConversationState
+    public class GetPortfolioRequestState : ConversationState
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public GetPortfolioInitialState(Conversation conversation) : base(conversation)
+        public GetPortfolioRequestState(Conversation conversation) : base(conversation, null)
         {
         }
 
@@ -26,14 +27,14 @@ namespace Shared.Conversations.GetPortfolio
                 //you should set nextState to the next ConversationState expected in the conversation.
                 case ErrorMessage m:
                     Log.Error($"Received error message as reply...\n{m.ErrorText}");
-                    nextState = new ConversationDoneState(ParentConversation, this);
+                    nextState = new ConversationDoneState(Conversation, this);
                     break;
                 case PortfolioUpdateMessage m:
                     Log.Debug($"Received portfolio for ...\n{m.PortfolioID}");
 
                     // TODO: Update portfolio model data.
 
-                    nextState = new ConversationDoneState(ParentConversation, this);
+                    nextState = new ConversationDoneState(Conversation, this);
                     break;
                 default:
                     Log.Error($"No logic to process incoming message of type {incomingMessage.Contents?.GetType()}. Ignoring message.");
@@ -49,9 +50,9 @@ namespace Shared.Conversations.GetPortfolio
             Log.Debug($"{nameof(Prepare)} (enter)");
 
             var message = MessageFactory.GetMessage<GetPortfolioRequest>(Config.GetInt(Config.CLIENT_PROCESS_NUM), 0);
-            message.ConversationID = ParentConversation.Id;
+            message.ConversationID = Conversation.Id;
             var env = new Envelope(message, Config.GetString(Config.BROKER_IP), Config.GetInt(Config.BROKER_PORT));
-                        
+
             Log.Debug($"{nameof(Prepare)} (exit)");
             return env;
         }
