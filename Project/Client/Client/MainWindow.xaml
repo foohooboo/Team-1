@@ -23,7 +23,7 @@
         </Grid.ColumnDefinitions>
         <Label Content="Hello World! From the client." HorizontalAlignment="Left" Margin="15,71,0,0" VerticalAlignment="Top" Width="368" Height="26" Grid.ColumnSpan="2"/>
         <TextBlock Text="{Binding HelloTextLocal}" TextWrapping="WrapWithOverflow" HorizontalAlignment="Left" Margin="15,170,0,0" VerticalAlignment="Top" Width="368" Height="59" Grid.ColumnSpan="2"/>
-        <ListBox x:Name="listBox" Grid.Column="3" Grid.RowSpan="2" Background="#00000000" SelectionChanged="ListBox_SelectionChanged">
+        <ListBox x:Name="stockPanels" Grid.Column="3" Grid.RowSpan="2" Background="#00000000" SelectionChanged="ListBox_SelectionChanged">
             <Canvas Height="52" Width="183">
                 <Rectangle Height="52" Width="183" />
                 <TextBlock x:Name="textBlock1" TextWrapping="Wrap" Text="TextBlock" Margin="2"/>
