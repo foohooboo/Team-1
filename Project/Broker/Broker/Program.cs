@@ -59,11 +59,11 @@ namespace Broker
                 case CreatePortfolioRequestMessage m
                     when (m is CreatePortfolioRequestMessage):
                     conv = new CreatePortfoliolResponseConversation(m.ConversationID);
-                    conv.SetInitialState(new GetPortfolioReceiveState(conv));
+                    conv.SetInitialState(new GetPortfolioReceiveState(e, conv));
                     break;
                 case GetPortfolioRequest m:
                     conv = new GetPortfoliolResponseConversation(m.ConversationID);
-                    conv.SetInitialState(new GetPortfolioReceiveState(conv));
+                    conv.SetInitialState(new GetPortfolioReceiveState(e, conv));
                     break;
             }
 

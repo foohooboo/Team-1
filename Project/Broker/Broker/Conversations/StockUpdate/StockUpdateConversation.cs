@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Shared.Conversations;
 
-namespace Broker.Conversations.StockUpdate
+public class StockUpdateConversation : Conversation
 {
-    class StockUpdateConversation
+    public StockUpdateConversation(string conversationId) : base(conversationId)
     {
     }
 }

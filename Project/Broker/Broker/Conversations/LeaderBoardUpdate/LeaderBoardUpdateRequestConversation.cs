@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Shared.Conversations;
 
 namespace Broker.Conversations.LeaderBoardUpdate
 {
-    class LeaderBoardUpdateRequestConversation
+    public class LeaderBoardUpdateRequestConversation : Conversation
     {
+        public LeaderBoardUpdateRequestConversation(string conversationId) : base(conversationId)
+        {
+        }
     }
 }
