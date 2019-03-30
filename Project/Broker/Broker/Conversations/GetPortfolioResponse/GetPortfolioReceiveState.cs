@@ -11,15 +11,13 @@ namespace Broker.Conversations.GetPortfolio
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-
         private int PortfolioID
         {
             get; set;
         }
 
-        public GetPortfolioReceiveState(Conversation conversation) : base(conversation, null)
+        public GetPortfolioReceiveState(Envelope envelope, Conversation conversation) : base(envelope, conversation, null)
         {
-
         }
 
         public override ConversationState HandleMessage(Envelope incomingMessage)
@@ -36,18 +34,7 @@ namespace Broker.Conversations.GetPortfolio
         public override Envelope Prepare()
         {
             Log.Debug($"{nameof(Prepare)} (enter)");
-
-            if (!PortfolioManager.TryToGet(PortfolioID, out Portfolio portfolio))
-            {
-                // Add handling.
-            }
-
-            var message = MessageFactory.GetMessage<PortfolioUpdateMessage>(Config.GetInt(Config.BROKER_PROCESS_NUM), PortfolioID) as PortfolioUpdateMessage;
-
-            message.ConversationID = Conversation.Id;
-            message.Assets = portfolio.CloneAssets();
-
-            PortfolioManager.ReleaseLock(portfolio);
+            var message = GetMessage();
 
             var env = new Envelope(message, Config.GetString(Config.BROKER_IP), Config.GetInt(Config.BROKER_PORT))
             {
@@ -56,6 +43,28 @@ namespace Broker.Conversations.GetPortfolio
 
             Log.Debug($"{nameof(Prepare)} (exit)");
             return env;
+        }
+
+        private Message GetMessage()
+        {
+            if (!PortfolioManager.TryToGet(PortfolioID, out Portfolio portfolio))
+            {
+                var errormessage = MessageFactory.GetMessage<ErrorMessage>(Config.GetInt(Config.BROKER_PROCESS_NUM), PortfolioID) as ErrorMessage;
+
+                errormessage.ConversationID = Conversation.Id;
+                errormessage.ReferenceMessageID = this.MessageId;
+
+                return errormessage;
+            }
+
+            var message = MessageFactory.GetMessage<PortfolioUpdateMessage>(Config.GetInt(Config.BROKER_PROCESS_NUM), PortfolioID) as PortfolioUpdateMessage;
+
+            message.ConversationID = Conversation.Id;
+            message.Assets = portfolio.CloneAssets();
+            message.PortfolioID = portfolio.PortfolioID;
+            PortfolioManager.ReleaseLock(portfolio);
+
+            return message;
         }
     }
 }
