@@ -8,7 +8,7 @@
         }
 
         public float TotalAssetValue
-        {
+        {   
             get; private set;
         }
 

@@ -4,7 +4,7 @@ namespace Broker.Conversations.LeaderBoardUpdate
 {
     public class LeaderBoardUpdateRequestConversation : Conversation
     {
-        public LeaderBoardUpdateRequestConversation(string conversationId) : base(conversationId)
+        public LeaderBoardUpdateRequestConversation(int processId) : base(processId)
         {
         }
     }

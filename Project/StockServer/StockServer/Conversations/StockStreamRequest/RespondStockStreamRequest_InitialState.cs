@@ -5,11 +5,6 @@ using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
 using StockServer.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StockServer.Conversations.StockStreamRequest
 {
@@ -53,7 +48,7 @@ namespace StockServer.Conversations.StockStreamRequest
             var responseMessage = MessageFactory.GetMessage<StockStreamResponseMessage>(Config.GetInt(Config.STOCK_SERVER_PROCESS_NUM), 0) as StockStreamResponseMessage;
             responseMessage.ConversationID = conv.Id;
             responseMessage.RecentHistory = StockData.GetRecentHistory(5);
-            
+
             new Temp().LogStockHistory(responseMessage.RecentHistory);//log to console for prelim dev. Remove once not needed.
 
             var responseEnvelope = new Envelope(responseMessage) { To = conv.ClientIp };
