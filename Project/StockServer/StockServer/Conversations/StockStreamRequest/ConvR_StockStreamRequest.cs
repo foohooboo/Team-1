@@ -18,10 +18,8 @@ namespace StockServer.Conversations.StockStreamRequest
 
             ClientIp = e.To;
 
-            //TODO: save endpoint/connection/postbox to use in future stock price updates
-            // Right now this is setup to use the portfolioID for the key. 
-            ClientManager.TryToAdd(0, e.To);
-
+            //TODO: save endpoint/connection/postbox to use in future stock price update
+            ClientManager.TryToAdd(e.To);
 
             Log.Debug($"{nameof(ConvR_StockStreamRequest)} (exit)");
         }

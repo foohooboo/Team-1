@@ -1,6 +1,5 @@
 ﻿using log4net;
 using Shared;
-using Shared.Client;
 using Shared.Comms.MailService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
@@ -28,10 +27,13 @@ namespace StockServer.Conversations.StockUpdate
 
             message.StocksList = StockData.GetCurrentDay();
 
-            ClientManager.UpdateClients(message);
+            var env = new Envelope(message, Config.GetString(Config.STOCK_SERVER_IP), Config.GetInt(Config.STOCK_SERVER_PORT))
+            {
+                To = this.To
+            };
 
             Log.Debug($"{nameof(Prepare)} (exit)");
-            return null;
+            return env;
         }
     }
 }

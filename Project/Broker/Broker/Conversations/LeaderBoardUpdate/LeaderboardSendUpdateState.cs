@@ -1,6 +1,5 @@
 ﻿using Broker;
 using log4net;
-using Shared.Client;
 using Shared.Comms.MailService;
 using Shared.Comms.Messages;
 
@@ -29,11 +28,14 @@ namespace Shared.Conversations.SharedStates
                 var record = LeaderboardManager.GetLeaderboardRecord(portfolio.Value);
                 message.Records.Add(record.Username, record.TotalAssetValue);
             }
-            
-            ClientManager.UpdateClients(message);
+
+            var env = new Envelope(message, Config.GetString(Config.BROKER_IP), Config.GetInt(Config.BROKER_PORT))
+            {
+                To = this.To
+            };
 
             Log.Debug($"{nameof(Prepare)} (exit)");
-            return null;
+            return env;
         }
     }
 }
