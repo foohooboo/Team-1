@@ -9,7 +9,7 @@ using Shared.Conversations.SharedStates;
 using Shared.MarketStructures;
 using Shared.PortfolioResources;
 
-namespace BrokerTest.Conversations.TransasctionRequest
+namespace BrokerTest.Conversations
 {
     [TestClass]
     public class TransactionTest
@@ -27,9 +27,6 @@ namespace BrokerTest.Conversations.TransasctionRequest
 
                     //setup response message as mock
                     mock = new Mock<RespondTransaction_InitialState>(conv, m.MessageID) { CallBase = true };
-                    mock.Setup(st => st.HandleMessage(It.IsAny<Envelope>())).CallBase().Verifiable();
-                    mock.Setup(st => st.Send()).CallBase().Verifiable();
-
                     conv.SetInitialState(mock.Object as RespondTransaction_InitialState);
 
                     break;
@@ -86,6 +83,8 @@ namespace BrokerTest.Conversations.TransasctionRequest
             mock.Verify(state => state.Prepare(), Times.Once);
             mock.Verify(state => state.Send(), Times.Once);
             mock.Verify(state => state.HandleTimeout(), Times.Never);
+
+            PortfolioManager.TryToRemove(portfolio.PortfolioID);
         }
 
         [TestMethod]
@@ -131,6 +130,8 @@ namespace BrokerTest.Conversations.TransasctionRequest
             mock.Verify(state => state.Prepare(), Times.Once);
             mock.Verify(state => state.Send(), Times.Exactly(2));
             mock.Verify(state => state.HandleTimeout(), Times.Never);
+
+            PortfolioManager.TryToRemove(portfolio.PortfolioID);
         }
     }
 }

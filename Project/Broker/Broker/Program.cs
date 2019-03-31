@@ -1,4 +1,5 @@
 ﻿using System;
+using Broker.Conversations.CreatePortfolio;
 using Broker.Conversations.GetPortfolio;
 using Broker.Conversations.GetPortfolioResponse;
 using log4net;
@@ -59,7 +60,7 @@ namespace Broker
                 case CreatePortfolioRequestMessage m
                     when (m is CreatePortfolioRequestMessage):
                     conv = new CreatePortfoliolResponseConversation(m.ConversationID);
-                    conv.SetInitialState(new GetPortfolioReceiveState(e, conv));
+                    conv.SetInitialState(new CreatePortfolioReceiveState(e, conv));
                     break;
                 case GetPortfolioRequest m:
                     conv = new GetPortfoliolResponseConversation(m.ConversationID);
