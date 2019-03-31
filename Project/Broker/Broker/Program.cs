@@ -1,7 +1,11 @@
 ﻿using System;
+using Broker.Conversations.CreatePortfolio;
+using Broker.Conversations.GetPortfolio;
+using Broker.Conversations.GetPortfolioResponse;
 using log4net;
 using Shared;
 using Shared.Comms.MailService;
+using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
 using Shared.Conversations.StockStreamRequest.Initiator;
@@ -46,5 +50,26 @@ namespace Broker
             Console.WriteLine("   -\"exit\" to end");
             Console.WriteLine("   -anything else to start a StockStreamRequest conversation.");
         }
+
+        public static Conversation ConversationBuilder(Envelope e)
+        {
+            Conversation conv = null;
+
+            switch (e.Contents)
+            {
+                case CreatePortfolioRequestMessage m:
+                    conv = new CreatePortfoliolResponseConversation(m.ConversationID);
+                    conv.SetInitialState(new CreatePortfolioReceiveState(e, conv));
+                    break;
+                case GetPortfolioRequest m:
+                    conv = new GetPortfoliolResponseConversation(m.ConversationID);
+                    conv.SetInitialState(new GetPortfolioReceiveState(e, conv));
+                    break;
+            }
+
+            return conv;
+        }
+
+
     }
 }

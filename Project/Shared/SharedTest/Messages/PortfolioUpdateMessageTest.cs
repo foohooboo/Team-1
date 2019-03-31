@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Shared.Comms.Messages;
-using Shared.Portfolio;
+using Shared.PortfolioResources;
 using System.Collections.Generic;
 using Shared.MarketStructures;
 

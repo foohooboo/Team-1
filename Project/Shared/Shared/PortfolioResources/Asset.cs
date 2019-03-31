@@ -1,6 +1,6 @@
 ﻿using Shared.MarketStructures;
 
-namespace Shared.Portfolio
+namespace Shared.PortfolioResources
 {
     public class Asset
     {

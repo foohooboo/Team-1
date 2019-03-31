@@ -2,7 +2,7 @@
 using System.Linq;
 using log4net;
 using Shared.MarketStructures;
-using Shared.Portfolio;
+using Shared.PortfolioResources;
 
 namespace Broker
 {
@@ -38,26 +38,23 @@ namespace Broker
             return true;
         }
 
-        private static Portfolio GetNewPortfolio(string username, string password)
+        public static bool TryToGet(string username, string password, out Portfolio portfolio)
         {
             Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (enter)");
-            var portfolio = new Portfolio()
-            {
-                PortfolioID = Portfolios.Count + 1,
-                Username = username,
-                Password = password
-            };
 
-            var cash = new Asset()
-            {
-                RelatedStock = new Stock("$", "US Dollars"),
-                Quantity = 10000 // default cash value for participants
-            };
+            portfolio = null;
 
-            portfolio.ModifyAsset(cash);
+            foreach(Portfolio p in Portfolios.Values)
+            {
+                if (p.Username.Equals(username)&& p.Password.Equals(password))
+                {
+                    portfolio = p;
+                    break;
+                }
+            }
 
             Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (exit)");
-            return portfolio;
+            return portfolio!=null;
         }
 
         public static bool TryToGet(int portfolioID, out Portfolio portfolio)
@@ -80,6 +77,28 @@ namespace Broker
             Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (exit)");
             portfolio.WriteAuthority = true;
             return true;
+        }
+
+         private static Portfolio GetNewPortfolio(string username, string password)
+        {
+            Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (enter)");
+            var portfolio = new Portfolio()
+            {
+                PortfolioID = Portfolios.Count + 1,
+                Username = username,
+                Password = password
+            };
+
+            var cash = new Asset()
+            {
+                RelatedStock = new Stock("$", "US Dollars"),
+                Quantity = 10000 // default cash value for participants
+            };
+
+            portfolio.ModifyAsset(cash);
+
+            Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (exit)");
+            return portfolio;
         }
 
         public static bool TryToRemove(int portfolioID)
@@ -111,7 +130,14 @@ namespace Broker
         public static void ReleaseLock(Portfolio portfolio)
         {
             Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (enter)");
-            portfolio.WriteAuthority = false;
+            if (portfolio == null)
+            {
+                Log.Warn("Tried to release lock on null portfolio.");
+            }
+            else
+            {
+                portfolio.WriteAuthority = false;
+            }
             portfolio = null;
             Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (exit)");
         }

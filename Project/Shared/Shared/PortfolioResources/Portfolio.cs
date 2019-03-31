@@ -1,7 +1,8 @@
 ﻿using log4net;
+using System;
 using System.Collections.Generic;
 
-namespace Shared.Portfolio
+namespace Shared.PortfolioResources
 {
     public class Portfolio
     {
@@ -32,7 +33,6 @@ namespace Shared.Portfolio
             get; set;
         }
 
-        //private Dictionary<string, Asset> Assets;
         public Dictionary<string, Asset> Assets
         {
             get; set;
@@ -61,13 +61,12 @@ namespace Shared.Portfolio
 
             Log.Debug($"{nameof(ModifyAsset)} (exit)");
         }
-
+        
         public Asset GetAsset(string symbol)
         {
             Log.Debug($"{nameof(GetAsset)} (enter)");
-
-            Asset asset = null;
-            if (Assets.TryGetValue(symbol, out asset))
+            
+            if (Assets.TryGetValue(symbol, out Asset asset))
             {
                 asset = new Asset(asset);//Prepare deep copy so original can't be modified except through ModifyAsset method.
             }
@@ -78,6 +77,11 @@ namespace Shared.Portfolio
                 
             Log.Debug($"{nameof(GetAsset)} (exit)");
             return asset;
+        }
+
+        public Dictionary<string, Asset> CloneAssets()
+        {
+            return new Dictionary<string, Asset>(Assets);
         }
     }
 }

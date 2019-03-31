@@ -4,17 +4,15 @@ using Shared.Comms.MailService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
-using StockServer.Data;
 
-namespace StockServer.Conversations.StockStreamRequest
+namespace Client.Conversations.GetPortfolio
 {
-    public class RespondStockStreamRequest_InitialState : ConversationState
+    public class GetPortfolioRequestState : ConversationState
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public RespondStockStreamRequest_InitialState(Envelope env, Conversation conversation) : base(env, conversation, null)
+        public GetPortfolioRequestState(Conversation conversation) : base(conversation, null)
         {
-
         }
 
         public override ConversationState HandleMessage(Envelope incomingMessage)
@@ -25,9 +23,17 @@ namespace StockServer.Conversations.StockStreamRequest
 
             switch (incomingMessage.Contents)
             {
-                //no extra cases, as this state is expected to be end of conversation.
+                //TODO: Add state-specific message handling here. Given the incoming message,
+                //you should set nextState to the next ConversationState expected in the conversation.
                 case ErrorMessage m:
                     Log.Error($"Received error message as reply...\n{m.ErrorText}");
+                    nextState = new ConversationDoneState(Conversation, this);
+                    break;
+                case PortfolioUpdateMessage m:
+                    Log.Debug($"Received portfolio for ...\n{m.PortfolioID}");
+
+                    // TODO: Update portfolio model data.
+
                     nextState = new ConversationDoneState(Conversation, this);
                     break;
                 default:
@@ -43,24 +49,12 @@ namespace StockServer.Conversations.StockStreamRequest
         {
             Log.Debug($"{nameof(Prepare)} (enter)");
 
-            var conv = Conversation as ConvR_StockStreamRequest;
-
-            var responseMessage = MessageFactory.GetMessage<StockStreamResponseMessage>(Config.GetInt(Config.STOCK_SERVER_PROCESS_NUM), 0) as StockStreamResponseMessage;
-            responseMessage.ConversationID = conv.Id;
-            responseMessage.RecentHistory = StockData.GetRecentHistory(5);
-
-            new Temp().LogStockHistory(responseMessage.RecentHistory);//log to console for prelim dev. Remove once not needed.
-
-            var responseEnvelope = new Envelope(responseMessage) { To = conv.ClientIp };
+            var message = MessageFactory.GetMessage<GetPortfolioRequest>(Config.GetInt(Config.CLIENT_PROCESS_NUM), 0);
+            message.ConversationID = Conversation.Id;
+            var env = new Envelope(message, Config.GetString(Config.BROKER_IP), Config.GetInt(Config.BROKER_PORT));
 
             Log.Debug($"{nameof(Prepare)} (exit)");
-            return responseEnvelope;
-        }
-
-        public override void Send()
-        {
-            base.Send();
-            Conversation.UpdateState(new ConversationDoneState(Conversation, this));
+            return env;
         }
     }
 }

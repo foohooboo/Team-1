@@ -46,8 +46,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommSystemWrapper.cs" />
+    <Compile Include="Conversations\CreatePortfolioResponse\CreatePortfoliolResponseConversation.cs" />
+    <Compile Include="Conversations\CreatePortfolioResponse\CreatePortfolioReceiveState.cs" />
+    <Compile Include="Conversations\GetPortfolioResponse\GetPortfoliolResponseConversation.cs" />
+    <Compile Include="Conversations\GetPortfolioResponse\GetPortfolioReceiveState.cs" />
+    <Compile Include="Conversations\LeaderBoardUpdate\LeaderboardSendUpdateState.cs" />
+    <Compile Include="Conversations\LeaderBoardUpdate\LeaderBoardUpdateRequestConversation.cs" />
+    <Compile Include="Conversations\StockUpdate\ProcessStockUpdateState.cs" />
+    <Compile Include="Conversations\StockUpdate\StockUpdateConversation.cs" />
     <Compile Include="Conversations\TransactionRequest\RespondTransactionConversation.cs" />
     <Compile Include="Conversations\TransactionRequest\RespondTransaction_InitialState.cs" />
+    <Compile Include="LeaderboardManager.cs" />
     <Compile Include="PortfolioManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

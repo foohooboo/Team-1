@@ -1,14 +1,11 @@
-﻿using Shared.MarketStructures;
-using Shared.Portfolio;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Shared.MarketStructures;
+using Shared.PortfolioResources;
 
 namespace Client
 {
-    class ManagedData
+    internal class ManagedData
     {//Incredibly lazily made class, I will add a lot more functions here as i need to.
         public float Cash { get; set; } = 100000;
         public MarketSegment History { get; set; } = new MarketSegment();

@@ -12,8 +12,11 @@ namespace Shared.Conversations
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private static ConcurrentDictionary<string, Conversation> conversations = new ConcurrentDictionary<string, Conversation>();
+
         private static int count;
+
         private static int NextConversationCount => Interlocked.Increment(ref count);
+
         public static bool IsRunning { get; private set; }
 
         public static void Start(ConversationBuilder method)
@@ -176,7 +179,9 @@ namespace Shared.Conversations
         }
 
         public delegate Conversation ConversationBuilder(Envelope e);
+
         private static ConversationBuilder conversationBuilder;
+
         public static void SetConversationBuilder(ConversationBuilder method)
         {
             if (conversationBuilder?.GetInvocationList().Length > 0)
