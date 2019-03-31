@@ -18,8 +18,8 @@
 
             <ColumnDefinition/>
             <ColumnDefinition/>
-            <ColumnDefinition Width="198"/>
-            <ColumnDefinition Width="198"/>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="215"/>
         </Grid.ColumnDefinitions>
         <Label Content="Hello World! From the client." HorizontalAlignment="Left" Margin="15,71,0,0" VerticalAlignment="Top" Width="368" Height="26" Grid.ColumnSpan="2"/>
         <TextBlock Text="{Binding HelloTextLocal}" TextWrapping="WrapWithOverflow" HorizontalAlignment="Left" Margin="15,170,0,0" VerticalAlignment="Top" Width="368" Height="59" Grid.ColumnSpan="2"/>
@@ -34,13 +34,13 @@
             </Canvas>
             <Canvas Height="52" Width="183">
                 <Rectangle Height="52" Width="183" />
-                <TextBlock x:Name="textBlock3" TextWrapping="Wrap" Text="TextBlock" Margin="2"/>
+                <TextBlock x:Name="textBlock3" TextWrapping="Wrap" TextAlignment="Right" Text="TextBlock" Canvas.Left="124"/>
             </Canvas>
 
         </ListBox>
 
         <Border Grid.Column="2" Margin="0,0,0,0" Grid.Row="1">
-            <Grid HorizontalAlignment="Left" Height="136" VerticalAlignment="Bottom" Width="198">
+            <Grid Height="136" VerticalAlignment="Bottom" Margin="0,0,0,0" >
 
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*"/>
@@ -49,9 +49,9 @@
                     <RowDefinition Height="1*"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="99"/>
-                    <ColumnDefinition Width="50"/>
-                    <ColumnDefinition Width="49"/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <Button x:Name="SellOut" Content="Sell Out" Click="SellOutEvent" Margin="2"/>
                 <Button x:Name="Sell100" Content="Sell 100" Click="Sell100Event" Grid.Row="1" Margin="2"/>
@@ -64,6 +64,7 @@
                 <Button x:Name="Sell" Content="Sell" Click="SellEvent" Grid.Row="3" Margin="2" Grid.Column="1"/>
             </Grid>
         </Border>
+        <Button x:Name="makeup" Grid.ColumnSpan="2" Content="MakeUpData" Grid.Column="1" HorizontalAlignment="Left" Margin="134,119,0,0" VerticalAlignment="Top" Width="105" Click="Makeup_Click"/>
 
     </Grid>
 </Window>

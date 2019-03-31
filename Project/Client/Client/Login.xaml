@@ -1,0 +1,28 @@
+﻿<Window x:Class="Client.Login"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Client"
+        mc:Ignorable="d"
+        Title="Login" Height="500" Width="800">
+    <Grid>
+        <Grid Margin="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="300"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Rectangle Fill="#434343" Stroke="DimGray" Margin="0" Grid.ColumnSpan="3"/>
+
+            <Image x:Name="image" Source="Logo.JPG" Height="260" VerticalAlignment="Top" Grid.Column="1"/>
+            <TextBox x:Name="user" Grid.Column="1" Height="23" Margin="40,260,40,0" TextWrapping="Wrap" Text="Username" VerticalAlignment="Top" Width="300"/>
+            <TextBox x:Name="pass" Grid.Column="1" Height="23" Margin="40,300,40,0" TextWrapping="Wrap" Text="Password" VerticalAlignment="Top"/>
+            <TextBox x:Name="confirm" Grid.Column="1" Height="23" Margin="40,340,40,0" TextWrapping="Wrap" Text="Confirm Password" VerticalAlignment="Top" IsEnabled="False"/>
+            <CheckBox x:Name="register" Content="Register" Grid.Column="1" HorizontalAlignment="Left" Margin="40,380,0,0" VerticalAlignment="Top"/>
+            <Button x:Name="submit" Content="Submit" Grid.Column="1" HorizontalAlignment="Left" Margin="150,380,0,0" VerticalAlignment="Top" Width="110" Click="Submit_Click"/>
+
+
+        </Grid>
+    </Grid>
+</Window>

@@ -8,19 +8,21 @@ using Shared.Portfolio;
 using System.Collections.Generic;
 using System.Windows.Controls;
 using System.Windows.Shapes;
+using System.Windows.Forms.VisualStyles;
 
 namespace Client
 {
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
         ManagedData mem = new ManagedData();
-        public string StockCount { get; set; } = "0";//holds the data in textbox
+
+        public string StockCount { get; set; } = "0";//holds the data in buySell textbox
 
 
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private HelloWorld helloWorld = new HelloWorld();
         public event PropertyChangedEventHandler PropertyChanged;
-
+        
         public MainWindow()
         {
             
@@ -48,34 +50,42 @@ namespace Client
                 {
                     helloTextLocal = value;
                     helloWorld.HelloText = value;
+                    
                     //PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("HelloTextLocal"));
                 }
             }
         }
         public void updateStockPanels()
         {
-            foreach (Canvas i in stockPanels.Items)
-            {
-                stockPanels.Items.Remove(i);
-            }
-            MarketDay day = mem.History[mem.History.Count];
+            stockPanels.Items.Clear();
+            MarketDay day = mem.History[mem.History.Count-1];
             foreach(ValuatedStock i in day.TradedCompanies)
             {
                 Canvas shell = new Canvas();
+                shell.Name = i.Symbol;
                 shell.Height = 52;
                 shell.Width = 183;
                 Rectangle back = new Rectangle();
                 back.Height = 52;
                 back.Width = 183;
-                TextBox sym = new TextBox();
+                TextBlock sym = new TextBlock();
                 sym.Text =i.Symbol;
+                sym.Margin = new Thickness(2);
+                TextBlock val = new TextBlock();
+                val.Text = i.Close.ToString("0.00");
+                val.Width = 179;
+                val.TextAlignment = TextAlignment.Right;
+                
                 shell.Children.Insert(0,back);
                 shell.Children.Insert(1, sym);
-
+                shell.Children.Insert(2, val);
+                
+                stockPanels.Items.Add(shell);
+                
             }
                 
         }
-
+        
         public void OnHelloTextChanged(object source, EventArgs args)
         {
             string method = "OnHelloTextChanged";
@@ -92,17 +102,13 @@ namespace Client
             //This function should check if the transaction is possible and if not will just do its best.
             //Instead of selling 100 it just sells what you have.
             //instead of buying 100 it just buys as much as your cash can afford.
-            HelloTextLocal=amount.ToString();
+            HelloTextLocal = amount.ToString() + "of"+mem.SelectedAsset.RelatedStock.Name;
+            updateStockPanels();
         }
         private void SellOutEvent(object sender, RoutedEventArgs e)
         {
-            try {
-                Asset holder = mem.myPortfolio.GetAsset(mem.SelectedStock.Symbol);
-                SendTransaction(-holder.Quantity);
-            }
-            catch { HelloTextLocal = mem.SelectedStock.Symbol + " not found in dictionary"; }
-            
-            
+            SendTransaction(-mem.SelectedAsset.Quantity);
+ 
         }
 
         private void Sell100Event(object sender, RoutedEventArgs e)
@@ -143,12 +149,21 @@ namespace Client
 
         private void ListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-
+            mem.SelectedAsset = mem.MyPortfolio.GetAsset(((sender as ListBox).SelectedItem as Canvas).Name);
         }
 
         public void Button_Click_1(object sender, EventArgs e)
         {
 
+        }
+
+        private void Makeup_Click(object sender, RoutedEventArgs e)
+        {
+            mem.Cash = 100000;
+            mem.History = ManagedData.makeupMarketSegment(15,30);
+            mem.MyPortfolio = ManagedData.makeupPortfolio(mem.History[0]);
+            makeup.IsEnabled=false;
+            updateStockPanels();
         }
     }
 }

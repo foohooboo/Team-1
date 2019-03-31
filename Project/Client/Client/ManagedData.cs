@@ -12,45 +12,63 @@ namespace Client
     {//Incredibly lazily made class, I will add a lot more functions here as i need to.
         public float Cash { get; set; } = 100000;
         public MarketSegment History { get; set; } = new MarketSegment();
-        public Portfolio myPortfolio { get; set; } = new Shared.Portfolio.Portfolio();
+        public Portfolio MyPortfolio { get; set; } = new Portfolio();
         public SortedList<string, string> HighScores { get; set; } = new SortedList<string, string>();
-        public Stock SelectedStock { get; set; } = new Stock("AAPL", "Apple Inc.");
+        public Asset SelectedAsset{ get; set; } = new Asset(new Stock("APPL","Apple Inc."), 5);
 
-        private static readonly Random random = new Random();
-        private float low, high, open, close,volume;
+        private static readonly Random random = new Random(54);
+        private static float low, high, open, close,volume;
         //Bad data added in manaually for testing
-        public void makeUpData()
+        public static Portfolio makeupPortfolio(MarketDay input)
         {
-
-            for(int i = 0; i < 15; i++)
+            
+            Portfolio ret = new Portfolio();
+            foreach(ValuatedStock i in input.TradedCompanies)
             {
-
+                int count=random.Next(0,1);
+                count *= random.Next(0, 100);
+                ret.Assets.Add(i.Symbol,new Asset(i,count));
             }
-            Stock apl = new Stock("AAPL", "Apple Inc.");
-            //Expected string[] format: date(unused),open,high,low,close,volume
-            string[] dat = { "3-27-2019", "21.34", "23.45", "21.10","23.10", "4007"};
-            ValuatedStock[] stocks = { new ValuatedStock(dat,apl)};
-            MarketDay a = new MarketDay("3-27-2019", stocks);
-            History.Add(a);
-
-            Asset aplasset = new Asset(apl,47);
-            
+            return ret;
         }
-        private Stock makeupStock()
+
+        public static MarketSegment makeupMarketSegment(int stocks, int days)
         {
-            
-            return new Stock(random.Next().ToString().GetHashCode().ToString("X"), random.Next().ToString().GetHashCode().ToString("x"));
+            MarketSegment returns = new MarketSegment();
+            List<Stock> madeupStocks = new List<Stock>(stocks);
+            for (int i = 0; i < stocks; i++)
+            {
+                madeupStocks.Add(makeupStock());
+            }
+            for(int i = 0; i < days; i++)
+            {
+                List<ValuatedStock> dayList = new List<ValuatedStock>(stocks);
+                for(int j = 0; j < stocks; j++)
+                {
+                    dayList.Add(makeupValuatedStock(madeupStocks[j]));
+                }
+                MarketDay dayHolder = new MarketDay("3-26-2019",dayList.ToArray());
+                returns.Add(dayHolder);
+            }
+
+            return returns;
+        }
+        private static Stock makeupStock()
+        {
+            string full = random.Next().ToString().GetHashCode().ToString("X");
+            return new Stock(System.Text.RegularExpressions.Regex.Replace(full, @"[\d-]", string.Empty),full);
 
         }
-        private ValuatedStock makeupValuatedStock(Stock s)
+        private static ValuatedStock makeupValuatedStock(Stock s)
         {
-            low = random.Next() * 100;
-            high = random.Next() * 10 + low;
-            open = random.Next() * (high - low) + low;
-            close = random.Next() * (high - low) + low;
-            volume = (float)Math.Floor((double)random.Next() * 10000);
+            low = (float)random.Next(10000)/100;
+            high = (float)random.Next(1000)/100 + low;
+            open = (float)random.Next((int)low * 100, (int)high * 100) / 100;
+            close = (float)random.Next((int)low * 100, (int)high * 100) / 100;
+            volume = random.Next(100000);
             string[] holder = { "3-29-19",low.ToString("0.00"), high.ToString("0.00"), open.ToString("0.00"), close.ToString("0.00"), volume.ToString("0") };
             return new ValuatedStock(holder, s);
+
         }
 
     }
