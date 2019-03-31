@@ -25,6 +25,7 @@ namespace Broker.Conversations.GetPortfolio
 
         public override Envelope Prepare()
         {
+            // We need to trigger the Leaderboard update request conversation at this point some how.
             return null;
         }
     }

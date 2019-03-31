@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Shared.Conversations;
 
 namespace StockServer.Conversations.StockUpdate
 {
-    class StockUpdateSendConversation
+    public class StockUpdateSendConversation : Conversation
     {
+        public StockUpdateSendConversation(int processId) : base(processId)
+        {
+        }
     }
 }

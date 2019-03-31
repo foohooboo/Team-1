@@ -1,11 +1,8 @@
-﻿using log4net;
-using Shared;
+﻿using System.Net;
+using log4net;
+using Shared.Client;
 using Shared.Comms.MailService;
-using Shared.Comms.Messages;
 using Shared.Conversations;
-using Shared.Conversations.SharedStates;
-using StockServer.Data;
-using System.Net;
 
 namespace StockServer.Conversations.StockStreamRequest
 {
@@ -20,7 +17,11 @@ namespace StockServer.Conversations.StockStreamRequest
             Log.Debug($"{nameof(ConvR_StockStreamRequest)} (enter)");
 
             ClientIp = e.To;
+
             //TODO: save endpoint/connection/postbox to use in future stock price updates
+            // Right now this is setup to use the portfolioID for the key. 
+            ClientManager.TryToAdd(0, e.To);
+
 
             Log.Debug($"{nameof(ConvR_StockStreamRequest)} (exit)");
         }
