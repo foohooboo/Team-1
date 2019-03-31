@@ -71,8 +71,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Conversations\InitiateTransactionConversation.cs" />
-    <Compile Include="Conversations\InitTransactionStartingState.cs" />
+
     <Compile Include="Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
     </Compile>
