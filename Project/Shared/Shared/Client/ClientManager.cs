@@ -11,61 +11,42 @@ namespace Shared.Client
     {
         private static ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public static ConcurrentDictionary<int, IPEndPoint> Clients = new ConcurrentDictionary<int, IPEndPoint>();
+        public static ConcurrentBag<IPEndPoint> Clients = new ConcurrentBag<IPEndPoint>();
 
-        public static bool TryToAdd(int portfolioID, IPEndPoint endPoint)
+        public static bool TryToAdd(IPEndPoint endPoint)
         {
             Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (enter)");
 
-            if (Clients.Keys.Any(portID => portID.Equals(portfolioID)))
+            if (Clients.Contains(endPoint))
             {
-                Log.Debug($"Portfolio {portfolioID} is alread in the list");
+                Log.Debug($"EndPoint {endPoint.ToString()} is alread in the list");
                 return false;
             }
 
-            if (!Clients.TryAdd(portfolioID, endPoint))
-            {
-                Log.Debug($"Failed to add portfolio for {portfolioID}");
-                return false;
-            }
+            Clients.Add(endPoint);
 
             Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (exit)");
             return true;
         }
         
-        public static bool TryToRemove(int portfolioID)
+        public static bool TryToRemove(IPEndPoint endPoint)
         {
             Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (enter)");
-            
-            if (!Clients.TryRemove(portfolioID, out IPEndPoint endPoint))
+
+            if (!Clients.Contains(endPoint))
             {
-                Log.Debug($"Failed to remove client endpoint for portfolio id:: {portfolioID}");
+                Log.Debug($"EndPoint {endPoint.ToString()} is not in the list");
+                return false;
+            }
+
+            if (!Clients.TryTake(out IPEndPoint removedEndPoint))
+            {
+                Log.Debug($"Failed to remove endpoint {endPoint}");
                 return false;
             }
 
             Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (exit)");
             return true;
-        }
-
-        /// <summary>
-        /// The number of messages sent.
-        /// This was added to be able to test the messages sent were what was expected.
-        /// </summary>
-        /// <param name="message">The message to send to the clients.</param>
-        /// <returns></returns>
-        public static int UpdateClients(Message message)
-        {
-            var messagesSent = 0;
-
-            foreach (var client in Clients)
-            {
-                var env = new Envelope(message, client.Value.Address.ToString(), client.Value.Port);
-
-                PostOffice.Send(env);
-                messagesSent++;
-            }
-
-            return messagesSent;
         }
     }
 }

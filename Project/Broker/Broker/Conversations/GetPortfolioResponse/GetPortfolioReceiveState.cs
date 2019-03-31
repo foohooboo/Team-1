@@ -47,7 +47,7 @@ namespace Broker.Conversations.GetPortfolio
             // If we retreived a portfolio, add the receiver to the client list.
             if (message is PortfolioUpdateMessage m)
             {
-                ClientManager.TryToAdd(m.PortfolioID, To);
+                ClientManager.TryToAdd(To);
             }
 
             var env = new Envelope(message, Config.GetString(Config.BROKER_IP), Config.GetInt(Config.BROKER_PORT))
