@@ -30,7 +30,7 @@ namespace BrokerTest
         }
 
         [TestMethod]
-        public void GetPortfolioSuccessTest()
+        public void GetPortfolioByIdSuccessTest()
         {
             PortfolioManager.TryToCreate(GetRandomString(3), GetRandomString(6), out Portfolio portfolio);
 
@@ -41,6 +41,26 @@ namespace BrokerTest
             PortfolioManager.ReleaseLock(portfolio);
 
             Assert.IsTrue(PortfolioManager.TryToGet(id, out Portfolio newPullPortfolio));
+            Assert.AreEqual(id, newPullPortfolio.PortfolioID);
+            Assert.AreEqual(username, newPullPortfolio.Username);
+            Assert.AreEqual(password, newPullPortfolio.Password);
+
+            PortfolioManager.ReleaseLock(newPullPortfolio);
+            PortfolioManager.TryToRemove(portfolio.PortfolioID);
+        }
+
+        [TestMethod]
+        public void GetPortfolioByCredentialsSuccessTest()
+        {
+            PortfolioManager.TryToCreate(GetRandomString(5), GetRandomString(2), out Portfolio portfolio);
+
+            var id = portfolio.PortfolioID;
+            var username = portfolio.Username;
+            var password = portfolio.Password;
+
+            PortfolioManager.ReleaseLock(portfolio);
+
+            Assert.IsTrue(PortfolioManager.TryToGet(username, password, out Portfolio newPullPortfolio));
             Assert.AreEqual(id, newPullPortfolio.PortfolioID);
             Assert.AreEqual(username, newPullPortfolio.Username);
             Assert.AreEqual(password, newPullPortfolio.Password);

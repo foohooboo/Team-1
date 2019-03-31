@@ -65,9 +65,8 @@ namespace Shared.PortfolioResources
         public Asset GetAsset(string symbol)
         {
             Log.Debug($"{nameof(GetAsset)} (enter)");
-
-            Asset asset = null;
-            if (Assets.TryGetValue(symbol, out asset))
+            
+            if (Assets.TryGetValue(symbol, out Asset asset))
             {
                 asset = new Asset(asset);//Prepare deep copy so original can't be modified except through ModifyAsset method.
             }

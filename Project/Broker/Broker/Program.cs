@@ -57,8 +57,7 @@ namespace Broker
 
             switch (e.Contents)
             {
-                case CreatePortfolioRequestMessage m
-                    when (m is CreatePortfolioRequestMessage):
+                case CreatePortfolioRequestMessage m:
                     conv = new CreatePortfoliolResponseConversation(m.ConversationID);
                     conv.SetInitialState(new CreatePortfolioReceiveState(e, conv));
                     break;

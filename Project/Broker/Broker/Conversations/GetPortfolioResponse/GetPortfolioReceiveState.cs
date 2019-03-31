@@ -4,7 +4,9 @@ using Shared.Client;
 using Shared.Comms.MailService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
+using Shared.Conversations.SharedStates;
 using Shared.PortfolioResources;
+using System;
 
 namespace Broker.Conversations.GetPortfolio
 {
@@ -12,23 +14,28 @@ namespace Broker.Conversations.GetPortfolio
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        private int PortfolioID
+        private string PortfolioName
+        {
+            get; set;
+        }
+
+        private string PortfolioPassword
         {
             get; set;
         }
 
         public GetPortfolioReceiveState(Envelope envelope, Conversation conversation) : base(envelope, conversation, null)
         {
+            if (!(envelope.Contents is GetPortfolioRequest m))
+                throw new ArgumentException("GetPortfolioReceiveState must be created with a GetPortfolioRequest message.");
+
+            PortfolioName = m.Account.Username;
+            PortfolioPassword = m.Account.Password;
         }
 
         public override ConversationState HandleMessage(Envelope incomingMessage)
         {
-
-            if (incomingMessage.Contents is GetPortfolioRequest m)
-            {
-                PortfolioID = m.Account.PortfolioID;
-            }
-
+            //This state should never handle a new message
             return null;
         }
 
@@ -54,9 +61,9 @@ namespace Broker.Conversations.GetPortfolio
 
         private Message GetMessage()
         {
-            if (!PortfolioManager.TryToGet(PortfolioID, out Portfolio portfolio))
+            if (!PortfolioManager.TryToGet(PortfolioName, PortfolioPassword, out Portfolio portfolio))
             {
-                var errormessage = MessageFactory.GetMessage<ErrorMessage>(Config.GetInt(Config.BROKER_PROCESS_NUM), PortfolioID) as ErrorMessage;
+                var errormessage = MessageFactory.GetMessage<ErrorMessage>(Config.GetInt(Config.BROKER_PROCESS_NUM), 0) as ErrorMessage;
 
                 errormessage.ConversationID = Conversation.Id;
                 errormessage.ReferenceMessageID = this.MessageId;
@@ -64,7 +71,7 @@ namespace Broker.Conversations.GetPortfolio
                 return errormessage;
             }
 
-            var message = MessageFactory.GetMessage<PortfolioUpdateMessage>(Config.GetInt(Config.BROKER_PROCESS_NUM), PortfolioID) as PortfolioUpdateMessage;
+            var message = MessageFactory.GetMessage<PortfolioUpdateMessage>(Config.GetInt(Config.BROKER_PROCESS_NUM), portfolio.PortfolioID) as PortfolioUpdateMessage;
 
             message.ConversationID = Conversation.Id;
             message.Assets = portfolio.CloneAssets();
@@ -72,6 +79,12 @@ namespace Broker.Conversations.GetPortfolio
             PortfolioManager.ReleaseLock(portfolio);
 
             return message;
+        }
+
+        public override void Send()
+        {
+            base.Send();
+            Conversation.UpdateState(new ConversationDoneState(Conversation, this));
         }
     }
 }

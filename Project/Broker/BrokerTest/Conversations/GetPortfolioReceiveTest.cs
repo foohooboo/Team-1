@@ -1,5 +1,7 @@
 ﻿using Broker;
 using Broker.Conversations.CreatePortfolio;
+using Broker.Conversations.GetPortfolio;
+using Broker.Conversations.GetPortfolioResponse;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Shared.Comms.MailService;
@@ -12,9 +14,9 @@ using System.Linq;
 namespace BrokerTest.Conversations
 {
     [TestClass]
-    public class CreatePortfolioReceiveTest
+    public class GetPortfolioReceiveTest
     {
-        private Mock<CreatePortfolioReceiveState> mock;
+        private Mock<GetPortfolioReceiveState> mock;
 
         public Conversation ConversationBuilder(Envelope e)
         {
@@ -22,11 +24,11 @@ namespace BrokerTest.Conversations
 
             switch (e.Contents)
             {
-                case CreatePortfolioRequestMessage m:
-                    conv = new CreatePortfoliolResponseConversation(m.ConversationID);
+                case GetPortfolioRequest m:
+                    conv = new GetPortfoliolResponseConversation(m.ConversationID);
 
-                    mock = new Mock<CreatePortfolioReceiveState>(e, conv) { CallBase = true };
-                    conv.SetInitialState(mock.Object as CreatePortfolioReceiveState);
+                    mock = new Mock<GetPortfolioReceiveState>(e, conv) { CallBase = true };
+                    conv.SetInitialState(mock.Object as GetPortfolioReceiveState);
                     break;
             }
 
@@ -47,57 +49,10 @@ namespace BrokerTest.Conversations
             PostOffice.RemoveBox("0.0.0.0:0");
         }
 
+        
+
         [TestMethod]
         public void RequestSucceed()
-        {
-            string PortName = "IamAUsername";
-            string PortPass = "IamAPassword";
-            string RequestConvId = "5-567";
-            string ClientIp = "192.168.1.75";
-            int ClientPort = 5655;
-            
-            var RequestMessage = new CreatePortfolioRequestMessage()
-            {
-                ConversationID = RequestConvId,
-                MessageID = RequestConvId,
-                Account = new Portfolio
-                {
-                    Username = PortName,
-                    Password = PortPass
-                },
-                ConfirmPassword = PortPass
-            };
-
-            Envelope IncomingRequest = new Envelope(RequestMessage, ClientIp, ClientPort);
-
-            var localConv = ConversationManager.GetConversation(RequestConvId);
-            Assert.IsNull(localConv);
-            Assert.IsNull(mock);
-
-            Assert.IsTrue(PortfolioManager.Portfolios.Count == 0);
-
-            ConversationManager.ProcessIncomingMessage(IncomingRequest);
-
-            Assert.IsTrue(PortfolioManager.Portfolios.Count == 1);
-            Portfolio localPortfolio = PortfolioManager.Portfolios.First().Value;
-            Assert.AreEqual(PortName, localPortfolio.Username);
-            Assert.AreEqual(PortPass, localPortfolio.Password);
-
-            localConv = ConversationManager.GetConversation(RequestConvId);
-            
-            Assert.IsNotNull(localConv);
-            Assert.IsNotNull(localConv.CurrentState.PreviousState.OutboundMessage.Contents as PortfolioUpdateMessage);
-
-            Assert.IsTrue(localConv.CurrentState is ConversationDoneState);
-            mock.Verify(state => state.Prepare(), Times.Once);
-            mock.Verify(state => state.Send(), Times.Once);
-            mock.Verify(state => state.HandleTimeout(), Times.Never);
-
-            Assert.IsTrue(PortfolioManager.TryToRemove(localPortfolio.PortfolioID));
-        }
-
-        [TestMethod]
-        public void RequestFailAlreadyExists()
         {
             string PortName = "IamAUsername";
             string PortPass = "IamAPassword";
@@ -108,7 +63,7 @@ namespace BrokerTest.Conversations
             PortfolioManager.TryToCreate(PortName, PortPass, out Portfolio preExistingPortfolio);
             PortfolioManager.ReleaseLock(preExistingPortfolio);
 
-            var RequestMessage = new CreatePortfolioRequestMessage()
+            var RequestMessage = new GetPortfolioRequest()
             {
                 ConversationID = RequestConvId,
                 MessageID = RequestConvId,
@@ -116,8 +71,7 @@ namespace BrokerTest.Conversations
                 {
                     Username = PortName,
                     Password = PortPass
-                },
-                ConfirmPassword = PortPass
+                }
             };
 
             Envelope IncomingRequest = new Envelope(RequestMessage, ClientIp, ClientPort);
@@ -131,16 +85,111 @@ namespace BrokerTest.Conversations
             ConversationManager.ProcessIncomingMessage(IncomingRequest);
 
             localConv = ConversationManager.GetConversation(RequestConvId);
+            Assert.IsNotNull(localConv.CurrentState.PreviousState.OutboundMessage.Contents as PortfolioUpdateMessage);
+            Assert.IsNull(localConv.CurrentState.PreviousState.OutboundMessage.Contents as ErrorMessage);
             
-            Assert.IsNotNull(localConv);
-            Assert.IsNotNull(localConv.CurrentState.PreviousState.OutboundMessage.Contents as ErrorMessage);
-            Assert.IsNull(localConv.CurrentState.PreviousState.OutboundMessage.Contents as PortfolioUpdateMessage);
 
+            Assert.IsNotNull(localConv);
+            
             Assert.IsTrue(localConv.CurrentState is ConversationDoneState);
             mock.Verify(state => state.Prepare(), Times.Once);
             mock.Verify(state => state.Send(), Times.Once);
             mock.Verify(state => state.HandleTimeout(), Times.Never);
             
+            Assert.IsTrue(PortfolioManager.TryToRemove(preExistingPortfolio.PortfolioID));
+        }
+
+        [TestMethod]
+        public void RequestFailInvalidUsername()
+        {
+            string PortName = "IamAUsername";
+            string PortPass = "IamAPassword";
+            string RequestConvId = "5-567";
+            string ClientIp = "192.168.1.75";
+            int ClientPort = 5655;
+
+            PortfolioManager.TryToCreate(PortName, PortPass, out Portfolio preExistingPortfolio);
+            PortfolioManager.ReleaseLock(preExistingPortfolio);
+
+            var RequestMessage = new GetPortfolioRequest()
+            {
+                ConversationID = RequestConvId,
+                MessageID = RequestConvId,
+                Account = new Portfolio
+                {
+                    Username = PortName +"makemeInvalid",
+                    Password = PortPass
+                }
+            };
+
+            Envelope IncomingRequest = new Envelope(RequestMessage, ClientIp, ClientPort);
+
+            var localConv = ConversationManager.GetConversation(RequestConvId);
+            Assert.IsNull(localConv);
+            Assert.IsNull(mock);
+
+            Assert.IsTrue(PortfolioManager.Portfolios.Count == 1);
+
+            ConversationManager.ProcessIncomingMessage(IncomingRequest);
+
+            localConv = ConversationManager.GetConversation(RequestConvId);
+            Assert.IsNotNull(localConv.CurrentState.PreviousState.OutboundMessage.Contents as ErrorMessage);
+            Assert.IsNull(localConv.CurrentState.PreviousState.OutboundMessage.Contents as PortfolioUpdateMessage);
+
+            Assert.IsNotNull(localConv);
+
+            Assert.IsTrue(localConv.CurrentState is ConversationDoneState);
+            mock.Verify(state => state.Prepare(), Times.Once);
+            mock.Verify(state => state.Send(), Times.Once);
+            mock.Verify(state => state.HandleTimeout(), Times.Never);
+
+            Assert.IsTrue(PortfolioManager.TryToRemove(preExistingPortfolio.PortfolioID));
+        }
+
+        [TestMethod]
+        public void RequestFailInvalidPassword()
+        {
+            string PortName = "IamAUsernameff";
+            string PortPass = "IamAPasswordfff";
+            string RequestConvId = "5-564";
+            string ClientIp = "192.168.1.99";
+            int ClientPort = 5655;
+
+            PortfolioManager.TryToCreate(PortName, PortPass, out Portfolio preExistingPortfolio);
+            PortfolioManager.ReleaseLock(preExistingPortfolio);
+
+            var RequestMessage = new GetPortfolioRequest()
+            {
+                ConversationID = RequestConvId,
+                MessageID = RequestConvId,
+                Account = new Portfolio
+                {
+                    Username = PortName,
+                    Password = PortPass + "makemeInvalid"
+                }
+            };
+
+            Envelope IncomingRequest = new Envelope(RequestMessage, ClientIp, ClientPort);
+
+            var localConv = ConversationManager.GetConversation(RequestConvId);
+            Assert.IsNull(localConv);
+            Assert.IsNull(mock);
+
+            Assert.IsTrue(PortfolioManager.Portfolios.Count == 1);
+
+            ConversationManager.ProcessIncomingMessage(IncomingRequest);
+
+            localConv = ConversationManager.GetConversation(RequestConvId);
+            Assert.IsNotNull(localConv.CurrentState.PreviousState.OutboundMessage.Contents as ErrorMessage);
+            Assert.IsNull(localConv.CurrentState.PreviousState.OutboundMessage.Contents as PortfolioUpdateMessage);
+
+            Assert.IsNotNull(localConv);
+
+            Assert.IsTrue(localConv.CurrentState is ConversationDoneState);
+            mock.Verify(state => state.Prepare(), Times.Once);
+            mock.Verify(state => state.Send(), Times.Once);
+            mock.Verify(state => state.HandleTimeout(), Times.Never);
+
             Assert.IsTrue(PortfolioManager.TryToRemove(preExistingPortfolio.PortfolioID));
         }
 
