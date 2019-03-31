@@ -43,6 +43,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cleint\ClientManagerTest.cs" />
     <Compile Include="Configuration\ConfigurationTest.cs" />
     <Compile Include="MailService\EnvelopeTest.cs" />
     <Compile Include="MailService\PostBoxTest.cs" />

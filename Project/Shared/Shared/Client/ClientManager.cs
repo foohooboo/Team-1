@@ -4,8 +4,6 @@ using System.Net;
 using log4net;
 using Shared.Comms.MailService;
 using Shared.Comms.Messages;
-using Shared.MarketStructures;
-using Shared.PortfolioResources;
 
 namespace Shared.Client
 {
@@ -49,16 +47,25 @@ namespace Shared.Client
             return true;
         }
 
-        public static void UpdateClients(Message message)
+        /// <summary>
+        /// The number of messages sent.
+        /// This was added to be able to test the messages sent were what was expected.
+        /// </summary>
+        /// <param name="message">The message to send to the clients.</param>
+        /// <returns></returns>
+        public static int UpdateClients(Message message)
         {
+            var messagesSent = 0;
+
             foreach (var client in Clients)
             {
                 var env = new Envelope(message, client.Value.Address.ToString(), client.Value.Port);
 
                 PostOffice.Send(env);
+                messagesSent++;
             }
 
-
+            return messagesSent;
         }
     }
 }
