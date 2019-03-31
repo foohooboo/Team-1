@@ -1,6 +1,6 @@
 ﻿using Shared.Conversations;
 
-namespace Broker.Conversations.GetPortfolioResponse
+namespace Broker.Conversations.CreatePortfolio
 {
     public class CreatePortfoliolResponseConversation : Conversation
     {

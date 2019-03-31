@@ -111,7 +111,14 @@ namespace Broker
         public static void ReleaseLock(Portfolio portfolio)
         {
             Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (enter)");
-            portfolio.WriteAuthority = false;
+            if (portfolio == null)
+            {
+                Log.Warn("Tried to release lock on null portfolio.");
+            }
+            else
+            {
+                portfolio.WriteAuthority = false;
+            }
             portfolio = null;
             Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (exit)");
         }

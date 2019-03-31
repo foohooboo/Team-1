@@ -37,7 +37,7 @@ namespace Shared.Conversations.SharedStates
             if (++CountRetrys > Config.GetInt(Config.DEFAULT_RETRY_COUNT))
             {
                 Log.Debug($"Conversation {Conversation.Id} being cleaned up.");
-                PreviousState = null;
+
                 ConversationManager.RemoveConversation(Conversation.Id);
             }
 

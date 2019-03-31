@@ -4,6 +4,7 @@ using Shared.Client;
 using Shared.Comms.MailService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
+using Shared.Conversations.SharedStates;
 using Shared.PortfolioResources;
 
 namespace Broker.Conversations.CreatePortfolio
@@ -25,6 +26,13 @@ namespace Broker.Conversations.CreatePortfolio
 
         public CreatePortfolioReceiveState(Envelope envelope, Conversation conversation) : base(envelope, conversation, null)
         {
+            if (!(envelope.Contents is CreatePortfolioRequestMessage request))
+                throw new System.Exception("CreatePortflioReceieveState requires CreatePortfolioRequestMessage.");
+            if (request.Account.Password.Equals(request.ConfirmPassword))
+            {
+                Username = request.Account.Username;
+                Password = request.Account.Password;
+            }
         }
 
         public override ConversationState HandleMessage(Envelope incomingMessage)
@@ -78,6 +86,12 @@ namespace Broker.Conversations.CreatePortfolio
             PortfolioManager.ReleaseLock(portfolio);
 
             return message;
+        }
+
+        public override void Send()
+        {
+            base.Send();
+            Conversation.UpdateState(new ConversationDoneState(Conversation, this));
         }
     }
 }
