@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Shared.Leaderboard;
 using Shared.MarketStructures;
-using Shared.Portfolio;
+using Shared.PortfolioResources;
 
 namespace Broker
 {

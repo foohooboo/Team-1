@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Shared.Portfolio;
+using Shared.PortfolioResources;
 using Shared.MarketStructures;
 using System.Collections.Generic;
 

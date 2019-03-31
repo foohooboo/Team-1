@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Shared.Portfolio
+namespace Shared.PortfolioResources
 {
     public class Portfolio
     {

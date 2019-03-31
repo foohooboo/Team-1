@@ -1,9 +1,10 @@
 ﻿using log4net;
 using Shared;
+using Shared.Client;
 using Shared.Comms.MailService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
-using Shared.Portfolio;
+using Shared.PortfolioResources;
 
 namespace Broker.Conversations.CreatePortfolio
 {
@@ -41,6 +42,12 @@ namespace Broker.Conversations.CreatePortfolio
         {
             Log.Debug($"{nameof(Prepare)} (enter)");
             var message = GetMessage();
+
+            // If we created a portfolio, add the receiver to the client list.
+            if (message is PortfolioUpdateMessage m)
+            {
+                ClientManager.TryToAdd(m.PortfolioID, To);
+            }
 
             var env = new Envelope(message, Config.GetString(Config.BROKER_IP), Config.GetInt(Config.BROKER_PORT))
             {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Shared.Comms.Messages;
-using Shared.Portfolio;
+using Shared.PortfolioResources;
 using Shared;
 using System.Collections.Generic;
 
@@ -30,7 +30,7 @@ namespace SharedTest.Messages
         [TestMethod]
         public void InitializeTest()
         {
-            var acc = new Shared.Portfolio.Portfolio();
+            var acc = new Shared.PortfolioResources.Portfolio();
 
             var m = new GetPortfolioRequest
             {
@@ -49,7 +49,7 @@ namespace SharedTest.Messages
                 { "CASH", new Asset() }
             };
 
-            var acc = new Shared.Portfolio.Portfolio
+            var acc = new Shared.PortfolioResources.Portfolio
             {
                 Assets = assets,
                 Username = "foohooboo",

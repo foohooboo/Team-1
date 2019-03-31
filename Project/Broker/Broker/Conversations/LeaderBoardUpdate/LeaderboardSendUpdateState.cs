@@ -1,5 +1,6 @@
 ﻿using Broker;
 using log4net;
+using Shared.Client;
 using Shared.Comms.MailService;
 using Shared.Comms.Messages;
 
@@ -21,8 +22,6 @@ namespace Shared.Conversations.SharedStates
         {
             Log.Debug($"{nameof(Prepare)} (enter)");
 
-            Envelope env = null;
-
             var message = MessageFactory.GetMessage<UpdateLeaderBoardMessage>(Config.GetInt(Config.BROKER_PROCESS_NUM), 0) as UpdateLeaderBoardMessage;
 
             foreach (var portfolio in PortfolioManager.Portfolios)
@@ -30,9 +29,11 @@ namespace Shared.Conversations.SharedStates
                 var record = LeaderboardManager.GetLeaderboardRecord(portfolio.Value);
                 message.Records.Add(record.Username, record.TotalAssetValue);
             }
+            
+            ClientManager.UpdateClients(message);
 
             Log.Debug($"{nameof(Prepare)} (exit)");
-            return env;
+            return null;
         }
     }
 }

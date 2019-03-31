@@ -6,10 +6,10 @@ namespace Shared.Comms.Messages
     {
         public PortfolioUpdateMessage()
         {
-            Assets = new Dictionary<string, Portfolio.Asset>();
+            Assets = new Dictionary<string, PortfolioResources.Asset>();
         }
 
-        public PortfolioUpdateMessage(Dictionary<string, Shared.Portfolio.Asset> Assets)
+        public PortfolioUpdateMessage(Dictionary<string, Shared.PortfolioResources.Asset> Assets)
         {
             this.Assets = Assets;
         }
@@ -19,7 +19,7 @@ namespace Shared.Comms.Messages
             get; set;
         }
 
-        public Dictionary<string, Shared.Portfolio.Asset> Assets
+        public Dictionary<string, Shared.PortfolioResources.Asset> Assets
         {
             get; set;
         }

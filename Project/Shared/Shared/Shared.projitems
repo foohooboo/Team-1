@@ -9,6 +9,7 @@
     <Import_RootNamespace>Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Client\ClientManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\MailService\EndPointParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\MailService\Envelope.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\MailService\PostBox.cs" />
@@ -40,8 +41,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)MarketStructures\ValuatedStock.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MarketStructures\Stock.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MarketStructures\MarketDay.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Portfolio\Asset.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Portfolio\Portfolio.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PortfolioResources\Asset.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PortfolioResources\Portfolio.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Temp.cs" />
   </ItemGroup>
   <ItemGroup>

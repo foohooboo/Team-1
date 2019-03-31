@@ -2,7 +2,7 @@
 using System.Linq;
 using log4net;
 using Shared.MarketStructures;
-using Shared.Portfolio;
+using Shared.PortfolioResources;
 
 namespace Broker
 {

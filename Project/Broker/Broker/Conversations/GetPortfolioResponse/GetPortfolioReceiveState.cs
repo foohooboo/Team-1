@@ -3,7 +3,7 @@ using Shared;
 using Shared.Comms.MailService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
-using Shared.Portfolio;
+using Shared.PortfolioResources;
 
 namespace Broker.Conversations.GetPortfolio
 {

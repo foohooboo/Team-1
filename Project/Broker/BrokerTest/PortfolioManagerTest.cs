@@ -1,7 +1,7 @@
 ﻿using System;
 using Broker;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Shared.Portfolio;
+using Shared.PortfolioResources;
 
 namespace BrokerTest
 {

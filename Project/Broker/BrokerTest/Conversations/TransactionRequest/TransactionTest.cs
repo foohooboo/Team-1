@@ -7,7 +7,7 @@ using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
 using Shared.MarketStructures;
-using Shared.Portfolio;
+using Shared.PortfolioResources;
 
 namespace BrokerTest.Conversations.TransasctionRequest
 {

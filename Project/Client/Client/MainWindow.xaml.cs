@@ -4,7 +4,7 @@ using System;
 using System.ComponentModel;
 using System.Windows;
 using Shared.MarketStructures;
-using Shared.Portfolio;
+using Shared.PortfolioResources;
 using System.Collections.Generic;
 using System.Windows.Controls;
 using System.Windows.Shapes;

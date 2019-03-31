@@ -7,7 +7,7 @@
 
         }
 
-        public Shared.Portfolio.Portfolio Account
+        public Shared.PortfolioResources.Portfolio Account
         {
             get; set;
         }
