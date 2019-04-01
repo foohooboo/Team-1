@@ -11,6 +11,7 @@ namespace Broker.Conversations.GetPortfolio
 
         public ProcessStockUpdateState(Envelope envelope, Conversation conversation) : base(envelope, conversation, null)
         {
+
         }
 
         public override ConversationState HandleMessage(Envelope incomingMessage)

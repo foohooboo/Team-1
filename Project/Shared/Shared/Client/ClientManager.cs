@@ -2,8 +2,6 @@
 using System.Linq;
 using System.Net;
 using log4net;
-using Shared.Comms.MailService;
-using Shared.Comms.Messages;
 
 namespace Shared.Client
 {
