@@ -71,7 +71,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-
     <Compile Include="Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
     </Compile>
@@ -84,7 +83,6 @@
     <Compile Include="Conversations\RequestTransaction\InitiateTransactionConversation.cs" />
     <Compile Include="Conversations\RequestTransaction\InitTransactionStartingState.cs" />
     <Compile Include="Conversations\RequestTransaction\ReceiveConfirmationState.cs" />
-    <Compile Include="Conversations\StockHistory\StockHistoryReceiveState.cs" />
     <Compile Include="Conversations\StockHistory\StockHistoryRequestConversation.cs" />
     <Compile Include="Conversations\StockHistory\StockHistoryRequestState.cs" />
     <Compile Include="Conversations\StockUpdate\ReceiveStockUpdateConversation.cs" />
