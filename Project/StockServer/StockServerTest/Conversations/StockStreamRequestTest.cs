@@ -6,7 +6,7 @@ using Shared.Conversations;
 using Shared.Conversations.SharedStates;
 using StockServer.Conversations.StockStreamRequest;
 
-namespace SharedTest.Conversations
+namespace StockServerTest.Conversations
 {
     /// <summary>
     /// Summary description for MessageFactoryTest

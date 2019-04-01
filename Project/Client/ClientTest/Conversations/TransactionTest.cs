@@ -30,7 +30,6 @@ namespace ClientTest.Conversations
             PostOffice.RemoveBox("0.0.0.0:0");
         }
 
-
         [TestMethod]
         public void RequestSucceed()
         {

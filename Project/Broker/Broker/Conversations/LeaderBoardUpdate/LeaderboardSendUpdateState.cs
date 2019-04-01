@@ -1,9 +1,9 @@
-﻿using Broker;
+﻿using System.Net;
+using Broker;
 using log4net;
 using Shared.Client;
 using Shared.Comms.MailService;
 using Shared.Comms.Messages;
-using System.Net;
 
 namespace Shared.Conversations.SharedStates
 {
@@ -46,7 +46,8 @@ namespace Shared.Conversations.SharedStates
                 message.Records.Add(record.TotalAssetValue, record.Username);
             }
 
-            var env = new Envelope(message) {
+            var env = new Envelope(message)
+            {
                 To = this.To
             };
 
@@ -67,8 +68,6 @@ namespace Shared.Conversations.SharedStates
                 Log.Info($"Client {OutboundMessage.To.ToString()} appears to be disconnected. Removing from connected clients.");
                 ClientManager.TryToRemove(OutboundMessage.To);
             }
-
-           
         }
     }
 }
