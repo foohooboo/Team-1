@@ -1,9 +1,11 @@
 ﻿using log4net;
+using Shared;
 using Shared.Comms.MailService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
+using Shared.Conversations.SharedStates;
 
-namespace Broker.Conversations.GetPortfolio
+namespace Broker.Conversations
 {
     public class ProcessStockUpdateState : ConversationState
     {
@@ -26,8 +28,22 @@ namespace Broker.Conversations.GetPortfolio
 
         public override Envelope Prepare()
         {
-            // We need to trigger the Leaderboard update request conversation at this point some how.
-            return null;
+            //TODO: We need to trigger the Leaderboard update request conversation at this point some how.
+
+            var ack = MessageFactory.GetMessage<AckMessage>(Config.GetInt(Config.BROKER_PROCESS_NUM),0);
+            ack.ConversationID = Conversation.Id;
+            var env = new Envelope(ack)
+            {
+                To = this.To
+            };
+
+            return env;
+        }
+
+        public override void Send()
+        {
+            base.Send();
+            Conversation.UpdateState(new ConversationDoneState(Conversation, this));
         }
     }
 }
