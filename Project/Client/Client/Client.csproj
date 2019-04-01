@@ -71,11 +71,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Conversations\InitiateTransactionConversation.cs" />
-    <Compile Include="Conversations\InitTransactionStartingState.cs" />
-    <Compile Include="Login.xaml.cs">
-      <DependentUpon>Login.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Conversations\CreatePortfolio\CreatePortfolioRequestConversation.cs" />
     <Compile Include="Conversations\CreatePortfolio\CreatePortfolioRequestState.cs" />
     <Compile Include="Conversations\GetPortfolio\GetPortfolioRequestState.cs" />
@@ -90,6 +85,11 @@
     <Compile Include="Conversations\StockHistory\StockHistoryRequestState.cs" />
     <Compile Include="Conversations\StockUpdate\ReceiveStockUpdateConversation.cs" />
     <Compile Include="Conversations\StockUpdate\ReceiveStockUpdateState.cs" />
+    <Compile Include="Conversations\InitiateTransactionConversation.cs" />
+    <Compile Include="Conversations\InitTransactionStartingState.cs" />
+    <Compile Include="Login.xaml.cs">
+      <DependentUpon>Login.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
