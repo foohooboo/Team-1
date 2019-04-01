@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Conversations\CreatePortfolioReceiveTest.cs" />
+    <Compile Include="Conversations\LeaderboardSendUpdateTest.cs" />
     <Compile Include="Conversations\GetPortfolioReceiveTest.cs" />
     <Compile Include="PortfolioManagerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

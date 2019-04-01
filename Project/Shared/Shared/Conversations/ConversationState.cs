@@ -16,7 +16,7 @@ namespace Shared.Conversations
         private bool StatePrepared = false;
 
         protected readonly string MessageId = "";
-        protected readonly IPEndPoint To = null;
+        protected IPEndPoint To = null;
 
         /// <summary>
         /// Use this constructor if state was created by a local action. Do NOT use this

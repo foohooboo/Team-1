@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Shared.MarketStructures;
+using System.Linq;
 
 namespace SharedTest.MarketStructureTests
 {
@@ -16,7 +17,7 @@ namespace SharedTest.MarketStructureTests
         {
             var MarketDay = new MarketDay();
 
-            Assert.AreEqual(MarketDay.TradedCompanies.Count, 0);
+            Assert.IsNull(MarketDay.TradedCompanies);
             Assert.IsNull(MarketDay.Date);
         }
 
@@ -26,7 +27,7 @@ namespace SharedTest.MarketStructureTests
             string date = "1990-02-20";
             var MarketDay = new MarketDay(date);
 
-            Assert.AreEqual(MarketDay.TradedCompanies.Count, 0);
+            Assert.AreEqual(1,MarketDay.TradedCompanies.Count);
             Assert.AreEqual(MarketDay.Date, date);
         }
 
@@ -41,7 +42,7 @@ namespace SharedTest.MarketStructureTests
             
             var MarketDay = new MarketDay(date, stocks);
 
-            Assert.AreEqual(MarketDay.TradedCompanies.Count, 2);
+            Assert.AreEqual(3, MarketDay.TradedCompanies.Count);
             Assert.AreEqual(MarketDay.Date, date);
         }
 
@@ -59,9 +60,9 @@ namespace SharedTest.MarketStructureTests
                 Date = date
             };
 
-            MarketDay.TradedCompanies.AddRange(stocks);
+            MarketDay.TradedCompanies = stocks.Cast<ValuatedStock>().ToList();
 
-            Assert.AreEqual(MarketDay.TradedCompanies.Count, 2);
+            Assert.AreEqual(3, MarketDay.TradedCompanies.Count);
             Assert.AreEqual(MarketDay.Date, date);
         }
     }
