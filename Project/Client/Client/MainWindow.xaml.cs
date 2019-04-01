@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Shapes;
@@ -15,7 +16,7 @@ namespace Client
     {
         private ManagedData mem = new ManagedData();
 
-        public string StockCount { get; set; } = "0";//holds the data in buySell textbox
+        public string StockCount { get; set; } = "1";//holds the data in buySell textbox
 
 
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
@@ -48,9 +49,9 @@ namespace Client
             helloWorld.HelloTextChanged += OnHelloTextChanged;
             HelloTextLocal = helloWorld.HelloText;
 
+            GenerateDummyData();
+
             Log.Debug(String.Format("Exit - {0}", method));
-
-
         }
 
         private string helloTextLocal;
@@ -72,49 +73,56 @@ namespace Client
         {
             stockPanels.Items.Clear();
             MarketDay day = mem.History[mem.History.Count - 1];
+
             foreach (ValuatedStock i in day.TradedCompanies)
             {
-                Canvas shell = new Canvas
-                {
-                    Name = i.Symbol,
-                    Height = 52,
-                    Width = 183
-                };
-                Rectangle back = new Rectangle
-                {
-                    Height = 52,
-                    Width = 183
-                };
-                TextBlock sym = new TextBlock
-                {
-                    Text = i.Symbol,
-                    Margin = new Thickness(2)
-                };
-                TextBlock val = new TextBlock
-                {
-                    Text = i.Close.ToString("0.00"),
-                    Width = 179,
-                    TextAlignment = TextAlignment.Right
-                };
-                int qty = mem.MyPortfolio.GetAsset(i.Symbol).Quantity;
 
-
-                shell.Children.Insert(0, back);
-                shell.Children.Insert(1, sym);
-                shell.Children.Insert(2, val);
-                if (qty != 0)
+                if (i.Symbol.Equals("$"))
                 {
-                    TextBlock amount = new TextBlock
-                    {
-                        Text = qty + " owned",
-                        Margin = new Thickness(2, 20, 0, 0)
-                    };
-                    shell.Children.Insert(3, amount);
+                    //TODO: Do something to display the user's cash value
                 }
-                stockPanels.Items.Add(shell);
+                else
+                {
+                    Canvas shell = new Canvas
+                    {
+                        Name = i.Symbol,
+                        Height = 52,
+                        Width = 183
+                    };
+                    Rectangle back = new Rectangle
+                    {
+                        Height = 52,
+                        Width = 183
+                    };
+                    TextBlock sym = new TextBlock
+                    {
+                        Text = i.Symbol,
+                        Margin = new Thickness(2)
+                    };
+                    TextBlock val = new TextBlock
+                    {
+                        Text = i.Close.ToString("0.00"),
+                        Width = 179,
+                        TextAlignment = TextAlignment.Right
+                    };
+                    int qty = mem.MyPortfolio.GetAsset(i.Symbol).Quantity;
 
+
+                    shell.Children.Insert(0, back);
+                    shell.Children.Insert(1, sym);
+                    shell.Children.Insert(2, val);
+                    if (qty != 0)
+                    {
+                        TextBlock amount = new TextBlock
+                        {
+                            Text = qty + " owned",
+                            Margin = new Thickness(2, 20, 0, 0)
+                        };
+                        shell.Children.Insert(3, amount);
+                    }
+                    stockPanels.Items.Add(shell);
+                }
             }
-
         }
 
         public void OnHelloTextChanged(object source, EventArgs args)
@@ -219,12 +227,11 @@ namespace Client
 
         }
 
-        private void Makeup_Click(object sender, RoutedEventArgs e)
+        private void GenerateDummyData()
         {
             mem.Cash = 100000;
             mem.History = ManagedData.makeupMarketSegment(15, 30);
             mem.MyPortfolio = ManagedData.makeupPortfolio(mem.History[0]);
-            makeup.IsEnabled = false;
             updateStockPanels();
         }
 
