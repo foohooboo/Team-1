@@ -44,7 +44,7 @@ namespace ClientTest.Conversations
             var mock = new Mock<InitTransactionStartingState>(conv) { CallBase = true };
             mock.Setup(st => st.Send())//Pretend message is sent and response comes back...
                 .Callback(()=> {
-                var responseMessage = new PortfolioUpdateMessage() { ConversationID = conv.Id, MessageID = "responceMessageID1234" };
+                var responseMessage = new PortfolioUpdateMessage() { ConversationID = conv.Id, MessageID = "responseMessageID1234" };
                 var responseEnv = new Envelope(responseMessage);
                 ConversationManager.ProcessIncomingMessage(responseEnv); 
             }).CallBase().Verifiable();
