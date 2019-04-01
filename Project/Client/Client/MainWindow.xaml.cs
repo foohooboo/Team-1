@@ -6,7 +6,7 @@ using System.Windows.Shapes;
 using CommSystem;
 using log4net;
 using Shared.MarketStructures;
-using static Client.Conversations.StockUpdate.ReceiveLeaderboardUpdateState;
+using static Client.Conversations.LeaderboardUpdate.ReceiveLeaderboardUpdateState;
 using static Client.Conversations.StockUpdate.ReceiveStockUpdateState;
 
 namespace Client

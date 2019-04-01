@@ -6,7 +6,7 @@ using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
 
-namespace Client.Conversations.StockUpdate
+namespace Client.Conversations.LeaderboardUpdate
 {
     public class ReceiveLeaderboardUpdateState : ConversationState
     {
@@ -32,30 +32,26 @@ namespace Client.Conversations.StockUpdate
             }
         }
 
-        public ReceiveLeaderboardUpdateState(Envelope env, Conversation conversation, ConversationState parentState) : base(conversation, parentState)
+        public ReceiveLeaderboardUpdateState(Envelope env, Conversation conversation) : base(conversation, null)
         {
-
+            Records = (env.Contents as UpdateLeaderBoardMessage).Records;
         }
 
         public override ConversationState HandleMessage(Envelope incomingMessage)
         {
             Log.Debug($"{nameof(HandleMessage)} (enter)");
 
-            ConversationState state = null;
-
-            if (incomingMessage.Contents is UpdateLeaderBoardMessage m)
-            {
-                state = new ConversationDoneState(Conversation, this);
-                Records = m.Records;
-            }
+            //This state doesn't expect any incoming messages
 
             Log.Debug($"{nameof(HandleMessage)} (exit)");
-            return state;
+            return null;
         }
 
         public override Envelope Prepare()
         {
             LeaderboardUpdateEventHandler?.Invoke(this, new LeaderboardUpdateEventArgs(Records));
+
+            Conversation.UpdateState(new ConversationDoneState(Conversation, this));
             return null;
         }
     }

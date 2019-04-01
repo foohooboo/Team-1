@@ -72,7 +72,7 @@ namespace Shared.Conversations
             else
             {
                 Log.Warn($"Timeout event is forcing conversation {Conversation.Id} into the Done state.");
-                ConversationManager.GetConversation(Conversation.Id).UpdateState(new ConversationDoneState(Conversation, this));
+                Conversation.UpdateState(new ConversationDoneState(Conversation, this));
             }
         }
 
