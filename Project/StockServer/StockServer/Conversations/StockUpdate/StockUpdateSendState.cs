@@ -6,6 +6,7 @@ using Shared.Comms.MailService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
+using Shared.MarketStructures;
 using StockServer.Data;
 
 namespace StockServer.Conversations.StockUpdate
@@ -14,10 +15,13 @@ namespace StockServer.Conversations.StockUpdate
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        //Use this constructor if state is created locally and not from incoming message.
-        public StockUpdateSendState(IPEndPoint recipiant, Conversation conv, ConversationState previousState) : base(conv, previousState)
+
+        private MarketDay DayData;
+
+        public StockUpdateSendState(MarketDay dayData, IPEndPoint recipiant, Conversation conv, ConversationState previousState) : base(conv, previousState)
         {
             To = recipiant;
+            DayData = dayData;
         }
 
         public override ConversationState HandleMessage(Envelope incomingMessage)
@@ -43,7 +47,7 @@ namespace StockServer.Conversations.StockUpdate
 
             var message = MessageFactory.GetMessage<StockPriceUpdate>(Config.GetInt(Config.STOCK_SERVER_PROCESS_NUM), 0) as StockPriceUpdate;
 
-            message.StocksList = StockData.GetCurrentDay();
+            message.StocksList = DayData;
 
             var env = new Envelope(message)
             {

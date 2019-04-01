@@ -18,7 +18,6 @@ namespace StockServerTest.Conversations
     [DoNotParallelize]
     public class StockUpdateSendTest
     {
-        private readonly Mock<StockUpdateSendState> mock;
 
         private readonly ValuatedStock user1VStock = new ValuatedStock()
         {
@@ -53,22 +52,6 @@ namespace StockServerTest.Conversations
             Volume = 3
         };
 
-        public Conversation ConversationBuilder(Envelope env)
-        {
-            Conversation conv = null;
-
-            switch (env.Contents)
-            {
-                case AckMessage m:
-                    //conv = new ConvR_StockStreamRequest(env);
-                    //mock = new Mock<RespondStockStreamRequest_InitialState>(env, conv) { CallBase = true };
-                    //conv.SetInitialState(mock.Object as RespondStockStreamRequest_InitialState);
-                    break;
-            }
-
-            return conv;
-        }
-
         [TestInitialize]
         public void TestInitialize()
         {
@@ -92,7 +75,7 @@ namespace StockServerTest.Conversations
             IPEndPoint clientEndpoint = new IPEndPoint(IPAddress.Parse("111.11.2.3"), 124);
 
             //setup response message and mock
-            var mock = new Mock<StockUpdateSendState>(clientEndpoint, conv, null) { CallBase = true };
+            var mock = new Mock<StockUpdateSendState>(Stocks, clientEndpoint, conv, null) { CallBase = true };
             mock.Setup(st => st.Send())//Pretend message is sent and response comes back...
                 .Callback(() =>
                 {
@@ -119,15 +102,15 @@ namespace StockServerTest.Conversations
 
 
             // These fail becaue the traded compaines are not the passed in values from above.
-            //Assert.AreEqual("U1STK", Stocks.TradedCompanies[1].Symbol);
-            //Assert.AreEqual("U2STK", Stocks.TradedCompanies[2].Symbol);
-            //Assert.AreEqual("U3STK", Stocks.TradedCompanies[3].Symbol);
+            Assert.AreEqual("U1STK", Stocks.TradedCompanies[0].Symbol);
+            Assert.AreEqual("U2STK", Stocks.TradedCompanies[1].Symbol);
+            Assert.AreEqual("U3STK", Stocks.TradedCompanies[2].Symbol);
 
             var conv2 = new StockUpdateSendConversation(42);
             var Stocks2 = new MarketDay("Today", new ValuatedStock[] { user1VStock, user2VStock, user3VStock });
 
             //setup response message and mock
-            var mock2 = new Mock<StockUpdateSendState>(clientEndpoint, conv2, null) { CallBase = true };
+            var mock2 = new Mock<StockUpdateSendState>(Stocks2, clientEndpoint, conv2, null) { CallBase = true };
             mock2.Setup(st => st.Send())//Pretend message is sent and response comes back...
                 .Callback(() =>
                 {
@@ -152,9 +135,9 @@ namespace StockServerTest.Conversations
             mock2.Verify(state => state.Send(), Times.Once);
 
             // These fail becaue the traded compaines are not the passed in values from above.
-            //Assert.AreEqual("U1STK", Stocks2.TradedCompanies[1].Symbol);
-            //Assert.AreEqual("U2STK", Stocks2.TradedCompanies[2].Symbol);
-            //Assert.AreEqual("U3STK", Stocks2.TradedCompanies[3].Symbol);
+            Assert.AreEqual("U1STK", Stocks2.TradedCompanies[0].Symbol);
+            Assert.AreEqual("U2STK", Stocks2.TradedCompanies[1].Symbol);
+            Assert.AreEqual("U3STK", Stocks2.TradedCompanies[2].Symbol);
 
             Assert.IsTrue(ClientManager.TryToRemove(clientEndpoint));
         }
@@ -167,10 +150,11 @@ namespace StockServerTest.Conversations
             var clientEndpoint = new IPEndPoint(IPAddress.Parse("111.11.2.3"), 124);
 
             ValuatedStock[] day1 = { user1VStock, user2VStock, user3VStock };
+            var mday1 = new MarketDay("day-1", day1);
             //LeaderboardManager.Market = new MarketDay("day-1", day1);
 
             //setup response message and mock
-            var mock = new Mock<StockUpdateSendState>(clientEndpoint, conv, null) { CallBase = true };
+            var mock = new Mock<StockUpdateSendState>(mday1, clientEndpoint, conv, null) { CallBase = true };
             mock.Setup(st => st.Send())//Pretend message is sent and response comes back...
                 .Callback(() =>
                 {
