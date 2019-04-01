@@ -27,10 +27,10 @@ namespace Client
         private void Submit_Click(object sender, RoutedEventArgs e)
         {
             string username = user.Text;
-            string password = pass.Text;
+            string password = pass.Password;
             if (register.IsChecked.Value)//registering?
             {
-                if (password == confirm.Text)//If they equal
+                if (password == confirm.Password)//If they equal
                 {
 
                 }
@@ -38,6 +38,11 @@ namespace Client
             MainWindow main = new MainWindow();
             Application.Current.Windows[0].Close();
             main.ShowDialog();
+        }
+
+        private void Register_Checked(object sender, RoutedEventArgs e)
+        {
+            confirm.IsEnabled = !confirm.IsEnabled;
         }
     }
 }

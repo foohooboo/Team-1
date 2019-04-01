@@ -22,7 +22,7 @@ namespace Client
             Portfolio ret = new Portfolio();
             foreach(ValuatedStock i in input.TradedCompanies)
             {
-                int count=random.Next(0,1);
+                int count=random.Next(0,2);
                 count *= random.Next(0, 100);
                 ret.Assets.Add(i.Symbol,new Asset(i,count));
             }
