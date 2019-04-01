@@ -1,21 +1,23 @@
-﻿using Broker;
-using Broker.Conversations;
-using Broker.Conversations.TransactionRequest;
+﻿using System;
+using System.Threading;
+using Client.Conversations;
+using Client.Conversations.StockUpdate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Shared;
 using Shared.Comms.MailService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
 using Shared.MarketStructures;
-using Shared.PortfolioResources;
 
-namespace BrokerTest.Conversations
+namespace ClientTest.Conversations
 {
     [TestClass]
     public class StockUpdateTest
     {
-        private Mock<ProcessStockUpdateState> mock;
+
+        private Mock<ReceiveStockUpdateState> mock;
 
         public Conversation ConversationBuilder(Envelope env)
         {
@@ -24,11 +26,11 @@ namespace BrokerTest.Conversations
             switch (env.Contents)
             {
                 case StockPriceUpdate m:
-                    conv = new StockUpdateConversation(m.ConversationID);
+                    conv = new ReceiveStockUpdateConversation(m.ConversationID);
 
                     //setup response message as mock
-                    mock = new Mock<ProcessStockUpdateState>(env, conv) { CallBase = true };
-                    conv.SetInitialState(mock.Object as ProcessStockUpdateState);
+                    mock = new Mock<ReceiveStockUpdateState>(env, conv) { CallBase = true };
+                    conv.SetInitialState(mock.Object as ReceiveStockUpdateState);
 
                     break;
             }

@@ -32,25 +32,26 @@ namespace Client.Conversations.StockUpdate
             }
         }
 
-        public ReceiveStockUpdateState(Envelope env, Conversation conversation, ConversationState parentState) : base(conversation, parentState)
+        public ReceiveStockUpdateState(Envelope env, Conversation conversation) : base(conversation, null)
         {
-
+            var update = env.Contents as StockPriceUpdate;
+            StockUpdate = update.StocksList;
         }
 
         public override ConversationState HandleMessage(Envelope incomingMessage)
         {
             Log.Debug($"{nameof(HandleMessage)} (enter)");
 
-            ConversationState state = null;
-
-            if (incomingMessage.Contents is StockPriceUpdate m)
-            {
-                state = new ConversationDoneState(Conversation, this);
-                StockUpdate = m.StocksList;
-            }
+            //This state doesn't expect any incoming messages
 
             Log.Debug($"{nameof(HandleMessage)} (exit)");
-            return state;
+            return null;
+        }
+
+        public override void Send()
+        {
+            base.Send();
+            Conversation.UpdateState(new ConversationDoneState(Conversation, this));
         }
 
         public override Envelope Prepare()
