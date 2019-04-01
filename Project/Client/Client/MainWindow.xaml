@@ -65,6 +65,12 @@
             </Grid>
         </Border>
         <Button x:Name="makeup" Grid.ColumnSpan="2" Content="MakeUpData" Grid.Column="1" HorizontalAlignment="Left" Margin="134,119,0,0" VerticalAlignment="Top" Width="105" Click="Makeup_Click"/>
+        <DataGrid x:Name="portfolioView" Grid.Column="1" Grid.Row="1" Margin="0" Background="Black" AlternatingRowBackground="DarkSlateGray">
+            <DataGrid.Columns>
+
+            </DataGrid.Columns>
+        </DataGrid>
+        <DataGrid x:Name="highScoreView" Grid.Row="1" Background="Black" AlternatingRowBackground="DarkSlateGray"/>
 
     </Grid>
 </Window>

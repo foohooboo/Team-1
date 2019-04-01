@@ -4,7 +4,6 @@ using Shared.Comms.MailService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
-using Shared.MarketStructures;
 using StockServer.Conversations.StockStreamRequest;
 
 namespace SharedTest.Conversations
@@ -81,6 +80,7 @@ namespace SharedTest.Conversations
                 ConversationID = RequestConvId,
                 MessageID = RequestMessageId
             };
+
             Envelope Request = new Envelope(RequestMessage, ClientIp, ClientPort);
 
             var localConv = ConversationManager.GetConversation(RequestConvId);

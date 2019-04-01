@@ -1,17 +1,18 @@
-﻿using CommSystem;
-using log4net;
-using Shared.MarketStructures;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Shapes;
+using CommSystem;
+using log4net;
+using Shared.MarketStructures;
+using static Client.Conversations.StockUpdate.ReceiveStockUpdateState;
 
 namespace Client
 {
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        ManagedData mem = new ManagedData();
+        private ManagedData mem = new ManagedData();
 
         public string StockCount { get; set; } = "0";//holds the data in buySell textbox
 
@@ -20,11 +21,18 @@ namespace Client
         private HelloWorld helloWorld = new HelloWorld();
         public event PropertyChangedEventHandler PropertyChanged;
 
+        private void ReceivedStockUpdate(object sender, StockUpdateEventArgs e)
+        {
+            mem.History.Add(e.CurrentDay);
+        }
+
         public MainWindow()
         {
 
+            StockUpdateEventHandler += ReceivedStockUpdate;
+
             string method = "MainWindow Constructor";
-            Log.Debug(string.Format("Enter - {0}", method));
+            Log.Debug(String.Format("Enter - {0}", method));
 
             InitializeComponent();
             DataContext = this;
@@ -32,7 +40,7 @@ namespace Client
             helloWorld.HelloTextChanged += OnHelloTextChanged;
             HelloTextLocal = helloWorld.HelloText;
 
-            Log.Debug(string.Format("Exit - {0}", method));
+            Log.Debug(String.Format("Exit - {0}", method));
 
 
         }
@@ -58,31 +66,41 @@ namespace Client
             MarketDay day = mem.History[mem.History.Count - 1];
             foreach (ValuatedStock i in day.TradedCompanies)
             {
-                Canvas shell = new Canvas();
-                shell.Name = i.Symbol;
-                shell.Height = 52;
-                shell.Width = 183;
-                Rectangle back = new Rectangle();
-                back.Height = 52;
-                back.Width = 183;
-                TextBlock sym = new TextBlock();
-                sym.Text = i.Symbol;
-                sym.Margin = new Thickness(2);
-                TextBlock val = new TextBlock();
-                val.Text = i.Close.ToString("0.00");
-                val.Width = 179;
-                val.TextAlignment = TextAlignment.Right;
+                Canvas shell = new Canvas
+                {
+                    Name = i.Symbol,
+                    Height = 52,
+                    Width = 183
+                };
+                Rectangle back = new Rectangle
+                {
+                    Height = 52,
+                    Width = 183
+                };
+                TextBlock sym = new TextBlock
+                {
+                    Text = i.Symbol,
+                    Margin = new Thickness(2)
+                };
+                TextBlock val = new TextBlock
+                {
+                    Text = i.Close.ToString("0.00"),
+                    Width = 179,
+                    TextAlignment = TextAlignment.Right
+                };
                 int qty = mem.MyPortfolio.GetAsset(i.Symbol).Quantity;
-                
-                
-                shell.Children.Insert(0,back);
+
+
+                shell.Children.Insert(0, back);
                 shell.Children.Insert(1, sym);
                 shell.Children.Insert(2, val);
                 if (qty != 0)
                 {
-                    TextBlock amount = new TextBlock();
-                    amount.Text = qty + " owned";
-                    amount.Margin = new Thickness(2,20,0,0);
+                    TextBlock amount = new TextBlock
+                    {
+                        Text = qty + " owned",
+                        Margin = new Thickness(2, 20, 0, 0)
+                    };
                     shell.Children.Insert(3, amount);
                 }
                 stockPanels.Items.Add(shell);
@@ -94,12 +112,12 @@ namespace Client
         public void OnHelloTextChanged(object source, EventArgs args)
         {
             string method = "OnHelloTextChanged";
-            Log.Debug(string.Format("Enter - {0}", method));
+            Log.Debug(String.Format("Enter - {0}", method));
 
             HelloTextLocal = helloWorld.HelloText;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("HelloTextLocal"));
 
-            Log.Debug(string.Format("Exit - {0}", method));
+            Log.Debug(String.Format("Exit - {0}", method));
         }
         private void SendTransaction(int amount)
         {
@@ -119,23 +137,25 @@ namespace Client
                 Log.Warn("No stocks selected, cannot send transaction.");
             }
             float value = 0;
-            foreach(ValuatedStock i in mem.History[mem.History.Count-1].TradedCompanies)
+            foreach (ValuatedStock i in mem.History[mem.History.Count - 1].TradedCompanies)
             {
-                if(mem.SelectedAsset.RelatedStock.Name == i.Name)
+                if (mem.SelectedAsset.RelatedStock.Name == i.Name)
                 {
                     value = i.Close;
                     break;
                 }
             }
-            if (amount > 0&&mem.Cash<value*amount)
+            if (amount > 0 && mem.Cash < value * amount)
             {
                 amount = (int)(mem.Cash / value);
-            }else if (amount < 0 && -amount > mem.MyPortfolio.GetAsset(mem.SelectedAsset.RelatedStock.Symbol).Quantity)
+            }
+            else if (amount < 0 && -amount > mem.MyPortfolio.GetAsset(mem.SelectedAsset.RelatedStock.Symbol).Quantity)
             {
                 amount = mem.MyPortfolio.GetAsset(mem.SelectedAsset.RelatedStock.Symbol).Quantity;
             }
-            HelloTextLocal = amount.ToString() + " of "+mem.SelectedAsset.RelatedStock.Name;
-             
+            HelloTextLocal = amount.ToString() + " of " + mem.SelectedAsset.RelatedStock.Name;
+
+
         }
         private void SellOutEvent(object sender, RoutedEventArgs e)
         {
@@ -199,5 +219,6 @@ namespace Client
             makeup.IsEnabled = false;
             updateStockPanels();
         }
+
     }
 }

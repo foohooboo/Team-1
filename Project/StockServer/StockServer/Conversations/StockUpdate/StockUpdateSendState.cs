@@ -27,7 +27,7 @@ namespace StockServer.Conversations.StockUpdate
 
             message.StocksList = StockData.GetCurrentDay();
 
-            var env = new Envelope(message, Config.GetString(Config.STOCK_SERVER_IP), Config.GetInt(Config.STOCK_SERVER_PORT))
+            var env = new Envelope(message)
             {
                 To = this.To
             };
