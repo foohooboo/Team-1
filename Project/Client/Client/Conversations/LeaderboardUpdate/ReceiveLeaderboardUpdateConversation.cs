@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Shared.Conversations;
 
 namespace Client.Conversations.LeaderboardUpdate
 {
-    class ReceiveLeaderboardUpdateConversation
+    public class ReceiveLeaderboardUpdateConversation : Conversation
     {
+        public ReceiveLeaderboardUpdateConversation(string conversationId) : base(conversationId)
+        {
+        }
     }
 }

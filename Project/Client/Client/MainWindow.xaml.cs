@@ -6,6 +6,7 @@ using System.Windows.Shapes;
 using CommSystem;
 using log4net;
 using Shared.MarketStructures;
+using static Client.Conversations.StockUpdate.ReceiveLeaderboardUpdateState;
 using static Client.Conversations.StockUpdate.ReceiveStockUpdateState;
 
 namespace Client
@@ -26,9 +27,16 @@ namespace Client
             mem.History.Add(e.CurrentDay);
         }
 
-        public MainWindow()
+        private void ReceivedLeaderboardUpdate(object sender, LeaderboardUpdateEventArgs e)
         {
 
+            // TODO: We need to decide how the records are going to be stored.
+            //mem.HighScores = e.Records as SortedList<string,string>;
+        }
+
+        public MainWindow()
+        {
+            LeaderboardUpdateEventHandler += ReceivedLeaderboardUpdate;
             StockUpdateEventHandler += ReceivedStockUpdate;
 
             string method = "MainWindow Constructor";
