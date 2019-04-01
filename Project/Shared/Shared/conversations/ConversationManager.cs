@@ -130,7 +130,7 @@ namespace Shared.Conversations
 
             if (conversations.ContainsKey(conversationId))
             {
-                conversations.TryRemove(conversationId, out Conversation removed);
+                var removed = conversations.TryRemove(conversationId, out Conversation removedConv);
             }
             else
             {
@@ -162,7 +162,7 @@ namespace Shared.Conversations
         {
             Conversation conv = null;
 
-            if (conversationBuilder.GetInvocationList().Length == 0)
+            if (conversationBuilder?.GetInvocationList()?.Length == 0)
             {
                 Log.Error("ConversationBuilder not set. Ignoring message.");
             }

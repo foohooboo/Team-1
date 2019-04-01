@@ -14,11 +14,13 @@ namespace Client.Conversations.GetPortfolio
 
         private string Username;
         private string Password;
+        private IHandleLogin LoginHandler;
 
-        public GetPortfolioRequestState(string username, string password, Conversation conversation) : base(conversation, null)
+        public GetPortfolioRequestState(string username, string password, IHandleLogin loginHandler, Conversation conversation) : base(conversation, null)
         {
             Username = username;
             Password = password;
+            LoginHandler = loginHandler;
         }
 
         public override ConversationState HandleMessage(Envelope incomingMessage)
@@ -33,6 +35,7 @@ namespace Client.Conversations.GetPortfolio
                 //you should set nextState to the next ConversationState expected in the conversation.
                 case ErrorMessage m:
                     Log.Error($"Received error message as reply...\n{m.ErrorText}");
+                    LoginHandler?.LoginFailure(m.ErrorText);
                     nextState = new ConversationDoneState(Conversation, this);
                     break;
                 case PortfolioUpdateMessage m:
@@ -40,7 +43,17 @@ namespace Client.Conversations.GetPortfolio
 
                     // TODO: Update portfolio model data.
 
+                    var port = new Portfolio()
+                    {
+                        Assets = m.Assets,
+                        Username = Username,
+                        PortfolioID = m.PortfolioID
+                    };
+
                     nextState = new ConversationDoneState(Conversation, this);
+                    ConversationManager.RemoveConversation(Conversation.Id);
+
+                    LoginHandler?.LoginSuccess(port);//Note: this appears to stop execution below, is it getting garbage collected somehow?? -dsphar 4/1/2019
                     break;
                 default:
                     Log.Error($"No logic to process incoming message of type {incomingMessage.Contents?.GetType()}. Ignoring message.");
@@ -67,6 +80,21 @@ namespace Client.Conversations.GetPortfolio
 
             Log.Debug($"{nameof(Prepare)} (exit)");
             return env;
+        }
+
+        public override void HandleTimeout()
+        {
+            if (++CountRetrys <= Config.GetInt(Config.DEFAULT_RETRY_COUNT))
+            {
+                Log.Warn($"Initiating retry for conversation {Conversation.Id}.");
+                Send();
+            }
+            else
+            {
+                Log.Warn($"Timeout event is forcing conversation {Conversation.Id} into the Done state.");
+                Conversation.UpdateState(new ConversationDoneState(Conversation, this));
+                LoginHandler?.LoginFailure("Login attempt timed out. Is the Broker running?");
+            }
         }
     }
 }

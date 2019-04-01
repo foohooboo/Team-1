@@ -19,7 +19,6 @@ namespace Client
         //Bad data added in manaually for testing
         public static Portfolio makeupPortfolio(MarketDay input)
         {
-            
             Portfolio ret = new Portfolio();
             foreach(ValuatedStock i in input.TradedCompanies)
             {

@@ -1,4 +1,10 @@
-﻿using System;
+﻿using Client.Conversations;
+using Client.Conversations.GetPortfolio;
+using Shared;
+using Shared.Comms.MailService;
+using Shared.Conversations;
+using Shared.PortfolioResources;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,32 +23,54 @@ namespace Client
     /// <summary>
     /// Interaction logic for Login.xaml
     /// </summary>
-    public partial class Login : Window
+    public partial class Login : Window, IHandleLogin
     {
         public Login()
         {
             InitializeComponent();
+            ConversationManager.Start(null);
+            PostOffice.AddBox("0.0.0.0:0");
         }
 
         private void Submit_Click(object sender, RoutedEventArgs e)
         {
-            string username = user.Text;
-            string password = pass.Password;
-            if (register.IsChecked.Value)//registering?
+            //registering
+            if (register.IsChecked.Value)
             {
-                if (password == confirm.Password)//If they equal
+                if (pass.Password == confirm.Password)//If they equal
                 {
-
+                    //TODO: initialize createPortfolio conversation
                 }
             }
-            MainWindow main = new MainWindow();
-            Application.Current.Windows[0].Close();
-            main.ShowDialog();
+
+            //logging in
+            else
+            {
+                var loginConv = new GetPortfolioRequestConversation(Config.GetInt(Config.CLIENT_PROCESS_NUM));
+                loginConv.SetInitialState(new GetPortfolioRequestState(user.Text, pass.Password, this, loginConv));
+                ConversationManager.AddConversation(loginConv);
+                //LoginSuccess(null);
+            }
         }
 
         private void Register_Checked(object sender, RoutedEventArgs e)
         {
             confirm.IsEnabled = !confirm.IsEnabled;
+        }
+
+        public void LoginSuccess(Portfolio portfolio)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                MainWindow main = new MainWindow();
+                Application.Current.Windows[0].Close();
+                main.ShowDialog();
+            });
+        }
+
+        public void LoginFailure(string message)
+        {
+            MessageBox.Show(message);
         }
     }
 }
