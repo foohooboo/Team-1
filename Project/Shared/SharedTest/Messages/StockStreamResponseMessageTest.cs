@@ -46,8 +46,8 @@ namespace SharedTest.Messages
             Assert.AreEqual(stockStreamResponse.RecentHistory[0].Date, date1);
             Assert.AreEqual(stockStreamResponse.RecentHistory[1].Date, date2);
             Assert.AreEqual(stockStreamResponse.RecentHistory.Count, 2);
-            Assert.AreEqual(stockStreamResponse.RecentHistory[0].TradedCompanies.Count, 2);
-            Assert.AreEqual(stockStreamResponse.RecentHistory[1].TradedCompanies.Count, 2);
+            Assert.AreEqual(3, stockStreamResponse.RecentHistory[0].TradedCompanies.Count);
+            Assert.AreEqual(3, stockStreamResponse.RecentHistory[1].TradedCompanies.Count);
         }
 
         [TestMethod]

@@ -17,20 +17,23 @@ namespace Shared.MarketStructures
             set {
                 _tradedCompanies = value;
 
-                //Add dollar
-                var dollarAsStock = new ValuatedStock()
-                {
-                    Symbol = "$",
-                    Name = "US Dollars",
-                    Close = 1
-                };
-                _tradedCompanies.Add(dollarAsStock);
+                bool alreadyHasCash = _tradedCompanies.Any(c => c.Symbol != null && c.Symbol.Equals("$"));
+                if (!alreadyHasCash){
+                    var dollarAsStock = new ValuatedStock()
+                    {
+                        Symbol = "$",
+                        Name = "US Dollars",
+                        Close = 1
+                    };
+                    _tradedCompanies.Add(dollarAsStock);
+                }
             }
         }
 
         public MarketDay(string date)
         {
             Date = date;
+            TradedCompanies = new List<ValuatedStock> ();
         }
 
         public MarketDay(string date, ValuatedStock[] starterArray)
@@ -39,6 +42,13 @@ namespace Shared.MarketStructures
             TradedCompanies = starterArray.Cast<ValuatedStock>().ToList();
         }
 
-        public MarketDay() { }
+        /// <summary>
+        /// Do not use this default constructor in code.
+        /// We have to have it for the JSON serializer.
+        /// Use the other available constructors instead.
+        /// </summary>
+        public MarketDay() {
+            
+        }
     }
 }

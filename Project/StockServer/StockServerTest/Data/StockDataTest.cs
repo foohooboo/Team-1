@@ -41,10 +41,10 @@ namespace StockServerTest.Data
 
             for (int i=0; i<numDays; i++)
             {
-                Assert.AreEqual("Apple Inc.", marketDay.TradedCompanies[0].Name);
-                Assert.AreEqual("AAPL", marketDay.TradedCompanies[0].Symbol);
-                Assert.AreEqual("Amazon.com Inc", marketDay.TradedCompanies[1].Name);
-                Assert.AreEqual("AMZN", marketDay.TradedCompanies[1].Symbol);
+                Assert.AreEqual("Apple Inc.", marketDay.TradedCompanies[1].Name);
+                Assert.AreEqual("AAPL", marketDay.TradedCompanies[1].Symbol);
+                Assert.AreEqual("Amazon.com Inc", marketDay.TradedCompanies[2].Name);
+                Assert.AreEqual("AMZN", marketDay.TradedCompanies[2].Symbol);
                 Assert.AreEqual(numCompanies, marketDay.TradedCompanies.Count);
                 marketDay = StockData.AdvanceDay();
             }

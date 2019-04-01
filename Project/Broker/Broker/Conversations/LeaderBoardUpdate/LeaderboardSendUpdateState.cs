@@ -63,9 +63,9 @@ namespace Shared.Conversations.SharedStates
             }
             else
             {
+                ConversationManager.GetConversation(Conversation.Id).UpdateState(new ConversationDoneState(Conversation, this));
                 Log.Info($"Client {OutboundMessage.To.ToString()} appears to be disconnected. Removing from connected clients.");
                 ClientManager.TryToRemove(OutboundMessage.To);
-                ConversationManager.GetConversation(Conversation.Id).UpdateState(new ConversationDoneState(Conversation, this));
             }
 
            
