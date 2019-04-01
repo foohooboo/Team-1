@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Conversations\GetPortfolio.cs" />
     <Compile Include="Conversations\StockHistoryTest.cs" />
     <Compile Include="Conversations\CreatePortfolio.cs" />
     <Compile Include="Conversations\TransactionTest.cs" />

@@ -107,7 +107,7 @@ namespace ClientTest.Conversations
             Assert.IsFalse(conv.CurrentState is InitTransactionStartingState);
             Assert.IsTrue(conv.CurrentState is ConversationDoneState);
             mock.Verify(state => state.Prepare(), Times.Once);
-            mock.Verify(state => state.Send(), Times.Exactly(2));
+            mock.Verify(state => state.Send(), Times.AtLeast(2));
             mock.Verify(state => state.HandleTimeout(), Times.Exactly(1));
         }
 

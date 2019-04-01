@@ -4,6 +4,7 @@ using Shared.Comms.MailService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
+using Shared.PortfolioResources;
 
 namespace Client.Conversations.GetPortfolio
 {
@@ -11,8 +12,13 @@ namespace Client.Conversations.GetPortfolio
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public GetPortfolioRequestState(Conversation conversation) : base(conversation, null)
+        private string Username;
+        private string Password;
+
+        public GetPortfolioRequestState(string username, string password, Conversation conversation) : base(conversation, null)
         {
+            Username = username;
+            Password = password;
         }
 
         public override ConversationState HandleMessage(Envelope incomingMessage)
@@ -49,8 +55,14 @@ namespace Client.Conversations.GetPortfolio
         {
             Log.Debug($"{nameof(Prepare)} (enter)");
 
-            var message = MessageFactory.GetMessage<GetPortfolioRequest>(Config.GetInt(Config.CLIENT_PROCESS_NUM), 0);
+            var message = MessageFactory.GetMessage<GetPortfolioRequest>(Config.GetInt(Config.CLIENT_PROCESS_NUM), 0) as GetPortfolioRequest;
             message.ConversationID = Conversation.Id;
+            message.Account = new Portfolio()
+            {
+                Username = this.Username,
+                Password = this.Password
+            };
+
             var env = new Envelope(message, Config.GetString(Config.BROKER_IP), Config.GetInt(Config.BROKER_PORT));
 
             Log.Debug($"{nameof(Prepare)} (exit)");

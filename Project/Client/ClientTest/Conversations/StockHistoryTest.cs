@@ -33,10 +33,6 @@ namespace ClientTest.Conversations
         [TestMethod]
         public void SucessfulRequest()
         {
-            //Simulate application-level ids
-            
-
-            //Create a new StockStreamRequestConv_Initor conversation
             var stockStreamConv = new StockHistoryRequestConversation();
             stockStreamConv.SetInitialState(new StockHistoryRequestState(stockStreamConv));
             ConversationManager.AddConversation(stockStreamConv);
@@ -57,7 +53,7 @@ namespace ClientTest.Conversations
 
             var retrycount = Config.GetInt(Config.DEFAULT_RETRY_COUNT);
             var timeout = Config.GetInt(Config.DEFAULT_TIMEOUT);
-            Thread.Sleep((int)(retrycount * timeout * 2.5));
+            Thread.Sleep((int)((retrycount*2) * timeout * 1.5));
 
             //Conversation should have cleaned itself up now...
             Assert.IsFalse(ConversationManager.ConversationExists(conversationId));
