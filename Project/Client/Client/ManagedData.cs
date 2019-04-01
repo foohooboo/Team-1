@@ -12,6 +12,8 @@ namespace Client
         public Portfolio MyPortfolio { get; set; } = new Portfolio();
         public SortedList<string, string> HighScores { get; set; } = new SortedList<string, string>();
         public Asset SelectedAsset{ get; set; } = new Asset(new Stock("APPL","Apple Inc."), 5);
+        
+        public SortedList<Asset, float> observablePortfolio { get; set; } = new SortedList<Asset, float>();
 
         private static readonly Random random = new Random(54);
         private static float low, high, open, close,volume;

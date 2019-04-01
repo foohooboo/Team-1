@@ -11,6 +11,7 @@ namespace Client
 {
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
+
         ManagedData mem = new ManagedData();
 
         public string StockCount { get; set; } = "0";//holds the data in buySell textbox
@@ -135,6 +136,7 @@ namespace Client
                 amount = mem.MyPortfolio.GetAsset(mem.SelectedAsset.RelatedStock.Symbol).Quantity;
             }
             HelloTextLocal = amount.ToString() + " of "+mem.SelectedAsset.RelatedStock.Name;
+
              
         }
         private void SellOutEvent(object sender, RoutedEventArgs e)
@@ -199,5 +201,6 @@ namespace Client
             makeup.IsEnabled = false;
             updateStockPanels();
         }
+
     }
 }
