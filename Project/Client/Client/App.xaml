@@ -15,6 +15,7 @@
             <Style TargetType="Button">
                 <Setter Property="FontFamily" Value="Segoe UI"/>
                 <Setter Property="FontSize" Value="14"/>
+                <Setter Property="Foreground" Value="Black"/>
                 <Setter Property="BorderBrush" Value="Black"/>
                 <Setter Property="Background">
                     <Setter.Value>

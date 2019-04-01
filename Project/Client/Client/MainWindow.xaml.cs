@@ -72,11 +72,19 @@ namespace Client
                 val.Text = i.Close.ToString("0.00");
                 val.Width = 179;
                 val.TextAlignment = TextAlignment.Right;
-
-                shell.Children.Insert(0, back);
+                int qty = mem.MyPortfolio.GetAsset(i.Symbol).Quantity;
+                
+                
+                shell.Children.Insert(0,back);
                 shell.Children.Insert(1, sym);
                 shell.Children.Insert(2, val);
-
+                if (qty != 0)
+                {
+                    TextBlock amount = new TextBlock();
+                    amount.Text = qty + " owned";
+                    amount.Margin = new Thickness(2,20,0,0);
+                    shell.Children.Insert(3, amount);
+                }
                 stockPanels.Items.Add(shell);
 
             }
@@ -110,6 +118,24 @@ namespace Client
             {
                 Log.Warn("No stocks selected, cannot send transaction.");
             }
+            float value = 0;
+            foreach(ValuatedStock i in mem.History[mem.History.Count-1].TradedCompanies)
+            {
+                if(mem.SelectedAsset.RelatedStock.Name == i.Name)
+                {
+                    value = i.Close;
+                    break;
+                }
+            }
+            if (amount > 0&&mem.Cash<value*amount)
+            {
+                amount = (int)(mem.Cash / value);
+            }else if (amount < 0 && -amount > mem.MyPortfolio.GetAsset(mem.SelectedAsset.RelatedStock.Symbol).Quantity)
+            {
+                amount = mem.MyPortfolio.GetAsset(mem.SelectedAsset.RelatedStock.Symbol).Quantity;
+            }
+            HelloTextLocal = amount.ToString() + " of "+mem.SelectedAsset.RelatedStock.Name;
+             
         }
         private void SellOutEvent(object sender, RoutedEventArgs e)
         {
