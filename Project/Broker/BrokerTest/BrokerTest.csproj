@@ -54,6 +54,7 @@
     <Compile Include="Conversations\CreatePortfolioReceiveTest.cs" />
     <Compile Include="Conversations\LeaderboardSendUpdateTest.cs" />
     <Compile Include="Conversations\GetPortfolioReceiveTest.cs" />
+    <Compile Include="Conversations\StockUpdateTest.cs" />
     <Compile Include="PortfolioManagerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Conversations\TransactionTest.cs" />
