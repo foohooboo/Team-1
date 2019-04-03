@@ -29,14 +29,20 @@ namespace Shared.Comms.MailService
             return box;
         }
 
+        //Following method not currently used. We might be able to remove it? -Dsphar 4/3/2019
         public static PostBox GetBox(string address)
         {
+            Log.Debug($"{nameof(GetBox)} (enter)");
+
+            PostBox box = null;
+
             if (PostBoxes.TryGetValue(address, out PostBox postBox))
             {
-                return postBox;
+                box = postBox;
             }
 
-            return null;
+            Log.Debug($"{nameof(GetBox)} (exit)");
+            return box;
         }
 
         public static void RemoveBox(string address)
@@ -57,12 +63,18 @@ namespace Shared.Comms.MailService
         {
             Log.Debug($"{nameof(SetIncomingMessageHandler)} (enter)");
 
-            if (method != null && _incomingMessageHandler != null)
-                throw new Exception("IncomingMessageHandler already set.");
-            else if (method != null)
-                _incomingMessageHandler = new MessageHandler(method);
+            if (method == null)
+            {
+                Log.Warn("Post office was given a null message handler.");
+            }
+            else if (_incomingMessageHandler != null)
+            {
+                throw new Exception("Post office already has a message handler.");
+            }
             else
-                Log.Warn("SetIncomingMessageHandler was given a null method.");
+            {
+                _incomingMessageHandler = new MessageHandler(method);
+            }
 
             Log.Debug($"{nameof(SetIncomingMessageHandler)} (exit)");
         }
@@ -79,7 +91,7 @@ namespace Shared.Comms.MailService
 
             if (_incomingMessageHandler == null)
             {
-                throw new NullReferenceException($"Please use SetIncomingMessageHandler(handlerFunc) before calling {nameof(HandleIncomingMessage)}");
+                throw new NullReferenceException($"Please use SetIncomingMessageHandler(delegate) before calling {nameof(HandleIncomingMessage)}");
             }
 
             var conv = _incomingMessageHandler(e);

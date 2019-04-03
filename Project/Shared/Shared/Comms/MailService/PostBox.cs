@@ -18,55 +18,16 @@ namespace Shared.Comms.MailService
             get; private set;
         }
 
-        public ConcurrentQueue<Envelope> Mail
-        {
-            get; set;
-        }
-
         public PostBox(string address)
         {
             boxLock = new object();
             LocalEndPoint = EndPointParser.Parse(address);
-            Mail = new ConcurrentQueue<Envelope>();
         }
-        
-        public bool HasMail()
-        {
-            return Mail.Count > 0;
-        }
-
-        /// <summary>
-        /// Used to insert an envelope that is received.
-        /// </summary>
-        public abstract void CollectMail();
 
         /// <summary>
         /// Used to shutdown the socket.
         /// </summary>
         public abstract void Close();
-
-    public Envelope GetMail()
-        {
-            var startTime = DateTime.Now;
-
-            Envelope envelope = null;
-
-            while (envelope is null &&
-                   DateTime.Now.Subtract(startTime).TotalMilliseconds < 1000)
-            {
-                if (!HasMail())
-                {
-                    waitHandle.WaitOne(1000);
-                }
-
-                if (!Mail.TryDequeue(out envelope))
-                {
-                    envelope = null;
-                }
-            }
-
-            return envelope;
-        }
 
         /// <summary>
         /// Used to send an envelope to the address.

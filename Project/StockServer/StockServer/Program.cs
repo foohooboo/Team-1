@@ -20,6 +20,7 @@ namespace StockServer
 
             StockData.Init();
             ConversationManager.Start(ConversationBuilder);
+
             var listenEndpoint = new IPEndPoint(IPAddress.Any, Config.GetInt(Config.STOCK_SERVER_PORT));
             PostOffice.AddBox(listenEndpoint.ToString());
             

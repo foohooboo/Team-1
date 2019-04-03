@@ -47,13 +47,5 @@ namespace Shared.Comms.MailService
 
             Contents = message;
         }
-
-        public Message Remove()
-        {
-            var contents = Contents;
-            Contents = null;
-
-            return contents;
-        }
     }
 }

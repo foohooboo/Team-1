@@ -25,7 +25,6 @@ namespace Broker
 
             PortfolioManager.TryToCreate("dummy", "password", out Portfolio dummyPortfolio);
             ConversationManager.Start(ConversationBuilder);
-            PostOffice.AddBox("0.0.0.0:0");
 
             var listenEndpoint = new IPEndPoint(IPAddress.Any, Config.GetInt(Config.BROKER_PORT));
             PostOffice.AddBox(listenEndpoint.ToString());

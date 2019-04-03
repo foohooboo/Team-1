@@ -18,14 +18,9 @@ namespace SharedTest.MailService
                 throw new System.NotImplementedException();
             }
 
-            public override void CollectMail()
-            {
-                //throw new System.NotImplementedException();
-            }
-
             public override void Send(Envelope envelope)
             {
-                //throw new System.NotImplementedException();
+                
             }
         }
 
@@ -46,13 +41,6 @@ namespace SharedTest.MailService
 
             Assert.AreEqual(addressParts[0], postBox.LocalEndPoint.Address.ToString());
             Assert.AreEqual(addressParts[1], postBox.LocalEndPoint.Port.ToString());
-            Assert.IsFalse(postBox.HasMail());
-        }
-
-        [TestMethod]
-        public void GetMailFailTest()
-        {
-            Assert.IsNull(postBox.GetMail());
         }
     }
 }

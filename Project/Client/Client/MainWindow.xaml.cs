@@ -6,6 +6,8 @@ using System.Windows.Controls;
 using System.Windows.Shapes;
 using CommSystem;
 using log4net;
+using Shared;
+using Shared.Comms.MailService;
 using Shared.MarketStructures;
 using static Client.Conversations.LeaderboardUpdate.ReceiveLeaderboardUpdateState;
 using static Client.Conversations.StockUpdate.ReceiveStockUpdateState;
@@ -36,13 +38,13 @@ namespace Client
 
         public MainWindow()
         {
-            LeaderboardUpdateEventHandler += ReceivedLeaderboardUpdate;
-            StockUpdateEventHandler += ReceivedStockUpdate;
-
-            string method = "MainWindow Constructor";
-            Log.Debug(String.Format("Enter - {0}", method));
+            Log.Debug($"{nameof(MainWindow)} (enter)");
 
             InitializeComponent();
+
+            LeaderboardUpdateEventHandler += ReceivedLeaderboardUpdate;
+            StockUpdateEventHandler += ReceivedStockUpdate;
+            
             DataContext = this;
 
             helloWorld.HelloTextChanged += OnHelloTextChanged;
@@ -50,7 +52,12 @@ namespace Client
 
             GenerateDummyData();
 
-            Log.Debug(String.Format("Exit - {0}", method));
+            Log.Debug($"{nameof(MainWindow)} (exit)");
+        }
+
+        ~MainWindow()
+        {
+            PostOffice.RemoveBox($"0.0.0.0:{Config.GetString(Config.CLIENT_PORT)}");
         }
 
         private string helloTextLocal;

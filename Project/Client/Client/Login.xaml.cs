@@ -7,6 +7,7 @@ using Shared.PortfolioResources;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -29,7 +30,9 @@ namespace Client
         {
             InitializeComponent();
             ConversationManager.Start(null);
-            PostOffice.AddBox("0.0.0.0:0");
+
+            var listenEndpoint = new IPEndPoint(IPAddress.Any, Config.GetInt(Config.CLIENT_PORT));
+            PostOffice.AddBox(listenEndpoint.ToString());
         }
 
         private void Submit_Click(object sender, RoutedEventArgs e)

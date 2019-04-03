@@ -12,6 +12,7 @@ namespace Shared
             DEFAULT_TIMEOUT = "defaultTimeout",
             DEFAULT_RETRY_COUNT = "defaultRetryCount",
             CLIENT_PROCESS_NUM = "clientProcessNum",
+            CLIENT_PORT = "clientPort",
             BROKER_IP = "brokerIp",
             BROKER_PORT = "brokerPort",
             BROKER_PROCESS_NUM = "brokerProcessNum",

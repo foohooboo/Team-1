@@ -20,7 +20,7 @@ namespace Shared.Comms.MailService
         {
             myUdpClient = new UdpClient(LocalEndPoint);
             isActive = true;
-            receiveTask = new Task(() => CollectMail());
+            receiveTask = new Task(() => ListenForMail());
             receiveTask.Start();
         }
 
@@ -44,15 +44,13 @@ namespace Shared.Comms.MailService
             }
         }
 
-        public override void CollectMail()
+        public void ListenForMail()
         {
-
             while (isActive)
             {
                 var envelope = GetIncomingMail();
                 if (envelope != null)
                 {
-                    Mail.Enqueue(envelope);
                     PostOffice.HandleIncomingMessage(envelope);
                     waitHandle.Set();
                 }
@@ -96,7 +94,7 @@ namespace Shared.Comms.MailService
             }
             catch (Exception err)
             {
-                Log.Warn($"Unexpected exception while receiving datagram: {err.Message} ");
+                Log.Error($"Unexpected exception while receiving datagram: {err.Message} ");
             }
 
             return receivedBytes;

@@ -70,30 +70,5 @@ namespace SharedTest.MailService
                 Assert.AreEqual("Envelope already has contents", error.Message);
             };
         }
-
-        [TestMethod]
-        public void RemovalTest()
-        {
-            var m = MessageFactory.GetMessage<AckMessage>(1, 5);
-            var e = new Envelope(m);
-
-            Assert.IsTrue(e.HasMessage());
-
-            var m2 = e.Remove();
-
-            Assert.IsFalse(e.HasMessage());
-
-            Assert.AreSame(m, m2);
-            Assert.IsNull(e.Contents);
-        }
-
-        [TestMethod]
-        public void EmptyRemovalTest()
-        {
-            var e = new Envelope();
-            var m = e.Remove();
-
-            Assert.IsNull(m);
-        }
     }
 }
