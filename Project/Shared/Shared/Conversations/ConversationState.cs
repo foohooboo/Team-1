@@ -103,7 +103,7 @@ namespace Shared.Conversations
                 if (nextState == null)
                 {
                     //current state couldn't handle incoming message, see if parent can handle it.
-                    nextState = PreviousState?.HandleMessage(incomingMessage);
+                    nextState = PreviousState?.OnHandleMessage(incomingMessage);
                 }
             }
 
