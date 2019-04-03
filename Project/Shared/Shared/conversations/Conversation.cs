@@ -75,7 +75,7 @@ namespace Shared.Conversations
         {
             Log.Debug($"{nameof(UpdateState)} (enter)");
 
-            var nextState = CurrentState?.OnHandleMessage(incomingEnvelope,true);
+            var nextState = CurrentState?.OnHandleMessage(incomingEnvelope,1);
             if (nextState != null)
             {
                 UpdateState(nextState);

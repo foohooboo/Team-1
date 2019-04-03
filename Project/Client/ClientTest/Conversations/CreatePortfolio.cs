@@ -77,7 +77,7 @@ namespace ClientTest.Conversations
             //setup response message and mock
             var mock = new Mock<InitTransactionStartingState>(conv) { CallBase = true };
             mock.Setup(prep => prep.Prepare()).Verifiable();//ensure DoPrepare is called.
-            mock.Setup(st => st.OnHandleMessage(It.IsAny<Envelope>(),false)).CallBase();//Skip mock's HandleMessage override.
+            mock.Setup(st => st.OnHandleMessage(It.IsAny<Envelope>(),0)).CallBase();//Skip mock's HandleMessage override.
             mock.Setup(st => st.Send())//Pretend message is sent and response comes back...
                 .Callback(() => {
                     if (++requests > 1)
@@ -123,7 +123,7 @@ namespace ClientTest.Conversations
             //setup response message and mock
             var mock = new Mock<InitTransactionStartingState>(conv) { CallBase = true };
             mock.Setup(prep => prep.Prepare()).Verifiable();//ensure DoPrepare is called.
-            mock.Setup(st => st.OnHandleMessage(It.IsAny<Envelope>(),false)).CallBase();//Skip mock's HandleMessage override.
+            mock.Setup(st => st.OnHandleMessage(It.IsAny<Envelope>(),0)).CallBase();//Skip mock's HandleMessage override.
             mock.Setup(st => st.Send()).CallBase().Verifiable();
 
             //execute test

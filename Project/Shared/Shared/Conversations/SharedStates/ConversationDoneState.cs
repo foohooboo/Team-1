@@ -24,7 +24,7 @@ namespace Shared.Conversations.SharedStates
 
             ConversationState state = null;
             Log.Warn($"Conversation {Conversation.Id} received message while in the Done state. Processing message as if conversation was in the previous state.");
-            state = PreviousState?.OnHandleMessage(newMessage, false);
+            state = PreviousState?.OnHandleMessage(newMessage, 0);
 
             Log.Debug($"{nameof(HandleMessage)} (exit)");
             return state;

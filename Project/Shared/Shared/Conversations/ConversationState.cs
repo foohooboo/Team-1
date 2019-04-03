@@ -98,7 +98,7 @@ namespace Shared.Conversations
         /// handling an unrecognized, unhandled message.
         /// </param>
         /// <returns></returns>
-        public virtual ConversationState OnHandleMessage(Envelope incomingMessage, bool haveParentTryOnFailure)
+        public virtual ConversationState OnHandleMessage(Envelope incomingMessage, int numAncestorsTryOnFailure)
         {
             ConversationState nextState = null;
             
@@ -113,10 +113,10 @@ namespace Shared.Conversations
                 //Incoming message not recognized. Try to handle it here
                 nextState = HandleMessage(incomingMessage);
 
-                if (nextState == null && haveParentTryOnFailure)
+                if (nextState == null && numAncestorsTryOnFailure>0)
                 {
                     //current state couldn't handle incoming message, see if parent can handle it.
-                    nextState = PreviousState?.OnHandleMessage(incomingMessage, false);
+                    nextState = PreviousState?.OnHandleMessage(incomingMessage, --numAncestorsTryOnFailure);
                 }
             }
 
