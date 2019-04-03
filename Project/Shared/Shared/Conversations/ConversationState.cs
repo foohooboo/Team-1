@@ -85,14 +85,27 @@ namespace Shared.Conversations
 
         }
 
-        public virtual ConversationState OnHandleMessage(Envelope incomingMessage)
+        /// <summary>
+        /// Actual handler for incoming messages. First it checks to see if the incoming message was already handled.
+        /// If it was, it returns self to ensure the OnHandle isn't called again for the already processed message. 
+        /// If the incoming message is not recognized as already-handled, it tries to handle it itself. 
+        /// If current state can't handle the incoming message, it may try to have it's parent handle the same message.
+        /// </summary>
+        /// <param name="incomingMessage">The message to be processed</param>
+        /// <param name="haveParentTryOnFailure">
+        /// If current state cannot process the message, should it try to have its parent state handle the message?
+        /// External callers of this method should set this to true. This results in only a single ancestor (the direct parent)
+        /// handling an unrecognized, unhandled message.
+        /// </param>
+        /// <returns></returns>
+        public virtual ConversationState OnHandleMessage(Envelope incomingMessage, bool haveParentTryOnFailure)
         {
             ConversationState nextState = null;
             
             if (!string.IsNullOrEmpty(MessageId) && incomingMessage.Contents.MessageID.Equals(MessageId))
             {
-                //If the incoming message is a repeat of one already processed, do nothing.
-                //The already prepared message will be re-sent by conversation manager.
+                //If the incoming message is a repeat of one already processed (resulted in the creation of this state), do nothing.
+                //The send will get re-called without calling OnPrepare again.
                 nextState = this;
             }
             else
@@ -100,10 +113,10 @@ namespace Shared.Conversations
                 //Incoming message not recognized. Try to handle it here
                 nextState = HandleMessage(incomingMessage);
 
-                if (nextState == null)
+                if (nextState == null && haveParentTryOnFailure)
                 {
                     //current state couldn't handle incoming message, see if parent can handle it.
-                    nextState = PreviousState?.OnHandleMessage(incomingMessage);
+                    nextState = PreviousState?.OnHandleMessage(incomingMessage, false);
                 }
             }
 
