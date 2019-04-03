@@ -35,7 +35,9 @@ namespace Client.Conversations.GetPortfolio
 
                 case ErrorMessage m:
                     Log.Error($"Received error message as reply...\n{m.ErrorText}");
-                    LoginHandler?.LoginFailure(m.ErrorText);
+
+                    Task.Run(() => LoginHandler?.LoginFailure(m.ErrorText)); 
+                    
                     nextState = new ConversationDoneState(Conversation, this);
                     ConversationManager.RemoveConversation(Conversation.Id);
                     break;
