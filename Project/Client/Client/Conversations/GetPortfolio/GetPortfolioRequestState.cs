@@ -5,6 +5,7 @@ using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
 using Shared.PortfolioResources;
+using System.Threading.Tasks;
 
 namespace Client.Conversations.GetPortfolio
 {
@@ -31,17 +32,16 @@ namespace Client.Conversations.GetPortfolio
 
             switch (incomingMessage.Contents)
             {
-                //TODO: Add state-specific message handling here. Given the incoming message,
-                //you should set nextState to the next ConversationState expected in the conversation.
+
                 case ErrorMessage m:
                     Log.Error($"Received error message as reply...\n{m.ErrorText}");
                     LoginHandler?.LoginFailure(m.ErrorText);
                     nextState = new ConversationDoneState(Conversation, this);
+                    ConversationManager.RemoveConversation(Conversation.Id);
                     break;
+
                 case PortfolioUpdateMessage m:
                     Log.Debug($"Received portfolio for ...\n{m.PortfolioID}");
-
-                    // TODO: Update portfolio model data.
 
                     var port = new Portfolio()
                     {
@@ -50,10 +50,13 @@ namespace Client.Conversations.GetPortfolio
                         PortfolioID = m.PortfolioID
                     };
 
+                    // TODO: Update portfolio model data.
+
                     nextState = new ConversationDoneState(Conversation, this);
                     ConversationManager.RemoveConversation(Conversation.Id);
 
-                    LoginHandler?.LoginSuccess(port);//Note: this appears to stop execution below, is it getting garbage collected somehow?? -dsphar 4/1/2019
+                    Task.Run(() => LoginHandler?.LoginSuccess(port));
+                    
                     break;
                 default:
                     Log.Error($"No logic to process incoming message of type {incomingMessage.Contents?.GetType()}. Ignoring message.");
