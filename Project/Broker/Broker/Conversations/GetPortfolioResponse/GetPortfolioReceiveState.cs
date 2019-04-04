@@ -52,10 +52,7 @@ namespace Broker.Conversations.GetPortfolio
                 ClientManager.TryToAdd(To);
             }
 
-            var env = new Envelope(message, Config.GetString(Config.BROKER_IP), Config.GetInt(Config.BROKER_PORT))
-            {
-                To = this.To
-            };
+            var env = new Envelope(message) { To = this.To };
 
             Log.Debug($"{nameof(Prepare)} (exit)");
             return env;
