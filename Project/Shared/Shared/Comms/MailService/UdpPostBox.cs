@@ -22,7 +22,8 @@ namespace Shared.Comms.MailService
             isActive = true;
             receiveTask = new Task(() => ListenForMail());
             receiveTask.Start();
-        }
+            Log.Debug($"Started UdpClient on port ${((IPEndPoint)myUdpClient.Client.LocalEndPoint).Port}");
+        }       
 
         ~UdpPostBox()
         {
@@ -31,7 +32,8 @@ namespace Shared.Comms.MailService
 
         public override void Send(Envelope envelope)
         {
-            Log.Info($"Sending message {envelope?.Contents?.MessageID} to {envelope.To}");
+            var messageId = (envelope?.Contents?.MessageID == null) ? null : envelope?.Contents?.MessageID;
+            Log.Info($"Sending message {messageId} to {envelope.To}");
             byte[] bytesToSend = envelope.Contents.Encode();
             try
             {

@@ -135,10 +135,12 @@ namespace Shared.Conversations
 
         public virtual void Send()
         {
+            Log.Debug($"{nameof(Send)} (enter)");
             if (OutboundMessage != null)
             {
                 PostOffice.Send(OutboundMessage);
             }
+            Log.Debug($"{nameof(Send)} (exit)");
         }
     }
 }

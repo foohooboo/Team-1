@@ -108,11 +108,13 @@ namespace Shared.Conversations
             }
             else if (conversations.ContainsKey(m.Contents.ConversationID))
             {
+                Log.Debug($"Send message to conversation {m.Contents.ConversationID}");
                 conv = conversations[m.Contents.ConversationID];
                 conv.UpdateState(m);
             }
             else
             {
+                Log.Debug("Create new conversation for message");
                 conv = BuildConversation(m);
                 if (conv != null)
                 {

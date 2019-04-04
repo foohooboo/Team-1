@@ -26,6 +26,8 @@ namespace Broker.Conversations.GetPortfolio
 
         public GetPortfolioReceiveState(Envelope envelope, Conversation conversation) : base(envelope, conversation, null)
         {
+            Log.Debug($"{nameof(GetPortfolioReceiveState)} (enter)");
+
             if (!(envelope.Contents is GetPortfolioRequest m))
                 throw new ArgumentException("GetPortfolioReceiveState must be created with a GetPortfolioRequest message.");
 
@@ -83,8 +85,10 @@ namespace Broker.Conversations.GetPortfolio
 
         public override void Send()
         {
+            Log.Debug($"{nameof(Send)} (enter)");
             base.Send();
             Conversation.UpdateState(new ConversationDoneState(Conversation, this));
+            Log.Debug($"{nameof(Send)} (exit)");
         }
     }
 }
