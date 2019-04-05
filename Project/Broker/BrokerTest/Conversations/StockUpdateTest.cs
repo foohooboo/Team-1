@@ -39,7 +39,7 @@ namespace BrokerTest.Conversations
         [TestInitialize]
         public void TestInitialize()
         {
-            PostOffice.AddBox("0.0.0.0:0");
+            ComService.AddClient("0.0.0.0:0");
             ConversationManager.Start(ConversationBuilder);
         }
 
@@ -47,7 +47,7 @@ namespace BrokerTest.Conversations
         public void TestCleanup()
         {
             ConversationManager.Stop();
-            PostOffice.RemoveBox("0.0.0.0:0");
+            ComService.RemoveClient("0.0.0.0:0");
         }
 
         [TestMethod]

@@ -55,7 +55,7 @@ namespace StockServerTest.Conversations
         [TestInitialize]
         public void TestInitialize()
         {
-            PostOffice.AddBox("0.0.0.0:0");
+            ComService.AddClient("0.0.0.0:0");
             ConversationManager.Start(null);
         }
 
@@ -63,7 +63,7 @@ namespace StockServerTest.Conversations
         public void TestCleanup()
         {
             ConversationManager.Stop();
-            PostOffice.RemoveBox("0.0.0.0:0");
+            ComService.RemoveClient("0.0.0.0:0");
         }
 
 
@@ -188,7 +188,7 @@ namespace StockServerTest.Conversations
             mock.Verify(state => state.HandleMessage(It.IsAny<Envelope>()), Times.Never);
             mock.Verify(state => state.Prepare(), Times.Once);
             mock.Verify(state => state.Send(), Times.Exactly(3));
-            mock.Verify(state => state.HandleTimeout(), Times.Exactly(3));
+            mock.Verify(state => state.HandleTimeout(), Times.AtLeast(3));
         }
     }
 }

@@ -59,7 +59,7 @@ namespace BrokerTest.Conversations
         [TestInitialize]
         public void TestInitialize()
         {
-            PostOffice.AddBox("0.0.0.0:0");
+            ComService.AddClient("0.0.0.0:0");
             ConversationManager.Start(null);
 
             //create fake portfolios to populate leaderboard
@@ -87,7 +87,7 @@ namespace BrokerTest.Conversations
         public void TestCleanup()
         {
             ConversationManager.Stop();
-            PostOffice.RemoveBox("0.0.0.0:0");
+            ComService.RemoveClient("0.0.0.0:0");
 
             foreach (Portfolio p in PortfolioManager.Portfolios.Values)
             {

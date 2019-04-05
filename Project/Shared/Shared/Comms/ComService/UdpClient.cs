@@ -8,31 +8,31 @@ using System.Threading.Tasks;
 
 namespace Shared.Comms.ComService
 {
-    public class UdpPostBox : PostBox
+    public class UdpClient : Client
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public readonly UdpClient myUdpClient;
+        public readonly System.Net.Sockets.UdpClient myUdpClient;
         private bool isActive;
         private Task receiveTask;
 
-        public UdpPostBox(string address) : base(address)
+        public UdpClient(string address) : base(address)
         {
-            myUdpClient = new UdpClient(LocalEndPoint);
+            myUdpClient = new System.Net.Sockets.UdpClient(LocalEndPoint);
             isActive = true;
             receiveTask = new Task(() => ListenForMail());
             receiveTask.Start();
             Log.Debug($"Started UdpClient on port ${((IPEndPoint)myUdpClient.Client.LocalEndPoint).Port}");
         }       
 
-        ~UdpPostBox()
+        ~UdpClient()
         {
             Close();
         }
 
         public override void Send(Envelope envelope)
         {
-            var messageId = (envelope?.Contents?.MessageID == null) ? null : envelope?.Contents?.MessageID;
+            var messageId = envelope?.Contents?.MessageID ?? null;
             Log.Info($"Sending message {messageId} to {envelope.To}");
             byte[] bytesToSend = envelope.Contents.Encode();
             try
@@ -53,7 +53,7 @@ namespace Shared.Comms.ComService
                 var envelope = GetIncomingMail();
                 if (envelope != null)
                 {
-                    PostOffice.HandleIncomingMessage(envelope);
+                    ComService.HandleIncomingMessage(envelope);
                     waitHandle.Set();
                 }
             }

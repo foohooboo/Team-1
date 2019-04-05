@@ -35,7 +35,7 @@ namespace StockServerTest.Conversations
         [TestInitialize]
         public void TestInitialize()
         {
-            PostOffice.AddBox("0.0.0.0:0");
+            ComService.AddClient("0.0.0.0:0");
             ConversationManager.Start(ConversationBuilder);
         }
 
@@ -43,7 +43,7 @@ namespace StockServerTest.Conversations
         public void TestCleanup()
         {
             ConversationManager.Stop();
-            PostOffice.RemoveBox("0.0.0.0:0");
+            ComService.RemoveClient("0.0.0.0:0");
         }
 
         [TestMethod]
@@ -60,7 +60,7 @@ namespace StockServerTest.Conversations
             var messageEnvelope = new Envelope(message);
 
             //Handle "incoming" message
-            var replyConversation = PostOffice.HandleIncomingMessage(messageEnvelope);
+            var replyConversation = ComService.HandleIncomingMessage(messageEnvelope);
 
             //Verify conversation was NOT built from message
             Assert.IsNull(replyConversation);

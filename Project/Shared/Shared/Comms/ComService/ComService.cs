@@ -7,48 +7,53 @@ using System.Linq;
 
 namespace Shared.Comms.ComService
 {
-    public static class PostOffice
+    public static class ComService
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public static Dictionary<string,PostBox> PostBoxes = new Dictionary<string, PostBox>();
-        
-        public static bool HasPostBox()
+
+        //TODO: tcp?
+        public static Dictionary<string,Client> Clients = new Dictionary<string, Client>();
+
+        //TODO: tcp?
+        public static bool HasClient()
         {
-            return PostBoxes.Count > 0;
+            return Clients.Count > 0;
         }
 
-        public static PostBox AddBox(string address)
+        //TODO: tcp?
+        public static Client AddClient(string address)
         {
-            Log.Debug($"{nameof(AddBox)} (enter)");
+            Log.Debug($"{nameof(AddClient)} (enter)");
 
-            var box = new UdpPostBox(address);
-            PostBoxes.Add(address, box);
+            var box = new UdpClient(address);//TODO: change to tcp client
+            Clients.Add(address, box);
 
-            Log.Debug($"{nameof(AddBox)} (exit)");
+            Log.Debug($"{nameof(AddClient)} (exit)");
             return box;
         }
 
-        //Following method not currently used. We might be able to remove it? -Dsphar 4/3/2019
-        public static PostBox GetBox(string address)
+        //TODO: tcp? Following method not currently used. Would be a good way to get tcp clients if we had a tcp unique identifier
+        public static Client GetClient(string address)
         {
-            Log.Debug($"{nameof(GetBox)} (enter)");
+            Log.Debug($"{nameof(GetClient)} (enter)");
 
-            PostBox box = null;
+            Client box = null;
 
-            if (PostBoxes.TryGetValue(address, out PostBox postBox))
+            if (Clients.TryGetValue(address, out Client postBox))
             {
                 box = postBox;
             }
 
-            Log.Debug($"{nameof(GetBox)} (exit)");
+            Log.Debug($"{nameof(GetClient)} (exit)");
             return box;
         }
 
-        public static void RemoveBox(string address)
+        //TODO: tcp?
+        public static void RemoveClient(string address)
         {
-            PostBoxes[address].Close();
-            PostBoxes.Remove(address);
+            Clients[address].Close();
+            Clients.Remove(address);
         }
 
         /// <summary>
@@ -104,11 +109,13 @@ namespace Shared.Comms.ComService
         {
             Log.Debug($"{nameof(Send)} (enter)");
 
+
+
             //TODO: We need to cleanup this hack when we refactor the comm system and add TCP.
             //Ideally, envelopes themselves have enough information for the comm system to determine
             //which communicator to use. That way we can keep this method generic.
             //Dsphar 3/20/19
-            if (PostBoxes.Count == 0)
+            if (Clients.Count == 0)
             {
                 Log.Error("Cannot send envelope. No valid postbox found.");
             }
@@ -116,7 +123,7 @@ namespace Shared.Comms.ComService
             {
                 try
                 {
-                    PostBoxes.Values.First().Send(env);//<<----- HACK ALERT, sends envelope through any arbitrary box.
+                    Clients.Values.First().Send(env);//<<----- HACK ALERT, sends envelope through any arbitrary box.
                 }
                 catch (Exception e)
                 {

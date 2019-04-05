@@ -10,7 +10,7 @@ namespace SharedTest.MailService
         public void ConstructorTest()
         {
             var address = "127.0.0.1:1342";
-            var udp = new UdpPostBox(address);
+            var udp = new UdpClient(address);
 
             Assert.AreEqual(address, udp.LocalEndPoint.ToString());
         }

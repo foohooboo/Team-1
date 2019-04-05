@@ -22,7 +22,7 @@ namespace StockServer
             ConversationManager.Start(ConversationBuilder);
 
             var listenEndpoint = new IPEndPoint(IPAddress.Any, Config.GetInt(Config.STOCK_SERVER_PORT));
-            PostOffice.AddBox(listenEndpoint.ToString());
+            ComService.AddClient(listenEndpoint.ToString());
             
             Log.Info("Waiting for StockStreamRequestMessages.");
             Log.Info("Pres any key to close program.");

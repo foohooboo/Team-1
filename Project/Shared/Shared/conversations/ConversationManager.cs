@@ -26,7 +26,7 @@ namespace Shared.Conversations
             if (!IsRunning)
             {
                 SetConversationBuilder(method);
-                PostOffice.SetIncomingMessageHandler(ProcessIncomingMessage);
+                ComService.SetIncomingMessageHandler(ProcessIncomingMessage);
 
                 IsRunning = true;
                 new Task(() => {
@@ -60,7 +60,7 @@ namespace Shared.Conversations
             {
                 IsRunning = false;
                 conversationBuilder = null;
-                PostOffice.ClearIncomingMessageHandler();
+                ComService.ClearIncomingMessageHandler();
                 conversations.Clear();
             }
             else

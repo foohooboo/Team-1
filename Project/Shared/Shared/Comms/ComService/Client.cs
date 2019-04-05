@@ -2,15 +2,16 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using Shared.Comms.Messages;
 
 namespace Shared.Comms.ComService
 {
-    public abstract class PostBox
+    public abstract class Client
     {
-        private readonly object boxLock;
+        protected readonly object clientLock;
         protected readonly AutoResetEvent waitHandle = new AutoResetEvent(false);
 
         public IPEndPoint LocalEndPoint
@@ -18,9 +19,9 @@ namespace Shared.Comms.ComService
             get; private set;
         }
 
-        public PostBox(string address)
+        public Client(string address)
         {
-            boxLock = new object();
+            clientLock = new object();
             LocalEndPoint = EndPointParser.Parse(address);
         }
 

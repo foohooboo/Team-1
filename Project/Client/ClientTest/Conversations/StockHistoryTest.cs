@@ -21,13 +21,13 @@ namespace ClientTest.Conversations
         public void TestInitialize()
         {
             ConversationManager.Start(null);
-            PostOffice.AddBox("0.0.0.0:0");
+            ComService.AddClient("0.0.0.0:0");
         }
 
         [TestCleanup]
         public void TestCleanup()
         {
-            PostOffice.RemoveBox("0.0.0.0:0");
+            ComService.RemoveClient("0.0.0.0:0");
         }
 
         [TestMethod]

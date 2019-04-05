@@ -32,7 +32,7 @@ namespace Client
             ConversationManager.Start(null);
 
             var listenEndpoint = new IPEndPoint(IPAddress.Any, Config.GetInt(Config.CLIENT_PORT));
-            PostOffice.AddBox(listenEndpoint.ToString());
+            ComService.AddClient(listenEndpoint.ToString());
         }
 
         private void Submit_Click(object sender, RoutedEventArgs e)

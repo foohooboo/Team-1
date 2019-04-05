@@ -57,7 +57,7 @@ namespace Client
 
         ~MainWindow()
         {
-            PostOffice.RemoveBox($"0.0.0.0:{Config.GetString(Config.CLIENT_PORT)}");
+            ComService.RemoveClient($"0.0.0.0:{Config.GetString(Config.CLIENT_PORT)}");
         }
 
         private string helloTextLocal;

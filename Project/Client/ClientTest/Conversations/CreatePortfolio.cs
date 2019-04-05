@@ -20,7 +20,7 @@ namespace ClientTest.Conversations
         [TestInitialize]
         public void TestInitialize()
         {
-            PostOffice.AddBox("0.0.0.0:0");
+            ComService.AddClient("0.0.0.0:0");
             ConversationManager.Start(null);
         }
 
@@ -28,7 +28,7 @@ namespace ClientTest.Conversations
         public void TestCleanup()
         {
             ConversationManager.Stop();
-            PostOffice.RemoveBox("0.0.0.0:0");
+            ComService.RemoveClient("0.0.0.0:0");
         }
 
         [TestMethod]

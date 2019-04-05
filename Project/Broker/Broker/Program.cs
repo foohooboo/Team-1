@@ -27,7 +27,7 @@ namespace Broker
             ConversationManager.Start(ConversationBuilder);
 
             var listenEndpoint = new IPEndPoint(IPAddress.Any, Config.GetInt(Config.BROKER_PORT));
-            PostOffice.AddBox(listenEndpoint.ToString());
+            ComService.AddClient(listenEndpoint.ToString());
 
             PrintMenu();
             var input = Console.ReadLine();

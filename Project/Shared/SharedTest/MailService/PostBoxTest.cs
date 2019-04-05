@@ -6,7 +6,7 @@ namespace SharedTest.MailService
     [TestClass]
     public class PostBoxTest
     {
-        private class TestPostBox : PostBox
+        private class TestPostBox : Client
         {
             public TestPostBox(string address) : base(address)
             {
@@ -25,7 +25,7 @@ namespace SharedTest.MailService
         }
 
         private string address;
-        private PostBox postBox;
+        private Client postBox;
 
         [TestInitialize]
         public void TestInitialize()

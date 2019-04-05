@@ -138,7 +138,7 @@ namespace Shared.Conversations
             Log.Debug($"{nameof(Send)} (enter)");
             if (OutboundMessage != null)
             {
-                PostOffice.Send(OutboundMessage);
+                ComService.Send(OutboundMessage);
             }
             Log.Debug($"{nameof(Send)} (exit)");
         }
