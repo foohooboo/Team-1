@@ -1,13 +1,13 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Shared.Comms.ComService;
 
-namespace SharedTest.MailService
+namespace SharedTest.CommSystem
 {
     [TestClass]
-    public class PostOfficeTest
+    public class ComServiceTest
     {
         [TestMethod]
-        public void AddPostBoxTest()
+        public void AddClientTest()
         {
             var a1 = @"127.0.0.1:231";
 
@@ -18,7 +18,7 @@ namespace SharedTest.MailService
         }
 
         [TestMethod]
-        public void AccessPostBoxTest()
+        public void AccessClientTest()
         {
             var a1 = @"127.0.0.1:231";
             var a2 = @"127.0.0.1:241";
@@ -40,7 +40,7 @@ namespace SharedTest.MailService
         }
 
         [TestMethod]
-        public void RemovePostBoxTest()
+        public void RemoveClientTest()
         {
             var a1 = @"127.0.0.1:231";
             var a2 = @"127.0.0.1:211";

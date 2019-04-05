@@ -1,14 +1,14 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Shared.Comms.ComService;
 
-namespace SharedTest.MailService
+namespace SharedTest.CommSystem
 {
     [TestClass]
-    public class PostBoxTest
+    public class ClientTest
     {
-        private class TestPostBox : Client
+        private class TestClient : Client
         {
-            public TestPostBox(string address) : base(address)
+            public TestClient(string address) : base(address)
             {
 
             }
@@ -31,7 +31,7 @@ namespace SharedTest.MailService
         public void TestInitialize()
         {
             address = @"127.0.0.1:1234";
-            postBox = new TestPostBox(address);
+            postBox = new TestClient(address);
         }
 
         [TestMethod]

@@ -3,7 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Shared.Comms.ComService;
 using Shared.Comms.Messages;
 
-namespace SharedTest.MailService
+namespace SharedTest.CommSystem
 {
     [TestClass]
     public class EnvelopeTest

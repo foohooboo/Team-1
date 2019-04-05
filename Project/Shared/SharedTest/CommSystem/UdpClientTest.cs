@@ -1,10 +1,10 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Shared.Comms.ComService;
 
-namespace SharedTest.MailService
+namespace SharedTest.CommSystem
 {
     [TestClass]
-    public class UdpPostBoxTest
+    public class UdpClientTest
     {
         [TestMethod]
         public void ConstructorTest()
