@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Shared.Comms.MailService;
+using Shared.Comms.ComService;
 
 namespace SharedTest.MailService
 {

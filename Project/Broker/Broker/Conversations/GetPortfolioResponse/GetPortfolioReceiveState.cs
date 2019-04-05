@@ -1,7 +1,7 @@
 ﻿using log4net;
 using Shared;
 using Shared.Client;
-using Shared.Comms.MailService;
+using Shared.Comms.ComService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;

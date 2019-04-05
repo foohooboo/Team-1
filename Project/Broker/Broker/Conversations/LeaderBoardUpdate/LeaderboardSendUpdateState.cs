@@ -2,7 +2,7 @@
 using Broker;
 using log4net;
 using Shared.Client;
-using Shared.Comms.MailService;
+using Shared.Comms.ComService;
 using Shared.Comms.Messages;
 
 namespace Shared.Conversations.SharedStates

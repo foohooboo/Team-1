@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Linq;
 
-namespace Shared.Comms.MailService
+namespace Shared.Comms.ComService
 {
     public static class PostOffice
     {

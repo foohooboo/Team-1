@@ -1,7 +1,7 @@
 ﻿using Client.Conversations;
 using Client.Conversations.GetPortfolio;
 using Shared;
-using Shared.Comms.MailService;
+using Shared.Comms.ComService;
 using Shared.Conversations;
 using Shared.PortfolioResources;
 using System;

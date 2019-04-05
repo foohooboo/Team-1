@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Shared.Client;
-using Shared.Comms.MailService;
+using Shared.Comms.ComService;
 // Git Commit tracking tes
 namespace SharedTest.Cleint
 {

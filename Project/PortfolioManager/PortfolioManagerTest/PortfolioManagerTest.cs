@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PortfolioManager;
-using Shared.Portfolio;
+using Shared.PortfolioResources;
 
 namespace PortfolioManagerTest
 {

@@ -7,7 +7,7 @@ using System.Windows.Shapes;
 using CommSystem;
 using log4net;
 using Shared;
-using Shared.Comms.MailService;
+using Shared.Comms.ComService;
 using Shared.MarketStructures;
 using static Client.Conversations.LeaderboardUpdate.ReceiveLeaderboardUpdateState;
 using static Client.Conversations.StockUpdate.ReceiveStockUpdateState;

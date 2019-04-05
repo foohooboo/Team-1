@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Shared.Comms.Messages;
 
-namespace Shared.Comms.MailService
+namespace Shared.Comms.ComService
 {
     public abstract class PostBox
     {

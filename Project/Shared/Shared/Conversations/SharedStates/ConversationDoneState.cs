@@ -1,6 +1,6 @@
 ﻿using System;
 using log4net;
-using Shared.Comms.MailService;
+using Shared.Comms.ComService;
 
 namespace Shared.Conversations.SharedStates
 {

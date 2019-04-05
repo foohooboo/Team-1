@@ -3,7 +3,7 @@ using System;
 using System.Linq;
 using System.Net;
 
-namespace Shared.Comms.MailService
+namespace Shared.Comms.ComService
 {
     public static class EndPointParser
     {

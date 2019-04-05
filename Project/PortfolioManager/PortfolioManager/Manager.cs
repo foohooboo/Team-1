@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Linq;
 using log4net;
 using Shared.MarketStructures;
-using Shared.Portfolio;
+using Shared.PortfolioResources;
 
 namespace PortfolioManager
 {
@@ -91,9 +91,9 @@ namespace PortfolioManager
                 }
 
                 // Unlock the portfolio on update.
-                if (portfolio.RequestWriteAuthority)
+                if (portfolio.WriteAuthority)
                 {
-                    portfolio.RequestWriteAuthority = false;
+                    portfolio.WriteAuthority = false;
                 }
 
                 portfolios.TryUpdate(portfolio.PortfolioID, portfolio, storedPortfolio);
@@ -131,7 +131,7 @@ namespace PortfolioManager
                 return false;
             }
 
-            portfolio.RequestWriteAuthority = true;
+            portfolio.WriteAuthority = true;
 
             return TryToUpdate(portfolio);
         }
@@ -145,7 +145,7 @@ namespace PortfolioManager
             }
 
             //
-            if (portfolio.RequestWriteAuthority)
+            if (portfolio.WriteAuthority)
             {
                 return false;
             }

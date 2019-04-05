@@ -1,5 +1,5 @@
 ﻿using log4net;
-using Shared.Comms.MailService;
+using Shared.Comms.ComService;
 using System;
 using System.Collections.Concurrent;
 using System.Threading;

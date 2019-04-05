@@ -6,7 +6,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Shared.Comms.MailService
+namespace Shared.Comms.ComService
 {
     public class UdpPostBox : PostBox
     {

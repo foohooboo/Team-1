@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Shared;
-using Shared.Comms.MailService;
+using Shared.Comms.ComService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
@@ -147,7 +147,7 @@ namespace SharedTest.Conversations
             mock.Verify(state => state.HandleTimeout(), Times.Never);
             Assert.IsTrue(ConversationManager.ConversationExists(conv.Id));
 
-            Thread.Sleep((int)(Config.GetInt(Config.DEFAULT_TIMEOUT) * (Config.GetInt(Config.DEFAULT_RETRY_COUNT) + 1) * 1.5));
+            Thread.Sleep((int)(Config.GetInt(Config.DEFAULT_TIMEOUT) * (Config.GetInt(Config.DEFAULT_RETRY_COUNT) + 1) * 1.2));
 
             Assert.IsFalse(conv.CurrentState is InitialState_ConvI_StockStreamRequest);
             Assert.IsTrue(conv.CurrentState is ConversationDoneState);

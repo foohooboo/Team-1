@@ -1,5 +1,5 @@
 ﻿using log4net;
-using Shared.Comms.MailService;
+using Shared.Comms.ComService;
 using Shared.Conversations.SharedStates;
 using System.Net;
 

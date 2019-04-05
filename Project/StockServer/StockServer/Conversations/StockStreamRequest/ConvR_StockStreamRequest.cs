@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using log4net;
 using Shared.Client;
-using Shared.Comms.MailService;
+using Shared.Comms.ComService;
 using Shared.Conversations;
 
 namespace StockServer.Conversations.StockStreamRequest

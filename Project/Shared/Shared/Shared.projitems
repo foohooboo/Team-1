@@ -10,11 +10,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Client\ClientManager.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Comms\MailService\EndPointParser.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Comms\MailService\Envelope.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Comms\MailService\PostBox.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Comms\MailService\PostOffice.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Comms\MailService\UdpPostBox.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Comms\ComService\EndPointParser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Comms\ComService\Envelope.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Comms\ComService\PostBox.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Comms\ComService\PostOffice.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Comms\ComService\UdpPostBox.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\CreatePortfolioRequestMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\ErrorMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Comms\Messages\GetPortfolioRequest.cs" />

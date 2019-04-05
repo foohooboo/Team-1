@@ -2,7 +2,7 @@
 using System.Net;
 using Shared.Comms.Messages;
 
-namespace Shared.Comms.MailService
+namespace Shared.Comms.ComService
 {
     public class Envelope
     {
