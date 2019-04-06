@@ -21,8 +21,7 @@ namespace StockServer
             StockData.Init();
             ConversationManager.Start(ConversationBuilder);
 
-            var listenEndpoint = new IPEndPoint(IPAddress.Any, Config.GetInt(Config.STOCK_SERVER_PORT));
-            ComService.AddClient(listenEndpoint.ToString());
+            ComService.AddClient(Config.DEFAULT_UDP_CLIENT, Config.GetInt(Config.STOCK_SERVER_PORT));
             
             Log.Info("Waiting for StockStreamRequestMessages.");
             Log.Info("Pres any key to close program.");

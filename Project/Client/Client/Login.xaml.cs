@@ -31,8 +31,7 @@ namespace Client
             InitializeComponent();
             ConversationManager.Start(null);
 
-            var listenEndpoint = new IPEndPoint(IPAddress.Any, Config.GetInt(Config.CLIENT_PORT));
-            ComService.AddClient(listenEndpoint.ToString());
+            ComService.AddClient(Config.DEFAULT_UDP_CLIENT, 0);
         }
 
         private void Submit_Click(object sender, RoutedEventArgs e)

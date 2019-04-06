@@ -2,7 +2,6 @@
 using Shared.Comms.Messages;
 using System;
 using System.Net;
-using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,16 +13,22 @@ namespace Shared.Comms.ComService
 
         public readonly System.Net.Sockets.UdpClient myUdpClient;
         private bool isActive;
-        private Task receiveTask;
 
-        public UdpClient(string address) : base(address)
+        /// <summary>
+        /// Creates a new UdpClient and binds it to the provided localPort.
+        /// A localPort of 0 will allow the client to bind to any available local port.
+        /// </summary>
+        /// <param name="localPort"></param>
+        public UdpClient(int localPort)
         {
-            myUdpClient = new System.Net.Sockets.UdpClient(LocalEndPoint);
+            var bindLocalEndPoint = new IPEndPoint(IPAddress.Any, localPort);
+            myUdpClient = new System.Net.Sockets.UdpClient(bindLocalEndPoint);
+
+            Log.Info($"Started UdpClient on port ${((IPEndPoint)myUdpClient.Client.LocalEndPoint).Port}");
+
             isActive = true;
-            receiveTask = new Task(() => ListenForMail());
-            receiveTask.Start();
-            Log.Debug($"Started UdpClient on port ${((IPEndPoint)myUdpClient.Client.LocalEndPoint).Port}");
-        }       
+            new Task(() => ListenForMessages()).Start();
+        }
 
         ~UdpClient()
         {
@@ -46,11 +51,11 @@ namespace Shared.Comms.ComService
             }
         }
 
-        public void ListenForMail()
+        public void ListenForMessages()
         {
             while (isActive)
             {
-                var envelope = GetIncomingMail();
+                var envelope = GetIncomingMessages();
                 if (envelope != null)
                 {
                     ComService.HandleIncomingMessage(envelope);
@@ -59,7 +64,7 @@ namespace Shared.Comms.ComService
             }
         }
 
-        private Envelope GetIncomingMail()
+        private Envelope GetIncomingMessages()
         {
             Envelope newEnvelope = null;
 
@@ -106,6 +111,17 @@ namespace Shared.Comms.ComService
         {
             isActive = false;
             myUdpClient?.Close();
+        }
+
+        public override int getConnectedPort()
+        {
+            int localPort = -1;
+
+            IPEndPoint endpoint = (IPEndPoint)myUdpClient?.Client?.LocalEndPoint;
+            if (endpoint != null)
+                localPort = endpoint.Port;
+
+            return localPort;
         }
     }
 }

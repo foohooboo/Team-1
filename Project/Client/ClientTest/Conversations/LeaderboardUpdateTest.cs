@@ -1,6 +1,7 @@
 ﻿using Client.Conversations.LeaderboardUpdate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Shared;
 using Shared.Comms.ComService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
@@ -37,7 +38,7 @@ namespace ClientTest.Conversations
         [TestInitialize]
         public void TestInitialize()
         {
-            ComService.AddClient("0.0.0.0:0");
+            ComService.AddClient(Config.DEFAULT_UDP_CLIENT,0);
             ConversationManager.Start(ConversationBuilder);
         }
 
@@ -45,7 +46,7 @@ namespace ClientTest.Conversations
         public void TestCleanup()
         {
             ConversationManager.Stop();
-            ComService.RemoveClient("0.0.0.0:0");
+            ComService.RemoveClient(Config.DEFAULT_UDP_CLIENT);
         }
 
         [TestMethod]

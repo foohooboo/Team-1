@@ -11,6 +11,8 @@ namespace Shared.Comms.ComService
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
+        //private static UdpClient DefaultUdp = new UdpClient()
+
 
         //TODO: tcp?
         public static Dictionary<string,Client> Clients = new Dictionary<string, Client>();
@@ -22,12 +24,12 @@ namespace Shared.Comms.ComService
         }
 
         //TODO: tcp?
-        public static Client AddClient(string address)
+        public static Client AddClient(string clientId, int localPort)
         {
             Log.Debug($"{nameof(AddClient)} (enter)");
 
-            var box = new UdpClient(address);//TODO: change to tcp client
-            Clients.Add(address, box);
+            var box = new UdpClient(localPort);//TODO: change to tcp client
+            Clients.Add(clientId, box);
 
             Log.Debug($"{nameof(AddClient)} (exit)");
             return box;
@@ -49,11 +51,10 @@ namespace Shared.Comms.ComService
             return box;
         }
 
-        //TODO: tcp?
-        public static void RemoveClient(string address)
+        public static void RemoveClient(string clientId)
         {
-            Clients[address].Close();
-            Clients.Remove(address);
+            Clients[clientId].Close();
+            Clients.Remove(clientId);
         }
 
         /// <summary>

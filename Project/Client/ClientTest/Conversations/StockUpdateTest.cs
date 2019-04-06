@@ -41,7 +41,7 @@ namespace ClientTest.Conversations
         [TestInitialize]
         public void TestInitialize()
         {
-            ComService.AddClient("0.0.0.0:0");
+            ComService.AddClient(Config.DEFAULT_UDP_CLIENT,0);
             ConversationManager.Start(ConversationBuilder);
         }
 
@@ -49,7 +49,7 @@ namespace ClientTest.Conversations
         public void TestCleanup()
         {
             ConversationManager.Stop();
-            ComService.RemoveClient("0.0.0.0:0");
+            ComService.RemoveClient(Config.DEFAULT_UDP_CLIENT);
         }
 
         [TestMethod]

@@ -46,7 +46,6 @@
     <Compile Include="Client\ClientManagerTest.cs" />
     <Compile Include="Configuration\ConfigurationTest.cs" />
     <Compile Include="CommSystem\EnvelopeTest.cs" />
-    <Compile Include="CommSystem\ClientTest.cs" />
     <Compile Include="CommSystem\ComServiceTest.cs" />
     <Compile Include="CommSystem\UdpClientTest.cs" />
     <Compile Include="MarketStructureTests\MarketDayTest.cs" />

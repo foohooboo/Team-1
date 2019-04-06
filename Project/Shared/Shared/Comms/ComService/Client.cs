@@ -14,16 +14,18 @@ namespace Shared.Comms.ComService
         protected readonly object clientLock;
         protected readonly AutoResetEvent waitHandle = new AutoResetEvent(false);
 
-        public IPEndPoint LocalEndPoint
-        {
-            get; private set;
-        }
-
-        public Client(string address)
+        public Client()
         {
             clientLock = new object();
-            LocalEndPoint = EndPointParser.Parse(address);
         }
+
+        /// <summary>
+        /// Get the port number which this client is bound to locally.
+        /// Can only be received after this client has been created.
+        /// </summary>
+        /// <returns></returns>
+        public abstract int getConnectedPort();
+        
 
         /// <summary>
         /// Used to shutdown the socket.
@@ -35,5 +37,7 @@ namespace Shared.Comms.ComService
         /// </summary>
         /// <param name="envelope">The <see cref="Envelope"/> containing the <see cref="Message"/> to send.</param>
         public abstract void Send(Envelope envelope);
+
+        
     }
 }

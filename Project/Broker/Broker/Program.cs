@@ -26,8 +26,7 @@ namespace Broker
             PortfolioManager.TryToCreate("dummy", "password", out Portfolio dummyPortfolio);
             ConversationManager.Start(ConversationBuilder);
 
-            var listenEndpoint = new IPEndPoint(IPAddress.Any, Config.GetInt(Config.BROKER_PORT));
-            ComService.AddClient(listenEndpoint.ToString());
+            ComService.AddClient(Config.DEFAULT_UDP_CLIENT, Config.GetInt(Config.BROKER_PORT));
 
             PrintMenu();
             var input = Console.ReadLine();

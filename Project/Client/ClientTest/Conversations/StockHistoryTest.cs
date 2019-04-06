@@ -21,13 +21,13 @@ namespace ClientTest.Conversations
         public void TestInitialize()
         {
             ConversationManager.Start(null);
-            ComService.AddClient("0.0.0.0:0");
+            ComService.AddClient(Config.DEFAULT_UDP_CLIENT,0);
         }
 
         [TestCleanup]
         public void TestCleanup()
         {
-            ComService.RemoveClient("0.0.0.0:0");
+            ComService.RemoveClient(Config.DEFAULT_UDP_CLIENT);
         }
 
         [TestMethod]

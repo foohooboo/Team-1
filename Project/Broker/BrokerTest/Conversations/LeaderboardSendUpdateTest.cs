@@ -59,7 +59,7 @@ namespace BrokerTest.Conversations
         [TestInitialize]
         public void TestInitialize()
         {
-            ComService.AddClient("0.0.0.0:0");
+            ComService.AddClient(Config.DEFAULT_UDP_CLIENT, 0);
             ConversationManager.Start(null);
 
             //create fake portfolios to populate leaderboard
@@ -87,7 +87,7 @@ namespace BrokerTest.Conversations
         public void TestCleanup()
         {
             ConversationManager.Stop();
-            ComService.RemoveClient("0.0.0.0:0");
+            ComService.RemoveClient(Config.DEFAULT_UDP_CLIENT);
 
             foreach (Portfolio p in PortfolioManager.Portfolios.Values)
             {
@@ -223,7 +223,7 @@ namespace BrokerTest.Conversations
             mock.Verify(state => state.HandleMessage(It.IsAny<Envelope>()), Times.Never);
             mock.Verify(state => state.Prepare(), Times.Once);
             mock.Verify(state => state.Send(), Times.Exactly(3));
-            mock.Verify(state => state.HandleTimeout(), Times.Exactly(3));
+            mock.Verify(state => state.HandleTimeout(), Times.AtLeast(3));
         }
     }
 }

@@ -9,10 +9,10 @@ namespace SharedTest.CommSystem
         [TestMethod]
         public void ConstructorTest()
         {
-            var address = "127.0.0.1:1342";
-            var udp = new UdpClient(address);
+            var localPort = 1342;
+            var udp = new UdpClient(localPort);
 
-            Assert.AreEqual(address, udp.LocalEndPoint.ToString());
+            Assert.AreEqual(localPort, udp.getConnectedPort());
         }
     }
 }

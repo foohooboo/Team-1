@@ -57,7 +57,7 @@ namespace Client
 
         ~MainWindow()
         {
-            ComService.RemoveClient($"0.0.0.0:{Config.GetString(Config.CLIENT_PORT)}");
+            ComService.RemoveClient(Config.DEFAULT_UDP_CLIENT);
         }
 
         private string helloTextLocal;
