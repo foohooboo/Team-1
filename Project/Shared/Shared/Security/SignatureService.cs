@@ -1,10 +1,15 @@
 ﻿using log4net;
 using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Security;
 using System;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+
+
+
+
 
 namespace Shared.Security
 {
@@ -12,8 +17,38 @@ namespace Shared.Security
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public RsaKeyParameters PrivateKey = null;
-        public RsaKeyParameters PublicKey = null;
+        public static RsaKeyParameters PrivateKey = null;
+        public static RsaKeyParameters PublicKey = null;
+
+        public static void SetPublicKey(string modulus, string exponent)
+        {
+            try
+            {
+                BigInteger mod = new BigInteger(Convert.FromBase64String(modulus));
+                BigInteger expo = new BigInteger(Convert.FromBase64String(exponent));
+                PublicKey = new RsaKeyParameters(false, mod, expo);
+            }
+            catch (Exception e)
+            {
+                Log.Error("Problem setting public key...");
+                Log.Error(e);
+            }
+        }
+
+        public static void SetPrivateKey(string modulus, string exponent)
+        {
+            try
+            {
+                BigInteger mod = new BigInteger(Convert.FromBase64String(modulus));
+                BigInteger expo = new BigInteger(Convert.FromBase64String(exponent));
+                PrivateKey = new RsaKeyParameters(true, mod, expo);
+            }
+            catch (Exception e)
+            {
+                Log.Error("Problem setting public key...");
+                Log.Error(e);
+            }
+        }
 
         public string GetSignature<TSignedObject>(TSignedObject obj)
         {

@@ -10,6 +10,7 @@ using System;
 namespace SharedTest.Security
 {
     [TestClass]
+    [DoNotParallelize]
     public class SignatureServiceTest
     {
         static SignatureService SigServe = new SignatureService();
@@ -18,19 +19,14 @@ namespace SharedTest.Security
         public static void ClassInit(TestContext context)
         {
             var key = GenerateKeys(1024);
-            SigServe.PublicKey = (RsaKeyParameters)(key.Public);
-            SigServe.PrivateKey = (RsaKeyParameters)(key.Private);
+            SignatureService.PublicKey = (RsaKeyParameters)(key.Public);
+            SignatureService.PrivateKey = (RsaKeyParameters)(key.Private);
 
-            //var publicKeyModulas = Convert.ToBase64String(publicKey.Modulus.ToByteArray());
-            //var publicKeyExponent = Convert.ToBase64String(publicKey.Exponent.ToByteArray());
-            //var privateKeyModulas = Convert.ToBase64String(privateKey.Modulus.ToByteArray());
-            //var privateKeyExponent = Convert.ToBase64String(privateKey.Exponent.ToByteArray());
-        }
-
-        [ClassCleanup()]
-        public static void ClassCleanup()
-        {
-
+            //Please keep the following comments, they're nice to have when generating new private/public key string data. -Dsphar 4/6/2019
+            //var publicKeyModulas = Convert.ToBase64String(SignatureService.PublicKey.Modulus.ToByteArray());
+            //var publicKeyExponent = Convert.ToBase64String(SignatureService.PublicKey.Exponent.ToByteArray());
+            //var privateKeyModulas = Convert.ToBase64String(SignatureService.PrivateKey.Modulus.ToByteArray());
+            //var privateKeyExponent = Convert.ToBase64String(SignatureService.PrivateKey.Exponent.ToByteArray());
         }
 
         [TestMethod]
@@ -173,6 +169,61 @@ namespace SharedTest.Security
 
             var isVerified = SigServe.VerifySignature(modifiedMarketDay, signature);
             Assert.IsFalse(isVerified);
+        }
+
+        [TestMethod]
+        public void SetKeysTest()
+        {
+
+            //Clear keys from other tests
+            SignatureService.PublicKey = null;
+            SignatureService.PrivateKey = null;
+
+            Assert.IsNull(SignatureService.PublicKey);
+            Assert.IsNull(SignatureService.PrivateKey);
+
+            //Load Keys
+            SignatureService.SetPrivateKey(
+                "AK3PGB1aToiVVGu0buZLm+P5PSAgaSIwaCoFJkuB+CC8OCiMRjPH8i567OM+DH5CU/XZh6yy6uffJ/uCyDygZYVL7viFiLzjHtBEAh/9Ma7cECrMtPQTUo+kN5JYQNnFfBy6PXjMI+jbAc2ZAwID6dCcK6OpejrP08sqW3ZOzBYZ",
+                "Gbp6dhvgXLEIPGJK+U2vb519KiSKE4zJWpEFFG/SkFv0TzJGkRMzuyQorVHJzSXZ4l53Sj347mZ293DqXakbpdN8Xua/4uuHj8edjeSgOdGvJ+O4I/8NMrFep4Ve1a2D8ZOmjA8NjWE4wVKc/6oHI3jLOy+PiPd8hWfVyooUbEU="
+                );
+
+            SignatureService.SetPublicKey(
+                "AK3PGB1aToiVVGu0buZLm+P5PSAgaSIwaCoFJkuB+CC8OCiMRjPH8i567OM+DH5CU/XZh6yy6uffJ/uCyDygZYVL7viFiLzjHtBEAh/9Ma7cECrMtPQTUo+kN5JYQNnFfBy6PXjMI+jbAc2ZAwID6dCcK6OpejrP08sqW3ZOzBYZ",
+                "AQAB"
+                );
+
+            //Prepare a MarketDay
+            var stock1 = new ValuatedStock()
+            {
+                Symbol = "STK1",
+                Name = "Stock 1",
+                Open = 1,
+                High = 2,
+                Low = 3,
+                Close = 4,
+                Volume = 5
+            };
+            var stock2 = new ValuatedStock()
+            {
+                Symbol = "STK2",
+                Name = "Stock 2",
+                Open = 6,
+                High = 7,
+                Low = 8,
+                Close = 9,
+                Volume = 10
+            };
+            ValuatedStock[] stocks = { stock1, stock2 };
+
+            var marketDay = new MarketDay("testDay", stocks);
+
+            //Sign marketDay
+            string signature = SigServe.GetSignature(marketDay);
+
+            //Verify signature
+            var isVerified = SigServe.VerifySignature(marketDay, signature);
+            Assert.IsTrue(isVerified);
         }
 
         private static AsymmetricCipherKeyPair GenerateKeys(int keySize)
