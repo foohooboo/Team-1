@@ -159,7 +159,7 @@ namespace ClientTest.Conversations
             Assert.IsTrue(conv.CurrentState is ConversationDoneState);
             mock.Verify(state => state.Prepare(), Times.Once);
             mock.Verify(state => state.Send(), Times.Exactly(3));
-            mock.Verify(state => state.HandleTimeout(), Times.Exactly(3));
+            mock.Verify(state => state.HandleTimeout(), Times.AtLeast(3));
             Assert.IsTrue(ConversationManager.ConversationExists(conv.Id));
         }
     }

@@ -1,11 +1,10 @@
 ﻿using log4net;
+using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Security;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace Shared.Security
 {
@@ -13,9 +12,10 @@ namespace Shared.Security
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        private static readonly HashAlgorithm HASH_ALGORITHM = new SHA1CryptoServiceProvider();
+        public RsaKeyParameters PrivateKey = null;
+        public RsaKeyParameters PublicKey = null;
 
-        public string GetSignature<TSignedObject>(TSignedObject obj, RSAParameters privateKey)
+        public string GetSignature<TSignedObject>(TSignedObject obj)
         {
             Log.Debug($"{nameof(GetSignature)} (enter)");
 
@@ -24,12 +24,7 @@ namespace Shared.Security
             try
             {
                 byte[] serlializedObj = Serialize(obj);
-
-                RSACryptoServiceProvider RSAalg = new RSACryptoServiceProvider();
-                RSAalg.ImportParameters(privateKey);
-
-                var sigBytes = RSAalg.SignData(serlializedObj, HASH_ALGORITHM);
-                sig = Convert.ToBase64String(sigBytes);
+                sig = GetSignature(serlializedObj);
             }
             catch (Exception e)
             {
@@ -41,7 +36,7 @@ namespace Shared.Security
             return sig;
         }
 
-        public bool VerifySignature<TSignedObject>(TSignedObject obj, string signature, RSAParameters publicKey)
+        public bool VerifySignature<TSignedObject>(TSignedObject objectToVerify, string signature)
         {
             Log.Debug($"{nameof(VerifySignature)} (enter)");
 
@@ -49,17 +44,12 @@ namespace Shared.Security
 
             try
             {
-                byte[] SignedData = Convert.FromBase64String(signature);
-                byte[] DataToVerify = Serialize(obj);
-
-                RSACryptoServiceProvider RSAalg = new RSACryptoServiceProvider();
-                RSAalg.ImportParameters(publicKey);
-
-                isValid = RSAalg.VerifyData(DataToVerify, new SHA1CryptoServiceProvider(), SignedData);
+                byte[] bytesToVerify = Serialize(objectToVerify);
+                isValid = VerifySignature(bytesToVerify, signature);
             }
             catch (Exception e)
             {
-                Log.Error($"Problem verifying signature of {obj.GetType().Name} object...");
+                Log.Error($"Problem verifying signature of {objectToVerify.GetType().Name} object...");
                 Log.Error(e);
             }
 
@@ -67,6 +57,29 @@ namespace Shared.Security
             return isValid;
         }
 
+        private string GetSignature(byte[] objectAsBytes)
+        {
+            if (PrivateKey == null)
+                throw new NullReferenceException("SingatureService.ProvateKey not loaded.");
+
+            var signer = SignerUtilities.GetSigner("SHA384WithRSAEncryption");
+            signer.Init(true, PrivateKey);
+            signer.BlockUpdate(objectAsBytes, 0, objectAsBytes.Length);
+
+            return Convert.ToBase64String(signer.GenerateSignature());
+        }
+
+        private bool VerifySignature(byte[] objectToVerifyAsBytes, string signature)
+        {
+            if (PublicKey == null)
+                throw new NullReferenceException("SingatureService.PublicKey not loaded.");
+
+            var signer = SignerUtilities.GetSigner("SHA384WithRSAEncryption");
+            signer.Init(false, PublicKey);
+            signer.BlockUpdate(objectToVerifyAsBytes, 0, objectToVerifyAsBytes.Length);
+
+            return signer.VerifySignature(Convert.FromBase64String(signature));
+        }
 
         //TODO: We may want to move the following serialize and deserialize methods into a serialization class? -Dsphar 4/6/2019
 
