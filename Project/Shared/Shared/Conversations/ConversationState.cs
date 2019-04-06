@@ -138,7 +138,7 @@ namespace Shared.Conversations
             Log.Debug($"{nameof(Send)} (enter)");
             if (OutboundMessage != null)
             {
-                ComService.Send(OutboundMessage);
+                ComService.Send(Config.DEFAULT_UDP_CLIENT, OutboundMessage);
             }
             Log.Debug($"{nameof(Send)} (exit)");
         }

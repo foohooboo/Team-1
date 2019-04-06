@@ -106,25 +106,19 @@ namespace Shared.Comms.ComService
             return conv;
         }
 
-        public static void Send(Envelope env)
+        public static void Send(string clientId, Envelope env)
         {
             Log.Debug($"{nameof(Send)} (enter)");
 
-
-
-            //TODO: We need to cleanup this hack when we refactor the comm system and add TCP.
-            //Ideally, envelopes themselves have enough information for the comm system to determine
-            //which communicator to use. That way we can keep this method generic.
-            //Dsphar 3/20/19
-            if (Clients.Count == 0)
+            if (!Clients.ContainsKey(clientId))
             {
-                Log.Error("Cannot send envelope. No valid postbox found.");
+                Log.Error("Cannot send envelope. No valid client found.");
             }
             else
             {
                 try
                 {
-                    Clients.Values.First().Send(env);//<<----- HACK ALERT, sends envelope through any arbitrary box.
+                    Clients[clientId].Send(env);
                 }
                 catch (Exception e)
                 {
