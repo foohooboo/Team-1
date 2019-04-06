@@ -63,5 +63,127 @@ namespace SharedTest.MarketStructureTests
             Assert.AreEqual(ValuatedStock.Name, "GOOGLE");
             Assert.AreEqual(ValuatedStock.Symbol, "GOOGL");
         }
+
+        [TestMethod]
+        public void EqualOverrideTest()
+        {
+
+            var stock1 = new ValuatedStock()
+            {
+                Symbol = "STK",
+                Name = "Stock",
+                Open = 6,
+                High = 7,
+                Low = 8,
+                Close = 9,
+                Volume = 10
+            };
+
+            var stock2 = new ValuatedStock()
+            {
+                Symbol = "STK",
+                Name = "Stock",
+                Open = 6,
+                High = 7,
+                Low = 8,
+                Close = 9,
+                Volume = 10
+            };
+
+            //Equals
+            Assert.IsTrue(stock1.Equals(stock2));
+
+
+            //Bad stock symbol
+            stock2 = new ValuatedStock()
+            {
+                Symbol = "STK2BADD",
+                Name = "Stock 2",
+                Open = 6,
+                High = 7,
+                Low = 8,
+                Close = 9,
+                Volume = 10
+            };
+            Assert.IsFalse(stock1.Equals(stock2));
+
+            //Bad stock name
+            stock2 = new ValuatedStock()
+            {
+                Symbol = "STK2",
+                Name = "Stock 2 BADD",
+                Open = 6,
+                High = 7,
+                Low = 8,
+                Close = 9,
+                Volume = 10
+            };
+            Assert.IsFalse(stock1.Equals(stock2));
+
+            //Bad stock open
+            stock2 = new ValuatedStock()
+            {
+                Symbol = "STK2",
+                Name = "Stock 2",
+                Open = 6000,
+                High = 7,
+                Low = 8,
+                Close = 9,
+                Volume = 10
+            };
+            Assert.IsFalse(stock1.Equals(stock2));
+
+            //Bad stock High
+            stock2 = new ValuatedStock()
+            {
+                Symbol = "STK2",
+                Name = "Stock 2",
+                Open = 6,
+                High = 7000,
+                Low = 8,
+                Close = 9,
+                Volume = 10
+            };
+            Assert.IsFalse(stock1.Equals(stock2));
+
+            //Bad stock Low
+            stock2 = new ValuatedStock()
+            {
+                Symbol = "STK2",
+                Name = "Stock 2",
+                Open = 6,
+                High = 7,
+                Low = 8000,
+                Close = 9,
+                Volume = 10
+            };
+            Assert.IsFalse(stock1.Equals(stock2));
+
+            //Bad stock Close
+            stock2 = new ValuatedStock()
+            {
+                Symbol = "STK2",
+                Name = "Stock 2",
+                Open = 6,
+                High = 7,
+                Low = 8,
+                Close = 9000,
+                Volume = 10
+            };
+            Assert.IsFalse(stock1.Equals(stock2));
+
+            //Bad stock Volume
+            stock2 = new ValuatedStock()
+            {
+                Symbol = "STK2",
+                Name = "Stock 2",
+                Open = 6,
+                High = 7,
+                Low = 8,
+                Close = 9,
+                Volume = 10000
+            };
+            Assert.IsFalse(stock1.Equals(stock2));
+        }
     }
 }
