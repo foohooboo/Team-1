@@ -1,5 +1,8 @@
-﻿namespace Shared.MarketStructures
+﻿using System;
+
+namespace Shared.MarketStructures
 {
+    [Serializable()]
     public class ValuatedStock : Stock
     {
         public float Open { get; set; }
@@ -25,6 +28,23 @@
             Low = float.Parse(data[3]);
             Close = float.Parse(data[4]);
             Volume = int.Parse(data[5]);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is ValuatedStock compareVStock))
+                return false;
+
+            return
+                (
+                Symbol == compareVStock.Symbol &&
+                Name == compareVStock.Name &&
+                Open == compareVStock.Open &&
+                High == compareVStock.High &&
+                Low == compareVStock.Low &&
+                Close == compareVStock.Close &&
+                Volume == compareVStock.Volume
+                );
         }
     }
 }

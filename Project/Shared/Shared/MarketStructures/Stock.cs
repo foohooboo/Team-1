@@ -1,5 +1,8 @@
-﻿namespace Shared.MarketStructures
+﻿using System;
+
+namespace Shared.MarketStructures
 {
+    [Serializable()]
     public class Stock
     {
         public string Symbol { get; set; }
