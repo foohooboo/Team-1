@@ -19,7 +19,7 @@ namespace Shared
         {
             for (int i = 0; i < 5 && i < seg.Count; i++)
             {
-                Log.Info($"Day {i}, {seg[i].TradedCompanies[0].Name}, Price:{seg[i].TradedCompanies[0].Close}");
+                Log.Info($"Day {i}, {seg[i].TradedCompanies[1].Name}, Price:{seg[i].TradedCompanies[1].Close}");
             }
         }
     }

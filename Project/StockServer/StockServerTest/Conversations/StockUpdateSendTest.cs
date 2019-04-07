@@ -163,7 +163,6 @@ namespace StockServerTest.Conversations
 
             ////execute test
             conv.SetInitialState(mock.Object as StockUpdateSendState);
-            var clients = ClientManager.Clients;
             Assert.IsTrue(ClientManager.TryToAdd(clientEndpoint));
 
             Assert.IsTrue(conv.CurrentState is StockUpdateSendState);

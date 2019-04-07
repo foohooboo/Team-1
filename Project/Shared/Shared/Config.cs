@@ -23,10 +23,8 @@ namespace Shared
             STOCK_SERVER_IP = "stockServerIp",
             STOCK_SERVER_PORT = "stockServerPort",
             STOCK_SERVER_PROCESS_NUM = "stockServerProcesNum",
-            STOCK_SERVER_PUB_MOD = "stockServerPublicModulus",
-            STOCK_SERVER_PUB_EXPO = "stockServerPublicExponenet",
-            STOCK_SERVER_PRIV_MOD = "stockServerPrivateModulus",
-            STOCK_SERVER_PRIV_EXPO = "stockServerPrivateExponenet";
+
+            STOCK_TICK_DELAY = "stockTickDelay";
 
         public static string GetString(string key)
         {

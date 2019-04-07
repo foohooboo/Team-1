@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Shared;
+using Shared.Client;
 using Shared.Comms.ComService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
@@ -88,7 +89,11 @@ namespace StockServerTest.Conversations
             Assert.IsNull(localConv);
             Assert.IsNull(mock);
 
+            var numClients = ClientManager.Clients.Count;
+            
             ConversationManager.ProcessIncomingMessage(Request);
+
+            Assert.AreEqual(numClients + 1, ClientManager.Clients.Count);
 
             localConv = ConversationManager.GetConversation(RequestConvId);
 

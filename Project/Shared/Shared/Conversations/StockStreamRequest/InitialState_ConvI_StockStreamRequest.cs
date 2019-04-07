@@ -24,7 +24,6 @@ namespace Shared.Conversations.SharedStates
 
                     //TODO: Update stock history (does this need to be broken into a non-shared state?) -Dsphar 3/25/2019
                     Temp t = new Temp();
-
                     t.LogStockHistory(stockHistory);
 
                     nextState = new ConversationDoneState(Conversation, this);

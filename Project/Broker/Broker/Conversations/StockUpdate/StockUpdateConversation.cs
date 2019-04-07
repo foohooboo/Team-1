@@ -1,8 +1,11 @@
 ﻿using Shared.Conversations;
 
-public class StockUpdateConversation : Conversation
+namespace Broker.Conversations.StockUpdate
 {
-    public StockUpdateConversation(string conversationId) : base(conversationId)
+    public class StockUpdateConversation : Conversation
     {
+        public StockUpdateConversation(string conversationId) : base(conversationId)
+        {
+        }
     }
 }

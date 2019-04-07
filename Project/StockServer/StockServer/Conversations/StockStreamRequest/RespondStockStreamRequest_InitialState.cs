@@ -50,7 +50,7 @@ namespace StockServer.Conversations.StockStreamRequest
             responseMessage.RecentHistory = StockData.GetRecentHistory(5);
 
             new Temp().LogStockHistory(responseMessage.RecentHistory);//log to console for prelim dev. Remove once not needed.
-
+                       
             var responseEnvelope = new Envelope(responseMessage) { To = conv.ClientIp };
 
             Log.Debug($"{nameof(Prepare)} (exit)");

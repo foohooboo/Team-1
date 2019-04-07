@@ -18,7 +18,6 @@ namespace StockServer.Conversations.StockStreamRequest
 
             ClientIp = e.To;
 
-            //TODO: save endpoint/connection/postbox to use in future stock price update
             ClientManager.TryToAdd(e.To);
 
             Log.Debug($"{nameof(ConvR_StockStreamRequest)} (exit)");

@@ -5,7 +5,7 @@ using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
 
-namespace Broker.Conversations
+namespace Broker.Conversations.StockUpdate
 {
     public class ProcessStockUpdateState : ConversationState
     {
@@ -28,8 +28,6 @@ namespace Broker.Conversations
 
         public override Envelope Prepare()
         {
-            //TODO: We need to trigger the Leaderboard update request conversation at this point some how.
-
             var ack = MessageFactory.GetMessage<AckMessage>(Config.GetInt(Config.BROKER_PROCESS_NUM),0);
             ack.ConversationID = Conversation.Id;
             var env = new Envelope(ack)

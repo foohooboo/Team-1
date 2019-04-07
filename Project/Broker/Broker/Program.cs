@@ -1,16 +1,21 @@
 ﻿using System;
 using System.Net;
+using System.Threading.Tasks;
 using Broker.Conversations.CreatePortfolio;
 using Broker.Conversations.GetPortfolio;
 using Broker.Conversations.GetPortfolioResponse;
+using Broker.Conversations.LeaderBoardUpdate;
+using Broker.Conversations.StockUpdate;
 using log4net;
 using Shared;
+using Shared.Client;
 using Shared.Comms.ComService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SendErrorMessage;
 using Shared.Conversations.SharedStates;
 using Shared.Conversations.StockStreamRequest.Initiator;
+using Shared.MarketStructures;
 using Shared.PortfolioResources;
 using Shared.Security;
 
@@ -92,6 +97,35 @@ namespace Broker
                         conv.SetInitialState(new SendErrorMessageState("Invalid login credentials.",e, conv,null,Config.GetInt(Config.BROKER_PROCESS_NUM)));
                     }
                                        
+                    break;
+
+                case StockPriceUpdate m:
+
+                    var sigServ = new SignatureService();
+
+                    if (!sigServ.VerifySignature<MarketDay>(m.StocksList, m.StockListSignature))
+                    {
+                        Log.Error("Stock Price Update signature validation failed. Ignoring message.");
+                    }
+                    else
+                    {
+                        LeaderboardManager.Market = m.StocksList;
+
+                        var ackCon = new StockUpdateConversation(m.ConversationID);
+                        ackCon.SetInitialState(new ProcessStockUpdateState(e, ackCon));
+                        ConversationManager.AddConversation(ackCon);
+
+                        //Send updated leaderboard to clients.
+                        Task.Run(() =>
+                        {
+                            foreach(var clientIp in ClientManager.Clients)
+                            {
+                                var stockUpdateConv = new LeaderBoardUpdateRequestConversation(Config.GetInt(Config.BROKER_PROCESS_NUM));
+                                stockUpdateConv.SetInitialState(new LeaderboardSendUpdateState(clientIp, stockUpdateConv, null));
+                                ConversationManager.AddConversation(stockUpdateConv);
+                            }
+                        });
+                    }
                     break;
             }
 

@@ -17,7 +17,7 @@ namespace Shared.Client
 
             if (Clients.Contains(endPoint))
             {
-                Log.Debug($"EndPoint {endPoint.ToString()} is alread in the list");
+                Log.Warn($"EndPoint {endPoint.ToString()} is already in the list");
                 return false;
             }
 
