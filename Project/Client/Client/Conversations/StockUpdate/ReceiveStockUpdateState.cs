@@ -5,6 +5,7 @@ using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
 using Shared.MarketStructures;
+using Shared.Security;
 
 namespace Client.Conversations.StockUpdate
 {
@@ -35,7 +36,9 @@ namespace Client.Conversations.StockUpdate
         public ReceiveStockUpdateState(Envelope env, Conversation conversation) : base(conversation, null)
         {
             var update = env.Contents as StockPriceUpdate;
-            StockUpdate = update.StocksList;
+            var sigServ = new SignatureService();
+            var bytes = Convert.FromBase64String(update.SerializedStockList);
+            StockUpdate = sigServ.Deserialize<MarketDay>(bytes);
         }
 
         public override ConversationState HandleMessage(Envelope incomingMessage)

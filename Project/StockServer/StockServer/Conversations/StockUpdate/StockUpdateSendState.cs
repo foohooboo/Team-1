@@ -50,7 +50,7 @@ namespace StockServer.Conversations.StockUpdate
             var sigServ = new SignatureService();
 
             var message = MessageFactory.GetMessage<StockPriceUpdate>(Config.GetInt(Config.STOCK_SERVER_PROCESS_NUM), 0) as StockPriceUpdate;
-
+            message.ConversationID = Conversation.Id;
             message.SerializedStockList = Convert.ToBase64String(sigServ.Serialize(DayData));
             message.StockListSignature = sigServ.GetSignature(DayData);
 

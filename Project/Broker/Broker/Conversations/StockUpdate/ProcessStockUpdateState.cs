@@ -4,6 +4,9 @@ using Shared.Comms.ComService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
+using Shared.MarketStructures;
+using Shared.Security;
+using System;
 
 namespace Broker.Conversations.StockUpdate
 {
@@ -20,7 +23,10 @@ namespace Broker.Conversations.StockUpdate
         {
             if (incomingMessage.Contents is StockPriceUpdate m)
             {
-                LeaderboardManager.Market.TradedCompanies = m.StocksList.TradedCompanies;
+                var sigServer = new SignatureService();
+                var bytes = Convert.FromBase64String(m.SerializedStockList);
+                var StockList = sigServer.Deserialize<MarketDay>(bytes);
+                LeaderboardManager.Market.TradedCompanies = StockList.TradedCompanies;
             }
 
             return null;

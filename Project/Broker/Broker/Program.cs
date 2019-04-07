@@ -101,19 +101,26 @@ namespace Broker
 
                 case StockPriceUpdate m:
 
-                    var sigServ = new SignatureService();
+                    Log.Info($"Processing StockPriceUpdate message");
 
-                    if (!sigServ.VerifySignature<MarketDay>(m.StocksList, m.StockListSignature))
+                    var sigServ = new SignatureService();
+                    var bits = Convert.FromBase64String(m.SerializedStockList);
+                    var StocksList = sigServ.Deserialize<MarketDay>(bits);
+
+                    if (!sigServ.VerifySignature(StocksList, m.StockListSignature))
                     {
                         Log.Error("Stock Price Update signature validation failed. Ignoring message.");
                     }
                     else
                     {
-                        LeaderboardManager.Market = m.StocksList;
+                                             
+                        LeaderboardManager.Market = StocksList;
+                        Log.Info("Stock Price Update signature verified, updating leaderboard.");
+                        var t = new Temp();
+                        t.LogStockDay(StocksList);
 
-                        var ackCon = new StockUpdateConversation(m.ConversationID);
-                        ackCon.SetInitialState(new ProcessStockUpdateState(e, ackCon));
-                        ConversationManager.AddConversation(ackCon);
+                        conv = new StockUpdateConversation(m.ConversationID);
+                        conv.SetInitialState(new ProcessStockUpdateState(e, conv));
 
                         //Send updated leaderboard to clients.
                         Task.Run(() =>

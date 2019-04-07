@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Net;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -10,6 +11,7 @@ using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
 using Shared.MarketStructures;
+using Shared.Security;
 using StockServer.Conversations.StockUpdate;
 
 namespace StockServerTest.Conversations
@@ -79,7 +81,9 @@ namespace StockServerTest.Conversations
             mock.Setup(st => st.Send())//Pretend message is sent and response comes back...
                 .Callback(() =>
                 {
-                    Stocks = ((mock.Object as StockUpdateSendState).OutboundMessage.Contents as StockPriceUpdate).StocksList;
+                    var serliaizedDay = ((mock.Object as StockUpdateSendState).OutboundMessage.Contents as StockPriceUpdate).SerializedStockList;
+                    var sigServ = new SignatureService();
+                    Stocks = sigServ.Deserialize<MarketDay>(Convert.FromBase64String(serliaizedDay));
                     var responseMessage = new AckMessage() { ConversationID = conv.Id, MessageID = "responseMessageID1234" };
                     var responseEnv = new Envelope(responseMessage);
                     ConversationManager.ProcessIncomingMessage(responseEnv);
@@ -114,7 +118,9 @@ namespace StockServerTest.Conversations
             mock2.Setup(st => st.Send())//Pretend message is sent and response comes back...
                 .Callback(() =>
                 {
-                    Stocks2 = ((mock2.Object as StockUpdateSendState).OutboundMessage.Contents as StockPriceUpdate).StocksList;
+                    var serliaizedDay = ((mock2.Object as StockUpdateSendState).OutboundMessage.Contents as StockPriceUpdate).SerializedStockList;
+                    var sigServ = new SignatureService();
+                    Stocks2 = sigServ.Deserialize<MarketDay>(Convert.FromBase64String(serliaizedDay));
                     var responseMessage = new AckMessage() { ConversationID = conv2.Id, MessageID = "responseMessageID1234" };
                     var responseEnv = new Envelope(responseMessage);
                     ConversationManager.ProcessIncomingMessage(responseEnv);

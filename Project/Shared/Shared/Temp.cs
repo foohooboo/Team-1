@@ -22,5 +22,10 @@ namespace Shared
                 Log.Info($"Day {i}, {seg[i].TradedCompanies[1].Name}, Price:{seg[i].TradedCompanies[1].Close}");
             }
         }
+
+        public void LogStockDay(MarketDay day)
+        {
+                Log.Info($"Day {day.Date}, {day.TradedCompanies[1].Name}, Price:{day.TradedCompanies[1].Close}");
+        }
     }
 }

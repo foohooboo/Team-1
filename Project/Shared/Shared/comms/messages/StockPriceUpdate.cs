@@ -28,10 +28,10 @@ namespace Shared.Comms.Messages
 
         public string StockListSignature { get; set; }
 
-        public MarketDay StocksList
-        {
-            get { return sigServer.Deserialize<MarketDay>(Convert.FromBase64String(SerializedStockList)); }
-            private set { }
-        }
+        //public MarketDay StocksList
+        //{
+        //    get { return sigServer.Deserialize<MarketDay>(Convert.FromBase64String(SerializedStockList)); }
+        //    private set { }
+        //}
     }
 }

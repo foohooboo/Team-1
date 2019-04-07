@@ -1,5 +1,6 @@
 ﻿using Broker;
 using Broker.Conversations;
+using Broker.Conversations.StockUpdate;
 using Broker.Conversations.TransactionRequest;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;

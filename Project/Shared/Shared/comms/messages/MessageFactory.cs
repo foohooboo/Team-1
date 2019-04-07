@@ -30,7 +30,6 @@ namespace Shared.Comms.Messages
         {
             Log.Debug($"{nameof(GetMessage)} (enter)");
 
-
             //Note: The following hack was added because we are using the Newtonsoft serializer on different projects.
             //It adds the project name to the Type field in JSON, and this causes an exception to be thrown when
             //decoding json from projects with a different name. We might be able to replace this hack with a setting
