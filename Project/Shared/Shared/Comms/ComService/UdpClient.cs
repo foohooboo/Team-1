@@ -58,8 +58,18 @@ namespace Shared.Comms.ComService
                 var envelope = GetIncomingMessages();
                 if (envelope != null)
                 {
-                    ComService.HandleIncomingMessage(envelope);
-                    waitHandle.Set();
+                    try
+                    {
+                        ComService.HandleIncomingMessage(envelope);
+                        
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error($"Problem encountered while handling incoming message...");
+                        Log.Error(e);
+                    }
+
+                    waitHandle.Set();//<- I don't think this is needed anymore?? -Dsphar 4/7/2019
                 }
             }
         }
