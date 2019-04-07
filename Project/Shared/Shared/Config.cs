@@ -9,20 +9,24 @@ namespace Shared
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public const string
-            
+
             DEFAULT_UDP_CLIENT = "defaultUdpClientName",
             DEFAULT_TIMEOUT = "defaultTimeout",
             DEFAULT_RETRY_COUNT = "defaultRetryCount",
-            
+
             CLIENT_PROCESS_NUM = "clientProcessNum",
-            
+
             BROKER_IP = "brokerIp",
             BROKER_PORT = "brokerPort",
             BROKER_PROCESS_NUM = "brokerProcessNum",
-            
+
             STOCK_SERVER_IP = "stockServerIp",
             STOCK_SERVER_PORT = "stockServerPort",
-            STOCK_SERVER_PROCESS_NUM = "stockServerProcesNum";
+            STOCK_SERVER_PROCESS_NUM = "stockServerProcesNum",
+            STOCK_SERVER_PUB_MOD = "stockServerPublicModulus",
+            STOCK_SERVER_PUB_EXPO = "stockServerPublicExponenet",
+            STOCK_SERVER_PRIV_MOD = "stockServerPrivateModulus",
+            STOCK_SERVER_PRIV_EXPO = "stockServerPrivateExponenet";
 
         public static string GetString(string key)
         {
