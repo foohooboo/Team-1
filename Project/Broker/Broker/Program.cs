@@ -12,6 +12,7 @@ using Shared.Conversations.SendErrorMessage;
 using Shared.Conversations.SharedStates;
 using Shared.Conversations.StockStreamRequest.Initiator;
 using Shared.PortfolioResources;
+using Shared.Security;
 
 namespace Broker
 {
@@ -22,6 +23,8 @@ namespace Broker
         private static void Main(string[] args)
         {
             Log.Debug($"{nameof(Main)} (enter)");
+
+            SignatureService.LoadPublicKey("Team1\StockServer");
 
             PortfolioManager.TryToCreate("dummy", "password", out Portfolio dummyPortfolio);
             ConversationManager.Start(ConversationBuilder);
@@ -94,7 +97,5 @@ namespace Broker
 
             return conv;
         }
-
-
     }
 }

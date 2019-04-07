@@ -20,8 +20,27 @@ namespace Shared.Security
         public static RsaKeyParameters PrivateKey = null;
         public static RsaKeyParameters PublicKey = null;
 
-        public static void SetPublicKey(string modulus, string exponent)
+        public static void LoadPublicKey(string relativeAppPath)
         {
+            var keyFilepath = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}/{relativeAppPath}/PublicKey.txt";
+            string modulus;
+            string exponent;
+
+            try
+            {
+                using (var fileReader = new StreamReader(keyFilepath))
+                {
+                    modulus = fileReader.ReadLine();
+                    exponent = fileReader.ReadLine();
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Error($"Problem loading public key from {keyFilepath}");
+                Log.Error(e);
+                throw e;
+            }
+
             try
             {
                 BigInteger mod = new BigInteger(Convert.FromBase64String(modulus));
@@ -35,8 +54,27 @@ namespace Shared.Security
             }
         }
 
-        public static void SetPrivateKey(string modulus, string exponent)
+        public static void LoadPrivateKey(string relativeAppPath)
         {
+            var keyFilepath = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}/{relativeAppPath}/PrivateKey.txt";
+            string modulus;
+            string exponent;
+
+            try
+            {
+                using (var fileReader = new StreamReader(keyFilepath))
+                {
+                    modulus = fileReader.ReadLine();
+                    exponent = fileReader.ReadLine();
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Error($"Problem loading public key from {keyFilepath}");
+                Log.Error(e);
+                throw e;
+            }
+
             try
             {
                 BigInteger mod = new BigInteger(Convert.FromBase64String(modulus));

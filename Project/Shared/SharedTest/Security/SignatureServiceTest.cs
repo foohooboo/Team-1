@@ -171,8 +171,21 @@ namespace SharedTest.Security
             Assert.IsFalse(isVerified);
         }
 
+        /// <summary>
+        /// Note: This test requires a couple of text files to be located in C:\Users\<username>\AppData\Local\Team1\StockServer\
+        /// Something like the following (below keypair not to be used in production)...
+        /// 
+        /// PrivateKey.txt
+        /// AK3PGB1aToiVVGu0buZLm+P5PSAgaSIwaCoFJkuB+CC8OCiMRjPH8i567OM+DH5CU/XZh6yy6uffJ/uCyDygZYVL7viFiLzjHtBEAh/9Ma7cECrMtPQTUo+kN5JYQNnFfBy6PXjMI+jbAc2ZAwID6dCcK6OpejrP08sqW3ZOzBYZ
+        /// Gbp6dhvgXLEIPGJK+U2vb519KiSKE4zJWpEFFG/SkFv0TzJGkRMzuyQorVHJzSXZ4l53Sj347mZ293DqXakbpdN8Xua/4uuHj8edjeSgOdGvJ+O4I/8NMrFep4Ve1a2D8ZOmjA8NjWE4wVKc/6oHI3jLOy+PiPd8hWfVyooUbEU=
+        /// 
+        /// PublicKey.txt
+        /// AK3PGB1aToiVVGu0buZLm+P5PSAgaSIwaCoFJkuB+CC8OCiMRjPH8i567OM+DH5CU/XZh6yy6uffJ/uCyDygZYVL7viFiLzjHtBEAh/9Ma7cECrMtPQTUo+kN5JYQNnFfBy6PXjMI+jbAc2ZAwID6dCcK6OpejrP08sqW3ZOzBYZ
+        /// AQAB
+        /// 
+        /// </summary>
         [TestMethod]
-        public void SetKeysTest()
+        public void LoadKeysTest()
         {
 
             //Clear keys from other tests
@@ -183,15 +196,9 @@ namespace SharedTest.Security
             Assert.IsNull(SignatureService.PrivateKey);
 
             //Load Keys
-            SignatureService.SetPrivateKey(
-                "AK3PGB1aToiVVGu0buZLm+P5PSAgaSIwaCoFJkuB+CC8OCiMRjPH8i567OM+DH5CU/XZh6yy6uffJ/uCyDygZYVL7viFiLzjHtBEAh/9Ma7cECrMtPQTUo+kN5JYQNnFfBy6PXjMI+jbAc2ZAwID6dCcK6OpejrP08sqW3ZOzBYZ",
-                "Gbp6dhvgXLEIPGJK+U2vb519KiSKE4zJWpEFFG/SkFv0TzJGkRMzuyQorVHJzSXZ4l53Sj347mZ293DqXakbpdN8Xua/4uuHj8edjeSgOdGvJ+O4I/8NMrFep4Ve1a2D8ZOmjA8NjWE4wVKc/6oHI3jLOy+PiPd8hWfVyooUbEU="
-                );
+            SignatureService.LoadPrivateKey("Team1/StockServer");
 
-            SignatureService.SetPublicKey(
-                "AK3PGB1aToiVVGu0buZLm+P5PSAgaSIwaCoFJkuB+CC8OCiMRjPH8i567OM+DH5CU/XZh6yy6uffJ/uCyDygZYVL7viFiLzjHtBEAh/9Ma7cECrMtPQTUo+kN5JYQNnFfBy6PXjMI+jbAc2ZAwID6dCcK6OpejrP08sqW3ZOzBYZ",
-                "AQAB"
-                );
+            SignatureService.LoadPublicKey("Team1/StockServer");
 
             //Prepare a MarketDay
             var stock1 = new ValuatedStock()
