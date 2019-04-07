@@ -3,6 +3,7 @@ using Shared;
 using Shared.Comms.ComService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
+using Shared.Security;
 using StockServer.Conversations.StockStreamRequest;
 using StockServer.Data;
 using System;
@@ -17,6 +18,8 @@ namespace StockServer
         static void Main(string[] args)
         {
             Log.Debug($"{nameof(Main)} (enter)");
+
+            SignatureService.LoadPrivateKey("Team1/StockServer");
 
             StockData.Init();
             ConversationManager.Start(ConversationBuilder);

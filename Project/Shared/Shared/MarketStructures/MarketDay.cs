@@ -20,7 +20,8 @@ namespace Shared.MarketStructures
                 _tradedCompanies = value;
 
                 bool alreadyHasCash = _tradedCompanies.Any(c => c.Symbol != null && c.Symbol.Equals("$"));
-                if (!alreadyHasCash){
+                if (!alreadyHasCash)
+                {
                     var dollarAsStock = new ValuatedStock()
                     {
                         Symbol = "$",

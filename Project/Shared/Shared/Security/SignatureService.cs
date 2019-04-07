@@ -1,4 +1,6 @@
 ﻿using log4net;
+using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Security;
@@ -181,6 +183,20 @@ namespace Shared.Security
                 IFormatter br = new BinaryFormatter();
                 return (T)br.Deserialize(ms);
             }
+        }
+
+        /// <summary>
+        /// Used for unit testing (random keypairs). In production, please use LoadKey methods above.
+        /// </summary>
+        /// <param name="keySize"></param>
+        /// <returns></returns>
+        public static AsymmetricCipherKeyPair GenerateKeys(int keySize)
+        {
+            var gen = new RsaKeyPairGenerator();
+            var secureRandom = new SecureRandom();
+            var keyGenParam = new KeyGenerationParameters(secureRandom, keySize);
+            gen.Init(keyGenParam);
+            return gen.GenerateKeyPair();
         }
     }
 }

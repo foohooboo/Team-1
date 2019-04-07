@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using log4net;
 using Shared;
 using Shared.Client;
@@ -7,6 +8,7 @@ using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
 using Shared.MarketStructures;
+using Shared.Security;
 using StockServer.Data;
 
 namespace StockServer.Conversations.StockUpdate
@@ -45,9 +47,12 @@ namespace StockServer.Conversations.StockUpdate
         {
             Log.Debug($"{nameof(Prepare)} (enter)");
 
+            var sigServ = new SignatureService();
+
             var message = MessageFactory.GetMessage<StockPriceUpdate>(Config.GetInt(Config.STOCK_SERVER_PROCESS_NUM), 0) as StockPriceUpdate;
 
-            message.StocksList = DayData;
+            message.SerializedStockList = Convert.ToBase64String(sigServ.Serialize(DayData));
+            message.StockListSignature = sigServ.GetSignature(DayData);
 
             var env = new Envelope(message)
             {

@@ -18,7 +18,7 @@ namespace SharedTest.Security
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
-            var key = GenerateKeys(1024);
+            var key = SignatureService.GenerateKeys(1024);
             SignatureService.PublicKey = (RsaKeyParameters)(key.Public);
             SignatureService.PrivateKey = (RsaKeyParameters)(key.Private);
 
@@ -231,15 +231,6 @@ namespace SharedTest.Security
             //Verify signature
             var isVerified = SigServe.VerifySignature(marketDay, signature);
             Assert.IsTrue(isVerified);
-        }
-
-        private static AsymmetricCipherKeyPair GenerateKeys(int keySize)
-        {
-            var gen = new RsaKeyPairGenerator();
-            var secureRandom = new SecureRandom();
-            var keyGenParam = new KeyGenerationParameters(secureRandom, keySize);
-            gen.Init(keyGenParam);
-            return gen.GenerateKeyPair();
         }
     }
 }

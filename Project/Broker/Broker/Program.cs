@@ -24,7 +24,7 @@ namespace Broker
         {
             Log.Debug($"{nameof(Main)} (enter)");
 
-            SignatureService.LoadPublicKey("Team1\StockServer");
+            SignatureService.LoadPublicKey("Team1/StockServer");
 
             PortfolioManager.TryToCreate("dummy", "password", out Portfolio dummyPortfolio);
             ConversationManager.Start(ConversationBuilder);
