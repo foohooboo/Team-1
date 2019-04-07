@@ -80,6 +80,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\SharedResources\SharedResources\SharedResources.csproj">
+      <Project>{bb2aadcf-d1e1-42de-ab97-ffd88f4a275c}</Project>
+      <Name>SharedResources</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Client\Client.csproj">
       <Project>{2dab74a3-87ea-44da-af09-7e2cc0bb9f4f}</Project>
       <Name>Client</Name>

@@ -112,6 +112,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="App.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -137,6 +138,11 @@
   <ItemGroup>
     <Resource Include="Logo.JPG" />
   </ItemGroup>
-  <Import Project="..\..\Shared\Shared\Shared.projitems" Label="Shared" />
+  <ItemGroup>
+    <ProjectReference Include="..\..\SharedResources\SharedResources\SharedResources.csproj">
+      <Project>{bb2aadcf-d1e1-42de-ab97-ffd88f4a275c}</Project>
+      <Name>SharedResources</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

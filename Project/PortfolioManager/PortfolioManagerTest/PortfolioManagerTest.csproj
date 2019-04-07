@@ -54,6 +54,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\SharedResources\SharedResources\SharedResources.csproj">
+      <Project>{bb2aadcf-d1e1-42de-ab97-ffd88f4a275c}</Project>
+      <Name>SharedResources</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PortfolioManager\PortfolioManager.csproj">
       <Project>{875d97e4-4f64-44c5-a37f-ee8f3e2386c2}</Project>
       <Name>PortfolioManager</Name>

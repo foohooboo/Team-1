@@ -48,6 +48,10 @@
     <Compile Include="Conversations\StockStreamRequestTest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\SharedResources\SharedResources\SharedResources.csproj">
+      <Project>{bb2aadcf-d1e1-42de-ab97-ffd88f4a275c}</Project>
+      <Name>SharedResources</Name>
+    </ProjectReference>
     <ProjectReference Include="..\StockServer\StockServer.csproj">
       <Project>{2ee7af62-96a2-4f63-b2bf-ce7c616573d2}</Project>
       <Name>StockServer</Name>
