@@ -48,10 +48,13 @@ namespace Client
             //logging in
             else
             {
+#if DEBUG
+                LoginSuccess(null);
+#else
                 var loginConv = new GetPortfolioRequestConversation(Config.GetInt(Config.CLIENT_PROCESS_NUM));
                 loginConv.SetInitialState(new GetPortfolioRequestState(user.Text, pass.Password, this, loginConv));
                 ConversationManager.AddConversation(loginConv);
-                //LoginSuccess(null);
+#endif
             }
         }
 

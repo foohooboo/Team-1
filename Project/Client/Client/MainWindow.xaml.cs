@@ -6,6 +6,8 @@ using System.Windows.Controls;
 using System.Windows.Shapes;
 using CommSystem;
 using log4net;
+using OxyPlot;
+using OxyPlot.Series;
 using Shared;
 using Shared.Comms.ComService;
 using Shared.MarketStructures;
@@ -23,6 +25,8 @@ namespace Client
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private HelloWorld helloWorld = new HelloWorld();
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public PlotModel MyModel { get; private set; }
 
         private void ReceivedStockUpdate(object sender, StockUpdateEventArgs e)
         {
@@ -51,6 +55,9 @@ namespace Client
             HelloTextLocal = helloWorld.HelloText;
 
             GenerateDummyData();
+
+            this.MyModel = new PlotModel { Title = "Example 1" };
+            this.MyModel.Series.Add(new FunctionSeries(Math.Cos, 0, 10, 0.1, "cos(x)"));
 
             Log.Debug($"{nameof(MainWindow)} (exit)");
         }

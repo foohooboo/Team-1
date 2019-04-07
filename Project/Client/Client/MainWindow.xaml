@@ -1,6 +1,7 @@
 ﻿<Window x:Class="Client.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:oxy="http://oxyplot.org/wpf"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Client"
@@ -21,6 +22,9 @@
             <ColumnDefinition/>
             <ColumnDefinition Width="215"/>
         </Grid.ColumnDefinitions>
+
+        <oxy:PlotView Model="{Binding MyModel}" Grid.ColumnSpan="3" Background="Black"/>
+
         <Label Content="Hello World! From the client." HorizontalAlignment="Left" Margin="15,71,0,0" VerticalAlignment="Top" Width="368" Height="26" Grid.ColumnSpan="2"/>
         <TextBlock Text="{Binding HelloTextLocal}" TextWrapping="WrapWithOverflow" HorizontalAlignment="Left" Margin="15,170,0,0" VerticalAlignment="Top" Width="368" Height="59" Grid.ColumnSpan="2"/>
         <ListBox x:Name="stockPanels" Grid.Column="3" Grid.RowSpan="2" Background="#00000000">
