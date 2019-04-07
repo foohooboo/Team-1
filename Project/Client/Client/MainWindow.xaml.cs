@@ -57,6 +57,7 @@ namespace Client
             GenerateDummyData();
 
             this.MyModel = new PlotModel { Title = "Example 1" };
+            var chart = new CandleStickSeries();//<---for later Dsphar 4/7/2019
             this.MyModel.Series.Add(new FunctionSeries(Math.Cos, 0, 10, 0.1, "cos(x)"));
 
             Log.Debug($"{nameof(MainWindow)} (exit)");
