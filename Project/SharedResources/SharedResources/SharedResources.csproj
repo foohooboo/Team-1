@@ -7,8 +7,8 @@
     <ProjectGuid>{BB2AADCF-D1E1-42DE-AB97-FFD88F4A275C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SharedResources2</RootNamespace>
-    <AssemblyName>SharedResources2</AssemblyName>
+    <RootNamespace>SharedResources</RootNamespace>
+    <AssemblyName>SharedResources</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>

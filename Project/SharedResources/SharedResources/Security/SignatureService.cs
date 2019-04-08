@@ -1,17 +1,13 @@
-﻿using log4net;
+﻿using System;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using log4net;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Security;
-using System;
-using System.IO;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
-
-
-
-
 
 namespace Shared.Security
 {
@@ -135,7 +131,9 @@ namespace Shared.Security
         private string GetSignature(byte[] objectAsBytes)
         {
             if (PrivateKey == null)
+            {
                 throw new NullReferenceException("SingatureService.ProvateKey not loaded.");
+            }
 
             var signer = SignerUtilities.GetSigner("SHA384WithRSAEncryption");
             signer.Init(true, PrivateKey);
@@ -147,7 +145,9 @@ namespace Shared.Security
         private bool VerifySignature(byte[] objectToVerifyAsBytes, string signature)
         {
             if (PublicKey == null)
+            {
                 throw new NullReferenceException("SingatureService.PublicKey not loaded.");
+            }
 
             var signer = SignerUtilities.GetSigner("SHA384WithRSAEncryption");
             signer.Init(false, PublicKey);
@@ -167,7 +167,10 @@ namespace Shared.Security
         public byte[] Serialize(object obj)
         {
             if (obj == null)
+            {
                 return null;
+            }
+
             BinaryFormatter bf = new BinaryFormatter();
             using (MemoryStream ms = new MemoryStream())
             {
