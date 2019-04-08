@@ -2,6 +2,9 @@
 
 Project board: https://trello.com/b/TfkcX7QO/design-tasks
 
+**NOTE: This repo uses a git submodule.** After updating to the latest version, you may need to enter the following...
+git submodule update --init --recursive
+
 System consists of 3 processes: 
   1. StockServer - Streams simulated stock-price data.
   2. Broker - Facilitates stock portfolio managament.
