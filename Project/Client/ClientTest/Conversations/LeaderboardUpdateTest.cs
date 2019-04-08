@@ -7,6 +7,7 @@ using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
 using Shared.MarketStructures;
+using System.Collections;
 
 namespace ClientTest.Conversations
 {
@@ -64,6 +65,7 @@ namespace ClientTest.Conversations
             var RequestMessage = new UpdateLeaderBoardMessage()
             {
                 ConversationID = RequestConvId,
+                Records = new SortedList()
             };
 
             Envelope Request = new Envelope(RequestMessage, ClientIp, ClientPort);
@@ -79,7 +81,7 @@ namespace ClientTest.Conversations
             Assert.IsNotNull(localConv);
             Assert.IsTrue(localConv.CurrentState is ConversationDoneState);
             mock.Verify(state => state.Prepare(), Times.Once);
-            mock.Verify(state => state.Send(), Times.Never);
+            mock.Verify(state => state.Send(), Times.Once);
             mock.Verify(state => state.HandleTimeout(), Times.Never);
         }
     }

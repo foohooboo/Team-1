@@ -17,12 +17,22 @@ using Shared.Comms.Messages;
 using Client.Conversations.LeaderboardUpdate;
 using static Client.Conversations.LeaderboardUpdate.ReceiveLeaderboardUpdateState;
 using static Client.Conversations.StockUpdate.ReceiveStockUpdateState;
+using System.Collections;
+using System.Collections.ObjectModel;
 
 namespace Client
 {
-    public partial class MainWindow : Window, INotifyPropertyChanged
+    public partial class MainWindow : Window, INotifyPropertyChanged, IHandleTraderModelChanged
     {
-        private TraderModel TModel;
+        public TraderModel TModel;
+
+        public ObservableCollection<Leaders> LeaderBoard { get; set; } = new ObservableCollection<Leaders>();
+
+        public class Leaders
+        {
+            public string value { get; set; }
+            public string name { get; set; }
+        }
 
 
         private ManagedData mem = new ManagedData();
@@ -42,20 +52,14 @@ namespace Client
             mem.History.Add(e.CurrentDay);
         }
 
-        //private void ReceivedLeaderboardUpdate(object sender, LeaderboardUpdateEventArgs e)
-        //{
-
-        //    // TODO: We need to decide how the records are going to be stored.
-        //    //mem.HighScores = e.Records as SortedList<string,string>;
-        //}
-
         public MainWindow(TraderModel model)
         {
             Log.Debug($"{nameof(MainWindow)} (enter)");
 
             InitializeComponent();
 
-            TModel = model; 
+            TModel = model;
+            TModel.Handler = this;
 
             StockUpdateEventHandler += ReceivedStockUpdate;
 
@@ -304,6 +308,31 @@ namespace Client
             mem.History = ManagedData.makeupMarketSegment(15, 30);
             mem.MyPortfolio = ManagedData.makeupPortfolio(mem.History[0]);
             UpdateStockPanels();
+        }
+
+        public void ProfileChanged()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void LeaderboardChanged()
+        {
+            LeaderBoard.Clear();
+            SortedList list = TraderModel.Current.Leaderboard;
+            for (int i = list.Count - 1; i >= 0 && i > list.Count - 10; i--)
+            {
+                string nam = list.GetByIndex(i).ToString();
+                float val = float.Parse(list.GetKey(i).ToString());
+
+
+                LeaderBoard.Add(new Leaders() { value = val.ToString("C0"), name = nam });
+            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("LeaderBoard"));
+        }
+
+        public void StockHistoryChanged()
+        {
+            throw new NotImplementedException();
         }
     }
 }

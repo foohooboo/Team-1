@@ -1,7 +1,4 @@
-﻿using System;
-using System.Net;
-using System.Threading.Tasks;
-using Broker.Conversations.CreatePortfolio;
+﻿using Broker.Conversations.CreatePortfolio;
 using Broker.Conversations.GetPortfolio;
 using Broker.Conversations.GetPortfolioResponse;
 using Broker.Conversations.LeaderBoardUpdate;
@@ -18,6 +15,8 @@ using Shared.Conversations.StockStreamRequest.Initiator;
 using Shared.MarketStructures;
 using Shared.PortfolioResources;
 using Shared.Security;
+using System;
+using System.Threading.Tasks;
 
 namespace Broker
 {
@@ -31,7 +30,12 @@ namespace Broker
 
             SignatureService.LoadPublicKey("Team1/StockServer");
 
-            PortfolioManager.TryToCreate("dummy", "password", out Portfolio dummyPortfolio);
+            //TODO: remove the following 2 dummy portfolio creations
+            PortfolioManager.TryToCreate("DevTrader", "password", out Portfolio devPortfolio);
+            devPortfolio.ModifyAsset(new Asset(new Stock("AAPL", "apple"), 600));
+            PortfolioManager.TryToCreate("SomeCompetitor", "password", out Portfolio competitorPortfolio);
+            competitorPortfolio.ModifyAsset(new Asset(new Stock("AMZN", "Amazon"), 60));
+
             ConversationManager.Start(ConversationBuilder);
 
             ComService.AddClient(Config.DEFAULT_UDP_CLIENT, Config.GetInt(Config.BROKER_PORT));
@@ -84,7 +88,7 @@ namespace Broker
 
                     Log.Info($"Received GetPortfolioRequest from {e.To.ToString()} for user:{user} with password:{pass}");
 
-                    if(PortfolioManager.TryToGet(user,pass, out Portfolio portfolio))
+                    if (PortfolioManager.TryToGet(user, pass, out Portfolio portfolio))
                     {
                         Log.Info($"Valid credentials, returning portfolio.");
                         conv = new GetPortfoliolResponseConversation(m.ConversationID);
@@ -94,9 +98,9 @@ namespace Broker
                     {
                         Log.Info($"Invalid credentials, return error.");
                         conv = new SendErrorMessageConversation(m.ConversationID);
-                        conv.SetInitialState(new SendErrorMessageState("Invalid login credentials.",e, conv,null,Config.GetInt(Config.BROKER_PROCESS_NUM)));
+                        conv.SetInitialState(new SendErrorMessageState("Invalid login credentials.", e, conv, null, Config.GetInt(Config.BROKER_PROCESS_NUM)));
                     }
-                                       
+
                     break;
 
                 case StockPriceUpdate m:
@@ -113,7 +117,7 @@ namespace Broker
                     }
                     else
                     {
-                                             
+
                         LeaderboardManager.Market = StocksList;
                         Log.Info("Stock Price Update signature verified, updating leaderboard.");
                         var t = new Temp();
@@ -125,7 +129,7 @@ namespace Broker
                         //Send updated leaderboard to clients.
                         Task.Run(() =>
                         {
-                            foreach(var clientIp in ClientManager.Clients)
+                            foreach (var clientIp in ClientManager.Clients)
                             {
                                 var stockUpdateConv = new LeaderBoardUpdateRequestConversation(Config.GetInt(Config.BROKER_PROCESS_NUM));
                                 stockUpdateConv.SetInitialState(new LeaderboardSendUpdateState(clientIp, stockUpdateConv, null));

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections;
+using System.Windows;
+using System.Windows.Threading;
 using log4net;
 using Shared;
 using Shared.Comms.ComService;
@@ -42,7 +44,10 @@ namespace Client.Conversations.LeaderboardUpdate
             }
             else
             {
-                TraderModel.Current.Leaderboard = Records;
+                Application.Current?.Dispatcher?.Invoke(() =>
+                {
+                    TraderModel.Current.Leaderboard = this.Records;
+                });
             }
             
             var ack = MessageFactory.GetMessage<AckMessage>(Config.GetInt(Config.CLIENT_PROCESS_NUM),0);

@@ -70,7 +70,25 @@
 
             </DataGrid.Columns>
         </DataGrid>
-        <DataGrid x:Name="highScoreView" Grid.Row="1" Background="Black" AlternatingRowBackground="DarkSlateGray"/>
+
+        <DataGrid ItemsSource="{Binding LeaderBoard}" x:Name="highScoreView" Grid.Row="1" Background="Black" AutoGenerateColumns="False" IsReadOnly="True" CanUserResizeColumns="False" CanUserResizeRows="False" RowHeaderWidth="0" IsHitTestVisible="False" BorderBrush="White">
+            <DataGrid.Resources>
+                <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
+                    <Setter Property="Background" Value="#202020"/>
+                    <Setter Property="Foreground" Value="White" />
+                </Style>
+                <Style x:Key="CellRightAlign">
+                    <Setter Property="Control.HorizontalAlignment"
+            Value="Right" />
+                </Style>
+            </DataGrid.Resources>
+            <DataGrid.RowBackground>Black</DataGrid.RowBackground>
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Path=name}" Header="Top Traders" Width="50*" Foreground="White"/>
+                <DataGridTextColumn Binding="{Binding Path=value}" Header="" Width="50*" Foreground="White" CellStyle="{StaticResource CellRightAlign}"/>
+            </DataGrid.Columns>
+        </DataGrid>
         <TextBlock Text="{Binding HelloTextLocal}" TextWrapping="WrapWithOverflow" HorizontalAlignment="Center" Margin="10,0" VerticalAlignment="Bottom" Width="557" Height="22" Grid.ColumnSpan="3" ScrollViewer.VerticalScrollBarVisibility="Disabled" Padding="10,0" TextAlignment="Center"/>
 
     </Grid>
