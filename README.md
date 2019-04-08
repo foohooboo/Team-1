@@ -2,7 +2,8 @@
 
 Project board: https://trello.com/b/TfkcX7QO/design-tasks
 
-**NOTE: This repo uses a git submodule.** After updating to the latest version, you may need to enter the following...
+**IMPORTANT!!** This repo uses a git submodule. After updating to the latest version, you may need to enter the following git command...
+
 git submodule update --init --recursive
 
 System consists of 3 processes: 
@@ -32,4 +33,4 @@ There is one root Visual Studio Solution (_\<repo\>_/Project/StockMarketSimulato
   
 ### Shared
 
-  * .Net 4.7.1 Shared Project
+  * .Net 4.7.1 Class Library
