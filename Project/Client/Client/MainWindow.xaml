@@ -23,7 +23,7 @@
             <ColumnDefinition Width="215"/>
         </Grid.ColumnDefinitions>
 
-        <oxy:PlotView Model="{Binding MyModel}" Grid.ColumnSpan="3" Background="Black"/>
+        <oxy:PlotView Model="{Binding MyModel}" Grid.ColumnSpan="3" Background="Black" Foreground="White"/>
 
         <Label Content="Hello World! From the client." HorizontalAlignment="Left" Margin="15,71,0,0" VerticalAlignment="Top" Width="368" Height="26" Grid.ColumnSpan="2"/>
         <TextBlock Text="{Binding HelloTextLocal}" TextWrapping="WrapWithOverflow" HorizontalAlignment="Left" Margin="15,170,0,0" VerticalAlignment="Top" Width="368" Height="59" Grid.ColumnSpan="2"/>

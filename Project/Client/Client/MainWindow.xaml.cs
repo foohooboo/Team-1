@@ -56,9 +56,13 @@ namespace Client
 
             GenerateDummyData();
 
-            this.MyModel = new PlotModel { Title = "Example 1" };
-            var chart = new CandleStickSeries();//<---for later Dsphar 4/7/2019
-            this.MyModel.Series.Add(new FunctionSeries(Math.Cos, 0, 10, 0.1, "cos(x)"));
+            this.MyModel = new PlotModel { Title = "Selected Stock Name (SMBL)" };
+
+            var chart = new CandleStickSeries();
+            //double x, double high, double low, double open = double.NaN, double close = double.NaN
+            chart.Items.Add(new HighLowItem(4, 332.4, 360.6, 300, 350));
+            chart.Items.Add(new HighLowItem(5, 460.6, 332.4, 450, 400));
+            MyModel.Series.Add(chart);
 
             Log.Debug($"{nameof(MainWindow)} (exit)");
         }
