@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using log4net;
+using Shared;
 using Shared.Comms.ComService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
@@ -15,21 +16,6 @@ namespace Client.Conversations.LeaderboardUpdate
         public SortedList Records
         {
             get; private set;
-        }
-
-        public static event EventHandler<LeaderboardUpdateEventArgs> LeaderboardUpdateEventHandler;
-
-        public class LeaderboardUpdateEventArgs : EventArgs
-        {
-            public SortedList Records
-            {
-                get; private set;
-            }
-
-            public LeaderboardUpdateEventArgs(SortedList records)
-            {
-                Records = new SortedList(records);
-            }
         }
 
         public ReceiveLeaderboardUpdateState(Envelope env, Conversation conversation) : base(conversation, null)
@@ -49,10 +35,27 @@ namespace Client.Conversations.LeaderboardUpdate
 
         public override Envelope Prepare()
         {
-            LeaderboardUpdateEventHandler?.Invoke(this, new LeaderboardUpdateEventArgs(Records));
-
+            //Update records
+            if (Records == null)
+            {
+                Log.Error("Leaderboard update message was missing the leaderboard.");
+            }
+            else
+            {
+                TraderModel.Current.Leaderboard = Records;
+            }
+                        
             Conversation.UpdateState(new ConversationDoneState(Conversation, this));
-            return null;
+
+            var ack = MessageFactory.GetMessage<AckMessage>(Config.GetInt(Config.CLIENT_PROCESS_NUM),0);
+            ack.ConversationID = Conversation?.Id;
+
+            var env = new Envelope(ack)
+            {
+                To = this.To
+            };
+
+            return env;
         }
     }
 }

@@ -48,13 +48,9 @@ namespace Client
             //logging in
             else
             {
-#if DEBUG
-                LoginSuccess(null);
-#else
                 var loginConv = new GetPortfolioRequestConversation(Config.GetInt(Config.CLIENT_PROCESS_NUM));
                 loginConv.SetInitialState(new GetPortfolioRequestState(user.Text, pass.Password, this, loginConv));
                 ConversationManager.AddConversation(loginConv);
-#endif
             }
         }
 
@@ -65,6 +61,12 @@ namespace Client
 
         public void LoginSuccess(Portfolio portfolio)
         {
+
+            TraderModel.Current = new TraderModel()
+            {
+                Portfolio = portfolio
+            };
+
             Dispatcher.Invoke(() =>
             {
                 MainWindow main = new MainWindow();
@@ -75,7 +77,18 @@ namespace Client
 
         public void LoginFailure(string message)
         {
+#if DEBUG
+            //Please keep this code in DEBUG. It allows us to advance to MainWindow
+            //without having a Broker process running.
+            var dummyPortfolio = new Portfolio()
+            {
+                Username = "DebugPortfolioName",
+                Password = "password"
+            };
+            LoginSuccess(dummyPortfolio);
+#else
             MessageBox.Show(message);
+#endif
         }
     }
 }

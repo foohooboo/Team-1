@@ -36,12 +36,12 @@ namespace Client
             mem.History.Add(e.CurrentDay);
         }
 
-        private void ReceivedLeaderboardUpdate(object sender, LeaderboardUpdateEventArgs e)
-        {
+        //private void ReceivedLeaderboardUpdate(object sender, LeaderboardUpdateEventArgs e)
+        //{
 
-            // TODO: We need to decide how the records are going to be stored.
-            //mem.HighScores = e.Records as SortedList<string,string>;
-        }
+        //    // TODO: We need to decide how the records are going to be stored.
+        //    //mem.HighScores = e.Records as SortedList<string,string>;
+        //}
 
         public MainWindow()
         {
@@ -49,7 +49,6 @@ namespace Client
 
             InitializeComponent();
 
-            LeaderboardUpdateEventHandler += ReceivedLeaderboardUpdate;
             StockUpdateEventHandler += ReceivedStockUpdate;
 
             DataContext = this;
