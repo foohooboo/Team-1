@@ -10,6 +10,8 @@ namespace Shared
 
         public const string
 
+            CLEANUP_DEAD_CLIENTS = "cleanupDeadClients",
+
             DEFAULT_UDP_CLIENT = "defaultUdpClientName",
             DEFAULT_TIMEOUT = "defaultTimeout",
             DEFAULT_RETRY_COUNT = "defaultRetryCount",
@@ -54,6 +56,16 @@ namespace Shared
             {
                 throw new Exception($"Error parsing configuration {key} to int.");
             }
+        }
+
+        public static bool GetBool(string key)
+        {
+            var value = GetString(key);
+            if (value.Equals("true"))
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

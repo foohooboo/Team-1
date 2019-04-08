@@ -96,9 +96,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="BouncyCastle">
       <Version>1.8.5</Version>
     </PackageReference>

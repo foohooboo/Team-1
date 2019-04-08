@@ -21,6 +21,8 @@ namespace Shared.Conversations.SharedStates
         {
             Log.Debug($"{nameof(HandleMessage)} (enter)");
 
+            Log.Info("Yay I got an ack from client");
+
             ConversationState nextState = null;
 
             switch (incomingMessage.Contents)
@@ -39,6 +41,7 @@ namespace Shared.Conversations.SharedStates
             Log.Debug($"{nameof(Prepare)} (enter)");
 
             var message = MessageFactory.GetMessage<UpdateLeaderBoardMessage>(Config.GetInt(Config.BROKER_PROCESS_NUM), 0) as UpdateLeaderBoardMessage;
+            message.ConversationID = Conversation.Id;
 
             foreach (var portfolio in PortfolioManager.Portfolios)
             {
@@ -65,8 +68,14 @@ namespace Shared.Conversations.SharedStates
             else
             {
                 ConversationManager.GetConversation(Conversation.Id).UpdateState(new ConversationDoneState(Conversation, this));
-                Log.Info($"Client {OutboundMessage.To.ToString()} appears to be disconnected. Removing from connected clients.");
-                ClientManager.TryToRemove(OutboundMessage.To);
+
+                Log.Warn($"Client {OutboundMessage.To.ToString()} appears to be disconnected.");
+
+                if (Config.GetBool(Config.CLEANUP_DEAD_CLIENTS))
+                {
+                    Log.Info($"Removing {OutboundMessage.To.ToString()} from connected clients.");
+                    ClientManager.TryToRemove(OutboundMessage.To);
+                }
             }
         }
     }

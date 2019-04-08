@@ -73,8 +73,14 @@ namespace StockServer.Conversations.StockUpdate
             else
             {
                 ConversationManager.GetConversation(Conversation.Id).UpdateState(new ConversationDoneState(Conversation, this));
-                Log.Info($"Client {OutboundMessage.To.ToString()} appears to be disconnected. Removing from connected clients.");
-                ClientManager.TryToRemove(OutboundMessage.To);
+
+                Log.Warn($"Client {OutboundMessage.To.ToString()} appears to be disconnected.");
+
+                if (Config.GetBool(Config.CLEANUP_DEAD_CLIENTS))
+                {
+                    Log.Info($"Removing {OutboundMessage.To.ToString()} from connected clients.");
+                    ClientManager.TryToRemove(OutboundMessage.To);
+                }
             }
         }
     }
