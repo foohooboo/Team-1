@@ -1,14 +1,13 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Shared.Client;
 using Shared.Comms.ComService;
-// Git Commit tracking tes
+
 namespace SharedTest.Cleint
 {
     [TestClass]
     public class ClientManagerTest
     {
         [TestMethod]
-        [DoNotParallelize]
         public void TryToAddSuccessTest()
         {
             var endpoint = EndPointParser.Parse("127.0.0.1:3456");
@@ -17,7 +16,6 @@ namespace SharedTest.Cleint
         }
 
         [TestMethod]
-        [DoNotParallelize]
         public void TryToAddFailTest()
         {
             var endpoint = EndPointParser.Parse("127.0.0.1:3456");
@@ -26,7 +24,6 @@ namespace SharedTest.Cleint
         }
 
         [TestMethod]
-        [DoNotParallelize]
         public void TryToRemoveSucessTest()
         {
             var endpoint = EndPointParser.Parse("127.0.0.1:3456");
@@ -37,7 +34,6 @@ namespace SharedTest.Cleint
         }
 
         [TestMethod]
-        [DoNotParallelize]
         public void TryToRemoveFailTest()
         {
             var endpoint = EndPointParser.Parse("127.0.0.1:3456");
