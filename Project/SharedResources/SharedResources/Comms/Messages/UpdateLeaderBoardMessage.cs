@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 
 namespace Shared.Comms.Messages
 {
@@ -6,7 +7,7 @@ namespace Shared.Comms.Messages
     {
         public UpdateLeaderBoardMessage()
         {
-            Records = new SortedList();
+            Records = new SortedList<float,string>();
         }
 
         /*
@@ -17,7 +18,7 @@ namespace Shared.Comms.Messages
          * as (string, string) pairs. 
          * -- Now you know, and knowing is half the battle. GO JOE!
          */ 
-        public SortedList Records
+        public SortedList<float,string> Records
         {
             get; set;
         }

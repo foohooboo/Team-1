@@ -21,8 +21,6 @@ namespace Shared.Conversations.SharedStates
         {
             Log.Debug($"{nameof(HandleMessage)} (enter)");
 
-            Log.Info("Yay I got an ack from client");
-
             ConversationState nextState = null;
 
             switch (incomingMessage.Contents)

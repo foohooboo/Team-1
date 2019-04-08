@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Threading;
 using log4net;
@@ -15,7 +15,7 @@ namespace Client.Conversations.LeaderboardUpdate
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public SortedList Records
+        public SortedList<float,string> Records
         {
             get; private set;
         }

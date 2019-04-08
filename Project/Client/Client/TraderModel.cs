@@ -1,6 +1,6 @@
 ﻿using Shared.MarketStructures;
 using Shared.PortfolioResources;
-using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace Client
@@ -12,7 +12,7 @@ namespace Client
 
         private Portfolio _portfolio;
         private MarketSegment _stockHistory;
-        public SortedList _leaderboard;
+        public SortedList<float,string> _leaderboard;
 
         /// <summary>
         /// This static TraderModel is a shortcut to share the active TraderModel to anyone that needs it (like conversations).
@@ -40,7 +40,7 @@ namespace Client
             }
         }
 
-        public SortedList Leaderboard{
+        public SortedList<float,string> Leaderboard{
             get => _leaderboard;
             set
             {

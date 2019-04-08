@@ -60,6 +60,7 @@ namespace Client
 
             TModel = model;
             TModel.Handler = this;
+            this.Title = $"{TModel.Portfolio.Username}'s Portfolio.";
 
             StockUpdateEventHandler += ReceivedStockUpdate;
 
@@ -318,14 +319,10 @@ namespace Client
         public void LeaderboardChanged()
         {
             LeaderBoard.Clear();
-            SortedList list = TraderModel.Current.Leaderboard;
+            SortedList<float,string> list = TraderModel.Current.Leaderboard;
             for (int i = list.Count - 1; i >= 0 && i > list.Count - 10; i--)
             {
-                string nam = list.GetByIndex(i).ToString();
-                float val = float.Parse(list.GetKey(i).ToString());
-
-
-                LeaderBoard.Add(new Leaders() { value = val.ToString("C0"), name = nam });
+                LeaderBoard.Add(new Leaders() { value = list.Keys[i].ToString("C0"), name = list.Values[i] });
             }
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("LeaderBoard"));
         }

@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading;
 using Broker;
@@ -101,7 +102,7 @@ namespace BrokerTest.Conversations
         public void Succeed()
         {
             var conv = new LeaderBoardUpdateRequestConversation(42);
-            SortedList Records = new SortedList();
+            SortedList<float, string> Records = new SortedList<float, string>();
             IPEndPoint clientEndpoint = new IPEndPoint(IPAddress.Parse("111.11.2.3"), 124);
 
             ValuatedStock[] day1 = { user1VStock, user2VStock, user3VStock };
@@ -133,14 +134,14 @@ namespace BrokerTest.Conversations
             mock.Verify(state => state.Prepare(), Times.Once);
             mock.Verify(state => state.Send(), Times.Once);
 
-            Assert.AreEqual("port1", Records.GetValueList()[0]);
-            Assert.AreEqual("port2", Records.GetValueList()[1]);
-            Assert.AreEqual("port3", Records.GetValueList()[2]);
+            Assert.AreEqual("port1", Records.Values[0]);
+            Assert.AreEqual("port2", Records.Values[1]);
+            Assert.AreEqual("port3", Records.Values[2]);
 
             //new market day, change stock price, re-update leaderboard
 
             var conv2 = new LeaderBoardUpdateRequestConversation(42);
-            SortedList Records2 = new SortedList();
+            SortedList<float, string> Records2 = new SortedList<float, string>();
 
             user2VStock.Close = 100;
             ValuatedStock[] day2 = { user1VStock, user2VStock, user3VStock };
@@ -171,9 +172,9 @@ namespace BrokerTest.Conversations
             mock2.Verify(state => state.Prepare(), Times.Once);
             mock2.Verify(state => state.Send(), Times.Once);
 
-            Assert.AreEqual("port1", Records2.GetValueList()[0]);
-            Assert.AreEqual("port3", Records2.GetValueList()[1]);
-            Assert.AreEqual("port2", Records2.GetValueList()[2]);
+            Assert.AreEqual("port1", Records2.Values[0]);
+            Assert.AreEqual("port3", Records2.Values[1]);
+            Assert.AreEqual("port2", Records2.Values[2]);
 
             Assert.IsTrue(ClientManager.TryToRemove(clientEndpoint));
         }

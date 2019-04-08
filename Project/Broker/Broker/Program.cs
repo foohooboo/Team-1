@@ -30,11 +30,13 @@ namespace Broker
 
             SignatureService.LoadPublicKey("Team1/StockServer");
 
-            //TODO: remove the following 2 dummy portfolio creations
+            //TODO: remove the following 3 dummy portfolio creations
             PortfolioManager.TryToCreate("DevTrader", "password", out Portfolio devPortfolio);
             devPortfolio.ModifyAsset(new Asset(new Stock("AAPL", "apple"), 600));
             PortfolioManager.TryToCreate("SomeCompetitor", "password", out Portfolio competitorPortfolio);
             competitorPortfolio.ModifyAsset(new Asset(new Stock("AMZN", "Amazon"), 60));
+            PortfolioManager.TryToCreate("Otherguy", "password", out Portfolio otherguyPortfolio);
+            otherguyPortfolio.ModifyAsset(new Asset(new Stock("AMZN", "Amazon"), 30));
 
             ConversationManager.Start(ConversationBuilder);
 
