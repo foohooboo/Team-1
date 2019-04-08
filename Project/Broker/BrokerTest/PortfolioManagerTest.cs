@@ -2,6 +2,7 @@
 using Broker;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Shared.PortfolioResources;
+using SharedResources.DataGeneration;
 
 namespace BrokerTest
 {
@@ -11,7 +12,7 @@ namespace BrokerTest
         [TestMethod]
         public void AddPortfolioSuccessTest()
         {
-            Assert.IsTrue(PortfolioManager.TryToCreate(GetRandomString(3), GetRandomString(6), out Portfolio portfolio));
+            Assert.IsTrue(PortfolioManager.TryToCreate(DataGenerator.GetRandomString(3), DataGenerator.GetRandomString(6), out Portfolio portfolio));
 
             PortfolioManager.ReleaseLock(portfolio);
             PortfolioManager.TryToRemove(portfolio.PortfolioID);
@@ -20,10 +21,10 @@ namespace BrokerTest
         [TestMethod]
         public void AddPortfolioFailTest()
         {
-            PortfolioManager.TryToCreate(GetRandomString(3), GetRandomString(6), out Portfolio portfolio);
+            PortfolioManager.TryToCreate(DataGenerator.GetRandomString(3), DataGenerator.GetRandomString(6), out Portfolio portfolio);
             PortfolioManager.ReleaseLock(portfolio);
 
-            Assert.IsFalse(PortfolioManager.TryToCreate(portfolio.Username, GetRandomString(6), out Portfolio newPortfolio));
+            Assert.IsFalse(PortfolioManager.TryToCreate(portfolio.Username, DataGenerator.GetRandomString(6), out Portfolio newPortfolio));
             Assert.IsNull(newPortfolio);
 
             PortfolioManager.TryToRemove(portfolio.PortfolioID);
@@ -32,7 +33,7 @@ namespace BrokerTest
         [TestMethod]
         public void GetPortfolioByIdSuccessTest()
         {
-            PortfolioManager.TryToCreate(GetRandomString(3), GetRandomString(6), out Portfolio portfolio);
+            PortfolioManager.TryToCreate(DataGenerator.GetRandomString(3), DataGenerator.GetRandomString(6), out Portfolio portfolio);
 
             var id = portfolio.PortfolioID;
             var username = portfolio.Username;
@@ -52,7 +53,7 @@ namespace BrokerTest
         [TestMethod]
         public void GetPortfolioByCredentialsSuccessTest()
         {
-            PortfolioManager.TryToCreate(GetRandomString(5), GetRandomString(2), out Portfolio portfolio);
+            PortfolioManager.TryToCreate(DataGenerator.GetRandomString(5), DataGenerator.GetRandomString(2), out Portfolio portfolio);
 
             var id = portfolio.PortfolioID;
             var username = portfolio.Username;
@@ -79,7 +80,7 @@ namespace BrokerTest
         [TestMethod]
         public void RemovePortfolioFailTest()
         {
-            PortfolioManager.TryToCreate(GetRandomString(3), GetRandomString(6), out Portfolio portfolio);
+            PortfolioManager.TryToCreate(DataGenerator.GetRandomString(3), DataGenerator.GetRandomString(6), out Portfolio portfolio);
             var count = PortfolioManager.Portfolios.Count;
 
             Assert.IsFalse(PortfolioManager.TryToRemove(portfolio.PortfolioID));
@@ -92,29 +93,13 @@ namespace BrokerTest
         [TestMethod]
         public void RemovePortfolioSuccessTest()
         {
-            PortfolioManager.TryToCreate(GetRandomString(3), GetRandomString(6), out Portfolio portfolio);
+            PortfolioManager.TryToCreate(DataGenerator.GetRandomString(3), DataGenerator.GetRandomString(6), out Portfolio portfolio);
             var count = PortfolioManager.Portfolios.Count;
             var id = portfolio.PortfolioID;
             PortfolioManager.ReleaseLock(portfolio);
 
             Assert.IsTrue(PortfolioManager.TryToRemove(id));
             Assert.AreEqual(count - 1, PortfolioManager.Portfolios.Count);
-        }
-
-        private static Random rand = new Random();
-
-        private string GetRandomString(int length)
-        {
-            var word = String.Empty;
-            var letters = @"abcdefghijklmnopqrstuvwxyz";
-
-            for (int characterIndex = 1; characterIndex <= length; characterIndex++)
-            {
-                int letterIndex = rand.Next(0, letters.Length - 1);
-                word += letters[letterIndex];
-            }
-
-            return word;
         }
     }
 }

@@ -77,6 +77,7 @@
     <Compile Include="Conversations\SharedStates\Template_ConvState.cs" />
     <Compile Include="Conversations\StockStreamRequest\ConvI_StockStreamRequest.cs" />
     <Compile Include="Conversations\StockStreamRequest\InitialState_ConvI_StockStreamRequest.cs" />
+    <Compile Include="DataGeneration\DataGenerator.cs" />
     <Compile Include="HelloWorld.cs" />
     <Compile Include="Leaderboard\LeaderboardRecord.cs" />
     <Compile Include="MarketStructures\MarketDay.cs" />

@@ -1,6 +1,9 @@
 ﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using log4net;
+using Newtonsoft.Json;
 using Shared.MarketStructures;
 using Shared.PortfolioResources;
 
@@ -9,6 +12,8 @@ namespace Broker
     public static class PortfolioManager
     {
         private static ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+        public static string PortfolioData => $"";
 
         public static ConcurrentDictionary<int, Portfolio> Portfolios = new ConcurrentDictionary<int, Portfolio>();
 
@@ -44,9 +49,9 @@ namespace Broker
 
             portfolio = null;
 
-            foreach(Portfolio p in Portfolios.Values)
+            foreach (Portfolio p in Portfolios.Values)
             {
-                if (p.Username.Equals(username)&& p.Password.Equals(password))
+                if (p.Username.Equals(username) && p.Password.Equals(password))
                 {
                     portfolio = p;
                     break;
@@ -54,7 +59,7 @@ namespace Broker
             }
 
             Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (exit)");
-            return portfolio!=null;
+            return portfolio != null;
         }
 
         public static bool TryToGet(int portfolioID, out Portfolio portfolio)
@@ -79,7 +84,7 @@ namespace Broker
             return true;
         }
 
-         private static Portfolio GetNewPortfolio(string username, string password)
+        private static Portfolio GetNewPortfolio(string username, string password)
         {
             Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (enter)");
             var portfolio = new Portfolio()
@@ -140,6 +145,33 @@ namespace Broker
             }
             portfolio = null;
             Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (exit)");
+        }
+
+        public static void SavePortfolios()
+        {
+            using (StreamWriter file = File.CreateText(PortfolioData))
+            {
+                new JsonSerializer().Serialize(file, Portfolios.Values.ToArray());
+            }
+
+            Portfolios.Clear();
+        }
+
+        public static void LoadPortfolios()
+        {
+            var loadedPortfolios = new List<Portfolio>();
+
+            using (var reader = new StreamReader(PortfolioData))
+            {
+                loadedPortfolios = JsonConvert.DeserializeObject<List<Portfolio>>(reader.ReadToEnd());
+            }
+
+            Portfolios.Clear();
+
+            foreach (var portfolio in loadedPortfolios)
+            {
+                Portfolios.TryAdd(portfolio.PortfolioID, portfolio);
+            }
         }
     }
 }
