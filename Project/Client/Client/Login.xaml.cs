@@ -29,7 +29,7 @@ namespace Client
         public Login()
         {
             InitializeComponent();
-            ConversationManager.Start(null);
+            ConversationManager.Start(ConversationBuilder.Builder);
 
             ComService.AddClient(Config.DEFAULT_UDP_CLIENT, 0);
         }
@@ -69,7 +69,7 @@ namespace Client
 
             Dispatcher.Invoke(() =>
             {
-                MainWindow main = new MainWindow();
+                MainWindow main = new MainWindow(TraderModel.Current);
                 Application.Current.Windows[0].Close();
                 main.ShowDialog();
             });
@@ -78,8 +78,9 @@ namespace Client
         public void LoginFailure(string message)
         {
 #if DEBUG
-            //Please keep this code in DEBUG. It allows us to advance to MainWindow
-            //without having a Broker process running.
+            //Please keep this code in the DEBUG directive. It allows us to advance to MainWindow
+            //without having a Broker process running. It should NOT be executed in production.
+            //-Dsphar 4/8/2019
             var dummyPortfolio = new Portfolio()
             {
                 Username = "DebugPortfolioName",

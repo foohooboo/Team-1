@@ -4,6 +4,7 @@ using OxyPlot;
 using OxyPlot.Series;
 using Shared;
 using Shared.Comms.ComService;
+using Shared.Conversations;
 using Shared.MarketStructures;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,8 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Shapes;
+using Shared.Comms.Messages;
+using Client.Conversations.LeaderboardUpdate;
 using static Client.Conversations.LeaderboardUpdate.ReceiveLeaderboardUpdateState;
 using static Client.Conversations.StockUpdate.ReceiveStockUpdateState;
 
@@ -19,6 +22,9 @@ namespace Client
 {
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
+        private TraderModel TModel;
+
+
         private ManagedData mem = new ManagedData();
 
         public string StockCount { get; set; } = "1";//holds the data in buySell textbox
@@ -43,11 +49,13 @@ namespace Client
         //    //mem.HighScores = e.Records as SortedList<string,string>;
         //}
 
-        public MainWindow()
+        public MainWindow(TraderModel model)
         {
             Log.Debug($"{nameof(MainWindow)} (enter)");
 
             InitializeComponent();
+
+            TModel = model; 
 
             StockUpdateEventHandler += ReceivedStockUpdate;
 
@@ -297,6 +305,5 @@ namespace Client
             mem.MyPortfolio = ManagedData.makeupPortfolio(mem.History[0]);
             UpdateStockPanels();
         }
-
     }
 }

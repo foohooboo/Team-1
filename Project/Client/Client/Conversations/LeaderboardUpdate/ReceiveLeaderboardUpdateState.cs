@@ -18,7 +18,7 @@ namespace Client.Conversations.LeaderboardUpdate
             get; private set;
         }
 
-        public ReceiveLeaderboardUpdateState(Envelope env, Conversation conversation) : base(conversation, null)
+        public ReceiveLeaderboardUpdateState(Envelope env, Conversation conversation) : base(env, conversation, null)
         {
             Records = (env.Contents as UpdateLeaderBoardMessage).Records;
         }
@@ -44,9 +44,7 @@ namespace Client.Conversations.LeaderboardUpdate
             {
                 TraderModel.Current.Leaderboard = Records;
             }
-                        
-            Conversation.UpdateState(new ConversationDoneState(Conversation, this));
-
+            
             var ack = MessageFactory.GetMessage<AckMessage>(Config.GetInt(Config.CLIENT_PROCESS_NUM),0);
             ack.ConversationID = Conversation?.Id;
 
@@ -56,6 +54,12 @@ namespace Client.Conversations.LeaderboardUpdate
             };
 
             return env;
+        }
+
+        public override void Send()
+        {
+            base.Send();
+            Conversation.UpdateState(new ConversationDoneState(Conversation, this));
         }
     }
 }
