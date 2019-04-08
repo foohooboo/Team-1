@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Shared.Comms.Messages
@@ -7,20 +8,15 @@ namespace Shared.Comms.Messages
     {
         public UpdateLeaderBoardMessage()
         {
-            Records = new SortedList<float,string>();
+            
         }
 
-        /*
-         * NOTE: -- System.Collections.Generic.SortedList lets us explicitly define expected types
-         * -- System.Collections.SortedList does not seem to allow that
-         * -- We are expecting the SortedList to hold (key,value) pairs of (portfolio-value, username)
-         * -- Whether you give it (string, string) or (double, string) pairs, it will all come out of the serializer 
-         * as (string, string) pairs. 
-         * -- Now you know, and knowing is half the battle. GO JOE!
-         */ 
-        public SortedList<float,string> Records
-        {
-            get; set;
-        }
+
+
+        /// <summary>
+        /// The json serializer was giving me grief with the sorted lists (generic and old-school).
+        /// Hence I change the message to contain a base 64 string encoding of a serialized Generic SortedList.
+        /// </summary>
+        public string SerializedRecords;
     }
 }

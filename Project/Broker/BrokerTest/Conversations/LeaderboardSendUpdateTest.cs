@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading;
@@ -15,6 +16,7 @@ using Shared.Conversations;
 using Shared.Conversations.SharedStates;
 using Shared.MarketStructures;
 using Shared.PortfolioResources;
+using Shared.Security;
 
 namespace BrokerTest.Conversations
 {
@@ -22,7 +24,8 @@ namespace BrokerTest.Conversations
     [DoNotParallelize]
     public class LeaderboardSendUpdateTest
     {
-        private readonly Mock<GetPortfolioReceiveState> mock;
+
+        SignatureService sigServe = new SignatureService();
 
         private readonly ValuatedStock user1VStock = new ValuatedStock()
         {
@@ -113,7 +116,9 @@ namespace BrokerTest.Conversations
             mock.Setup(st => st.Send())//Pretend message is sent and response comes back...
                 .Callback(() =>
                 {
-                    Records = ((mock.Object as LeaderboardSendUpdateState).OutboundMessage.Contents as UpdateLeaderBoardMessage).Records;
+
+                    var serliazedLeaders = Convert.FromBase64String(((mock.Object as LeaderboardSendUpdateState).OutboundMessage.Contents as UpdateLeaderBoardMessage).SerializedRecords);
+                    Records = sigServe.Deserialize<SortedList<float, string>>(serliazedLeaders);
                     var responseMessage = new AckMessage() { ConversationID = conv.Id, MessageID = "responseMessageID1234" };
                     var responseEnv = new Envelope(responseMessage);
                     ConversationManager.ProcessIncomingMessage(responseEnv);
@@ -152,7 +157,8 @@ namespace BrokerTest.Conversations
             mock2.Setup(st => st.Send())//Pretend message is sent and response comes back...
                 .Callback(() =>
                 {
-                    Records2 = ((mock2.Object as LeaderboardSendUpdateState).OutboundMessage.Contents as UpdateLeaderBoardMessage).Records;
+                    var serliazedLeaders = Convert.FromBase64String(((mock2.Object as LeaderboardSendUpdateState).OutboundMessage.Contents as UpdateLeaderBoardMessage).SerializedRecords);
+                    Records2 = sigServe.Deserialize<SortedList<float, string>>(serliazedLeaders);
                     var responseMessage = new AckMessage() { ConversationID = conv2.Id, MessageID = "responseMessageID1234" };
                     var responseEnv = new Envelope(responseMessage);
                     ConversationManager.ProcessIncomingMessage(responseEnv);

@@ -1,6 +1,7 @@
 ﻿using log4net;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace Shared.Comms.Messages
@@ -30,19 +31,6 @@ namespace Shared.Comms.Messages
         {
             Log.Debug($"{nameof(GetMessage)} (enter)");
 
-            //Note: The following hack was added because we are using the Newtonsoft serializer on different projects.
-            //It adds the project name to the Type field in JSON, and this causes an exception to be thrown when
-            //decoding json from projects with a different name. We might be able to replace this hack with a setting
-            //that allows cross-project serialization, I just couldn't find that setting after a 20 minute Google-fu
-            //session. Hence I decided to hack this before the assignment is due.
-            //-dsphar 3/3/2019
-             if (scrubJson)
-            {
-                json = !ProjectName.Equals("Broker")? json.Replace("Broker", ProjectName) :json;
-                json = !ProjectName.Equals("StockServer") ? json.Replace("StockServer", ProjectName) : json;
-                json = !ProjectName.Equals("Client") ? json.Replace("Client", ProjectName) : json;
-            }
-
             Message message = null;
 
             try
@@ -52,6 +40,7 @@ namespace Shared.Comms.Messages
             catch (Exception e)
             {
                 Log.Error("Error when deserializing message.");
+                Console.WriteLine($"Error when deserializing message...\n{e}");
                 Log.Error(e.Message);
                 Log.Error(e.StackTrace);
             }

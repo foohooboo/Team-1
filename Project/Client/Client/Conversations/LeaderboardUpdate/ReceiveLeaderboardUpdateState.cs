@@ -8,6 +8,7 @@ using Shared.Comms.ComService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
+using Shared.Security;
 
 namespace Client.Conversations.LeaderboardUpdate
 {
@@ -22,7 +23,8 @@ namespace Client.Conversations.LeaderboardUpdate
 
         public ReceiveLeaderboardUpdateState(Envelope env, Conversation conversation) : base(env, conversation, null)
         {
-            Records = (env.Contents as UpdateLeaderBoardMessage).Records;
+            var sigServe = new SignatureService();
+            Records = sigServe.Deserialize<SortedList<float,string>>(Convert.FromBase64String((env.Contents as UpdateLeaderBoardMessage).SerializedRecords));
         }
 
         public override ConversationState HandleMessage(Envelope incomingMessage)

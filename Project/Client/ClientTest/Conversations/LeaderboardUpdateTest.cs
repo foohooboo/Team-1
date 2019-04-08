@@ -7,6 +7,8 @@ using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
 using Shared.MarketStructures;
+using Shared.Security;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -17,6 +19,8 @@ namespace ClientTest.Conversations
     {
 
         private Mock<ReceiveLeaderboardUpdateState> mock;
+
+        private SignatureService sigServ = new SignatureService();
 
         public Conversation ConversationBuilder(Envelope env)
         {
@@ -66,7 +70,7 @@ namespace ClientTest.Conversations
             var RequestMessage = new UpdateLeaderBoardMessage()
             {
                 ConversationID = RequestConvId,
-                Records = new SortedList<float,string>()
+                SerializedRecords = Convert.ToBase64String(sigServ.Serialize(new SortedList<float, string>()))
             };
 
             Envelope Request = new Envelope(RequestMessage, ClientIp, ClientPort);

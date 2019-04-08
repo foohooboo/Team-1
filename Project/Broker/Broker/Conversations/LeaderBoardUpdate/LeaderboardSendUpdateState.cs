@@ -1,9 +1,12 @@
-﻿using System.Net;
+﻿using System;
+using System.Collections.Generic;
+using System.Net;
 using Broker;
 using log4net;
 using Shared.Client;
 using Shared.Comms.ComService;
 using Shared.Comms.Messages;
+using Shared.Security;
 
 namespace Shared.Conversations.SharedStates
 {
@@ -41,11 +44,16 @@ namespace Shared.Conversations.SharedStates
             var message = MessageFactory.GetMessage<UpdateLeaderBoardMessage>(Config.GetInt(Config.BROKER_PROCESS_NUM), 0) as UpdateLeaderBoardMessage;
             message.ConversationID = Conversation.Id;
 
+            var leaders = new SortedList<float, string>();
+
             foreach (var portfolio in PortfolioManager.Portfolios)
             {
                 var record = LeaderboardManager.GetLeaderboardRecord(portfolio.Value);
-                message.Records.Add(record.TotalAssetValue, record.Username);
+                leaders.Add(record.TotalAssetValue, record.Username);
             }
+
+            var sigServ = new SignatureService();
+            message.SerializedRecords = Convert.ToBase64String(sigServ.Serialize(leaders));
 
             var env = new Envelope(message)
             {
