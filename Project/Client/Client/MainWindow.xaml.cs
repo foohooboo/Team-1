@@ -1,16 +1,17 @@
-﻿using System;
-using System.ComponentModel;
-using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Shapes;
-using CommSystem;
+﻿using CommSystem;
 using log4net;
 using OxyPlot;
 using OxyPlot.Series;
 using Shared;
 using Shared.Comms.ComService;
 using Shared.MarketStructures;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Shapes;
 using static Client.Conversations.LeaderboardUpdate.ReceiveLeaderboardUpdateState;
 using static Client.Conversations.StockUpdate.ReceiveStockUpdateState;
 
@@ -25,6 +26,8 @@ namespace Client
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private HelloWorld helloWorld = new HelloWorld();
         public event PropertyChangedEventHandler PropertyChanged;
+
+        private static Random rand = new Random();
 
         public PlotModel MyModel { get; private set; }
 
@@ -48,7 +51,7 @@ namespace Client
 
             LeaderboardUpdateEventHandler += ReceivedLeaderboardUpdate;
             StockUpdateEventHandler += ReceivedStockUpdate;
-            
+
             DataContext = this;
 
             helloWorld.HelloTextChanged += OnHelloTextChanged;
@@ -58,13 +61,51 @@ namespace Client
 
             this.MyModel = new PlotModel { Title = "Selected Stock Name (SMBL)" };
 
-            var chart = new CandleStickSeries();
-            //double x, double high, double low, double open = double.NaN, double close = double.NaN
-            chart.Items.Add(new HighLowItem(4, 332.4, 360.6, 300, 350));
-            chart.Items.Add(new HighLowItem(5, 460.6, 332.4, 450, 400));
-            MyModel.Series.Add(chart);
+            RedrawCandlestickChart(GenStockHistory());
 
             Log.Debug($"{nameof(MainWindow)} (exit)");
+        }
+
+        private static List<HighLowItem> GenStockHistory()
+        {
+            var hist = new List<HighLowItem>();
+
+            //double x, double high, double low, double open = double.NaN, double close = double.NaN
+            double open = GetClampedRandom(300, 500);
+            for (int i = 1; i <= 30; i++)
+            {
+                double close = Clamp(open + GetClampedRandom(-50, 50), 10, 1000);
+                double high = Math.Max(open, close) + GetClampedRandom(1, 50);
+                double low = Math.Min(open, close) - GetClampedRandom(1, 50);
+
+                hist.Add(new HighLowItem(i, high, low, open, close));
+
+                open = Clamp(open + GetClampedRandom(-50, 50), 10, 1000);
+            }
+
+            return hist;
+        }
+
+        private void RedrawCandlestickChart(List<HighLowItem> newData) {
+            var chart = new CandleStickSeries();
+            chart.Items.AddRange(newData);
+            MyModel.Series.Clear();
+            MyModel.Series.Add(chart);
+            MyModel.InvalidatePlot(true);
+        }
+
+        private static double GetClampedRandom(double min, double max)
+        {
+            return rand.NextDouble() * (max - min) + min;
+        }
+
+        private static double Clamp(double val, double min, double max)
+        {
+            if (val < min)
+                val = min;
+            if (val > max)
+                val = max;
+            return val;
         }
 
         ~MainWindow()
@@ -143,6 +184,13 @@ namespace Client
             }
         }
 
+        public void OnStockSelected(object sender, RoutedEventArgs e)
+        {
+            //TODO: move the logic that tracks what is selected to here instead of in the beginning of transaction.
+
+            RedrawCandlestickChart(GenStockHistory());
+        }
+
         public void OnHelloTextChanged(object source, EventArgs args)
         {
             HelloTextLocal = helloWorld.HelloText;
@@ -159,7 +207,7 @@ namespace Client
             var symbol = "";
             var selectedItem = stockPanels.SelectedItem;
 
-            if(selectedItem == null)
+            if (selectedItem == null)
             {
                 //TODO: Move the following message to a better location, perhaps the place we will show error messages?
                 HelloTextLocal = "You must select a stock item before attempting a transaction.";
@@ -196,7 +244,7 @@ namespace Client
 
         private void SellOutEvent(object sender, RoutedEventArgs e)
         {
-            SendTransaction(int.MinValue+1);
+            SendTransaction(int.MinValue + 1);
 
         }
 

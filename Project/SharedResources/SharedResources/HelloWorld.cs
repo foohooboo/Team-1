@@ -13,7 +13,7 @@ namespace CommSystem
         {
             Log.Debug($"{nameof(HelloWorld)} (enter)");
 
-            _helloText = "Hello from the shared CommSystem resource. ";
+            _helloText = "Welcome to the Team-1 Stock Sim. Where you can practice without risk. Good luck!";
 
             //Temporary Task...
             //Update the text from a "different source(thread)" in 10 seconds.
@@ -21,7 +21,7 @@ namespace CommSystem
             new Task(() =>
             {
                 Thread.Sleep(5000);
-                HelloText += " !!!!!This text was updated by someone.!!!!!";
+                HelloText = "";
             }).Start();
 
             Log.Debug($"{nameof(HelloWorld)} (exit)");
