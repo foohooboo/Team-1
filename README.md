@@ -2,6 +2,10 @@
 
 Project board: https://trello.com/b/TfkcX7QO/design-tasks
 
+**IMPORTANT!!** This repo uses a git submodule. After updating to the latest version, you may need to enter the following git command...
+
+git submodule update --init --recursive
+
 System consists of 3 processes: 
   1. StockServer - Streams simulated stock-price data.
   2. Broker - Facilitates stock portfolio managament.
@@ -29,4 +33,4 @@ There is one root Visual Studio Solution (_\<repo\>_/Project/StockMarketSimulato
   
 ### Shared
 
-  * .Net 4.7.1 Shared Project
+  * .Net 4.7.1 Class Library
