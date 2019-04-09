@@ -12,7 +12,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using static Client.Conversations.StockUpdate.ReceiveStockUpdateState;
 
 namespace Client
@@ -72,60 +71,10 @@ namespace Client
 
             InitializeComponent();
 
-            
-
-            StockList.Add(new StockButton("GOOG", 42, 45.67f));
-            StockList.Add(new StockButton("AMZN", 42, 32.1f));
-            StockList.Add(new StockButton("AAPL", 42, 150));
-
             TModel = model;
             TModel.Handler = this;
 
-            var simHistory = new MarketSegment();
-            var simDay = new MarketDay("SomeDate");
-
             GenerateDummyData();
-
-            simDay.TradedCompanies.Add(
-                new ValuatedStock()
-                {
-                    Symbol = "GOOG",
-                    Name = "Google or something",
-                    Close = 45,
-                    Open = 40,
-                    High = 50,
-                    Low = 30,
-                    Volume = 500
-                });
-
-            simDay.TradedCompanies.Add(
-                new ValuatedStock()
-                {
-                    Symbol = "AAPL",
-                    Name = "Apple Inc.",
-                    Close = 145,
-                    Open = 140,
-                    High = 150,
-                    Low = 130,
-                    Volume = 1500
-                });
-
-            simDay.TradedCompanies.Add(
-                new ValuatedStock()
-                {
-                    Symbol = "AMZN",
-                    Name = "Amazon",
-                    Close = 245,
-                    Open = 240,
-                    High = 250,
-                    Low = 230,
-                    Volume = 2500
-                });
-
-            simHistory.Add(simDay);
-            TModel.StockHistory = simHistory;
-
-            ReDrawPortfolioItems();
 
             Title = $"{TModel.Portfolio.Username}'s Portfolio.";
 
@@ -134,13 +83,10 @@ namespace Client
             helloWorld.HelloTextChanged += OnHelloTextChanged;
             HelloTextLocal = helloWorld.HelloText;
 
-            
-
-
-
             this.MyModel = new PlotModel { Title = "Selected Stock Name (SMBL)" };
 
             RedrawCandlestickChart(GenStockHistory());
+            ReDrawPortfolioItems();
 
             Log.Debug($"{nameof(MainWindow)} (exit)");
         }
@@ -214,7 +160,11 @@ namespace Client
         {
             var selectedItem = stockPanels.SelectedItem as StockButton;
 
-            TraderModel.Current.SelectedStocksSymbol = selectedItem.Symbol;
+            if (selectedItem != null)
+            {
+                TraderModel.Current.SelectedStocksSymbol = selectedItem.Symbol;
+            }
+            
 
             RedrawCandlestickChart(GenStockHistory());
         }
@@ -225,13 +175,13 @@ namespace Client
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("HelloTextLocal"));
         }
 
+        /// <summary>
+        /// Buy and sell stocks. Positive amount buys, negative sells. It clamps the desired amount to the
+        /// largest possible amount if necessary.
+        /// </summary>
+        /// <param name="amount"></param>
         private void SendTransaction(int amount)
         {
-            //TODO: This function should actually buy and sell stocks. Positive amount buys, negative sells
-            //This function should check if the transaction is possible and if not will just do its best.
-            //Instead of selling 100 it just sells what you have.
-            //instead of buying 100 it just buys as much as your cash can afford.
-
             var symbol = TraderModel.Current.SelectedStocksSymbol;
 
             if (symbol.Equals(""))
@@ -240,43 +190,51 @@ namespace Client
                 return;
             }
 
-            var selectedVStock = TraderModel.Current._stockHistoryBySymbol[symbol].Last();
-            if (selectedVStock != null)
+            List<ValuatedStock> selectedVStockHistory;
+
+            if (!TraderModel.Current._stockHistoryBySymbol.TryGetValue(symbol, out selectedVStockHistory) || selectedVStockHistory.Count == 0)
             {
-                float value = selectedVStock.Close;
+                HelloTextLocal = $"We have not received a recent update for ({symbol}). Transaction canceled.";
+                return;
+            };
 
-                //buying
-                if (amount > 0)
-                {
-                    if (mem.Cash < value * amount)
-                    {
-                        amount = (int)(mem.Cash / value);
-                    }
-                }
-                //selling
-                else
-                {
-                    Asset ownedAsset = null;
-                    var amountOwned = 0;
+            var selectedVStock = selectedVStockHistory.Last();
+            float value = selectedVStock.Close;
 
-                    if (TraderModel.Current.Portfolio.Assets.TryGetValue(symbol, out ownedAsset))
-                    {
-                        amountOwned = ownedAsset.Quantity;
-                    }
+            //buying
+            if (amount > 0)
+            {
+                if (mem.Cash < value * amount)
+                {
+                    amount = (int)(mem.Cash / value);
+                }
+            }
+            //selling
+            else
+            {
+                Asset ownedAsset = null;
+                var amountOwned = 0;
 
-                    if (-amount > amountOwned)
-                    {
-                        amount = -amountOwned;
-                    }
-                }
-                if (amount == 0)
+                if (TraderModel.Current.Portfolio.Assets.TryGetValue(symbol, out ownedAsset))
                 {
-                    HelloTextLocal = "Cannot perform the desired transaction.";
+                    amountOwned = ownedAsset.Quantity;
                 }
-                else
+
+                if (-amount > amountOwned)
                 {
-                    HelloTextLocal = $"Initiated transaction for {amount} shares of {selectedVStock.Name} ({selectedVStock.Symbol}).";
+                    amount = -amountOwned;
                 }
+            }
+            if (amount == 0)
+            {
+                HelloTextLocal = "Cannot perform the desired transaction.";
+            }
+            else
+            {
+                HelloTextLocal = $"Initiated transaction for {amount} shares of {selectedVStock.Name} ({selectedVStock.Symbol}).";
+
+                //TODO: Start transaction request conversation.
+                ReDrawPortfolioItems();
             }
         }
 
@@ -334,7 +292,6 @@ namespace Client
             mem.Cash = 100000;
             mem.History = ManagedData.makeupMarketSegment(15, 30);
             mem.MyPortfolio = ManagedData.makeupPortfolio(mem.History[0]);
-            //UpdateStockPanels();
         }
 
         public void LeaderboardChanged()
@@ -350,7 +307,7 @@ namespace Client
 
         public void StockHistoryChanged()
         {
-            
+
         }
 
         public void ReDrawPortfolioItems()
@@ -412,7 +369,12 @@ namespace Client
                 }
             }
 
-            //PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ValueOfAssets"));
+            var selectedButton = StockList.Where(s => s.Symbol.Equals(TraderModel.Current.SelectedStocksSymbol)).FirstOrDefault();
+            if (selectedButton!= null)
+            {
+                stockPanels.SelectedItem = selectedButton;
+            }
+            
         }
 
         public class AssetNetValue

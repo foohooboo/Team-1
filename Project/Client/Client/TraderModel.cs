@@ -62,22 +62,36 @@ namespace Client
             }
         }
 
+        private object stockHistoryLock = new object();
         public MarketSegment StockHistory
         {
-            get => _stockHistory;
+            get
+            {
+                lock (stockHistoryLock)
+                {
+
+                    //Do we need to perform a deep copy of this so people using it don't mess with it??
+                    return _stockHistory;
+                }
+            }
             set
             {
-                _stockHistory = value;
-
-                foreach(var day in _stockHistory)
+                lock (stockHistoryLock)
                 {
-                    foreach(var vStock in day.TradedCompanies)
-                    {
-                        AddStockToHistory(vStock);
-                    }
-                }
+                    _stockHistory = value;
 
-                Handler?.StockHistoryChanged();
+                    foreach (var day in _stockHistory)
+                    {
+                        foreach (var vStock in day.TradedCompanies)
+                        {
+                            AddStockToHistory(vStock);
+                        }
+                    }
+
+                    Handler?.StockHistoryChanged();
+                    Handler?.ReDrawPortfolioItems();
+                }
+                
             }
         }
 
