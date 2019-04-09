@@ -20,7 +20,7 @@ namespace Client
         private SortedList<float, string> _leaderboard;
         private List<Asset> _ownedStocks = new List<Asset>();
 
-        public readonly Dictionary<string, List<ValuatedStock>> _stockHistoryBySymbol = new Dictionary<string, List<ValuatedStock>>();
+        private Dictionary<string, List<ValuatedStock>> _stockHistoryBySymbol = new Dictionary<string, List<ValuatedStock>>();
 
         /// <summary>
         /// This static TraderModel is a shortcut to share the active TraderModel to anyone that needs it (like conversations).
@@ -40,7 +40,7 @@ namespace Client
             getStockHistConv.SetInitialState(new StockHistoryRequestState(getStockHistConv));
             ConversationManager.AddConversation(getStockHistConv);
 
-            ReceiveStockUpdateState.StockUpdateEventHandler += HandleStockUpdate;
+            StockUpdateEventHandler += HandleStockUpdate;
         }
 
         public Portfolio Portfolio
@@ -84,6 +84,12 @@ namespace Client
                 }
                 Handler?.ReDrawPortfolioItems();
             }
+        }
+
+        public List<ValuatedStock> GetHistory(string symbol)
+        {
+            _stockHistoryBySymbol.TryGetValue(symbol, out List<ValuatedStock> history);
+            return history;
         }
 
         private void AddStockToHistory(ValuatedStock vStock)

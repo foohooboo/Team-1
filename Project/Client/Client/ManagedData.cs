@@ -3,6 +3,7 @@ using Shared.PortfolioResources;
 using SharedResources.DataGeneration;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Client
 {
@@ -34,16 +35,28 @@ namespace Client
         {
             MarketSegment returns = new MarketSegment();
             List<Stock> madeupStocks = new List<Stock>(stocks);
-            for (int i = 1; i <= stocks; i++)
+            for (int i = 0; i < stocks; i++)
             {
                 madeupStocks.Add(makeupStock());
             }
             for (int i = 0; i < days; i++)
             {
                 List<ValuatedStock> dayList = new List<ValuatedStock>(stocks);
-                for (int j = 0; j < stocks; j++)
+                
+                for (int j = 0; j < madeupStocks.Count; j++)
                 {
-                    dayList.Add(makeupValuatedStock(madeupStocks[j]));
+                    var symbol = madeupStocks[j].Symbol;
+                    if (symbol.Equals("$"))
+                        continue;
+
+                    float previousClose;
+                    if (i > 0)
+                        previousClose = returns[i - 1].TradedCompanies.Where(s => s.Symbol.Equals(symbol)).FirstOrDefault().Close;
+                    else
+                        previousClose = random.Next(100, 500);
+
+                    var vStock = MakeupValuatedStock(madeupStocks[j].Symbol, madeupStocks[j].Name, previousClose);
+                    dayList.Add( vStock );
                 }
                 MarketDay dayHolder = new MarketDay("3-26-2019", dayList.ToArray());
                 returns.Add(dayHolder);
@@ -55,18 +68,29 @@ namespace Client
         {
             return new Stock(DataGenerator.GetRandomString(4), DataGenerator.GetRandomString(15));
         }
-        private static ValuatedStock makeupValuatedStock(Stock s)
+
+        private static ValuatedStock makeupValuatedStock(Stock stock, float previousDayClose)
+        {
+            return MakeupValuatedStock(stock.Symbol, stock.Name, previousDayClose);
+        }
+
+        private static ValuatedStock MakeupValuatedStock(string symbol, string name, float previousDayClose)
         {
             var vStock = new ValuatedStock();
 
-            vStock.Name = s.Name;
-            vStock.Symbol = s.Symbol;
+            vStock.Name = name;
+            vStock.Symbol = symbol;
 
-            vStock.Low = (float)random.Next(1000);
-            vStock.High = (float)random.Next(100) + vStock.Low;
-            vStock.Open = random.Next((int)vStock.Low, (int)vStock.High);
-            vStock.Close = random.Next((int)vStock.Low, (int)vStock.High);
-            vStock.Volume = random.Next(100000);
+            //Make trading look realistic relative to previous day
+            var scaler = (int) (previousDayClose * 0.01);
+
+            vStock.Open =  previousDayClose + random.Next(-scaler/2, scaler); 
+            vStock.Close = vStock.Open + random.Next(-scaler*3, scaler*3);
+
+            vStock.Low = Math.Min(vStock.Open, vStock.Close) - random.Next(0, scaler * 3);
+            vStock.High = Math.Max(vStock.Open, vStock.Close) + random.Next(0, scaler * 3);
+
+            vStock.Volume = (int)Math.Abs(vStock.Open - vStock.Close)*1000000;
 
             return vStock;
         }

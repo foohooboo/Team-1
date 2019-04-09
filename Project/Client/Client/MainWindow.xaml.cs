@@ -75,53 +75,9 @@ namespace Client
 
             this.MyModel = new PlotModel { Title = "Selected Stock Name (SMBL)" };
 
-            RedrawCandlestickChart(GenStockHistory());
             ReDrawPortfolioItems();
 
             Log.Debug($"{nameof(MainWindow)} (exit)");
-        }
-
-        private static List<HighLowItem> GenStockHistory()
-        {
-            var hist = new List<HighLowItem>();
-
-            //double x, double high, double low, double open = double.NaN, double close = double.NaN
-            double open = GetClampedRandom(300, 500);
-            for (int i = 1; i <= 30; i++)
-            {
-                double close = Clamp(open + GetClampedRandom(-50, 50), 10, 1000);
-                double high = Math.Max(open, close) + GetClampedRandom(1, 50);
-                double low = Math.Min(open, close) - GetClampedRandom(1, 50);
-
-                hist.Add(new HighLowItem(i, high, low, open, close));
-
-                open = Clamp(open + GetClampedRandom(-50, 50), 10, 1000);
-            }
-
-            return hist;
-        }
-
-        private void RedrawCandlestickChart(List<HighLowItem> newData)
-        {
-            var chart = new CandleStickSeries();
-            chart.Items.AddRange(newData);
-            MyModel.Series.Clear();
-            MyModel.Series.Add(chart);
-            MyModel.InvalidatePlot(true);
-        }
-
-        private static double GetClampedRandom(double min, double max)
-        {
-            return rand.NextDouble() * (max - min) + min;
-        }
-
-        private static double Clamp(double val, double min, double max)
-        {
-            if (val < min)
-                val = min;
-            if (val > max)
-                val = max;
-            return val;
         }
 
         ~MainWindow()
@@ -129,7 +85,33 @@ namespace Client
             ComService.RemoveClient(Config.DEFAULT_UDP_CLIENT);
         }
 
-        private string helloTextLocal;
+        private void RedrawCandlestickChart()
+        {
+            var history = TraderModel.Current.GetHistory(TraderModel.Current.SelectedStocksSymbol);
+
+            if (history != null)
+            {
+                var chart = new CandleStickSeries();
+
+                for (int i=0; i< history.Count; i++)
+                {
+                    chart.Items.Add(new HighLowItem(i+1,history[i].High, history[i].Low, history[i].Open, history[i].Close));
+                }
+                MyModel.Series.Clear();
+                MyModel.Series.Add(chart);
+                MyModel.InvalidatePlot(true);
+                MyModel.ResetAllAxes();
+
+                chart.XAxis.IsZoomEnabled = false;
+                chart.YAxis.IsZoomEnabled = false;
+            }
+            else
+            {
+                MyModel.InvalidatePlot(false);
+            }
+        }   
+
+        private string helloTextLocal; //Todo: change this to fading status field
         public string HelloTextLocal
         {
             get => helloTextLocal;
@@ -139,12 +121,10 @@ namespace Client
                 {
                     helloTextLocal = value;
                     helloWorld.HelloText = value;
-
-                    //PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("HelloTextLocal"));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("HelloTextLocal"));
                 }
             }
         }
-
 
         public void OnStockSelected(object sender, RoutedEventArgs e)
         {
@@ -154,15 +134,13 @@ namespace Client
             {
                 TraderModel.Current.SelectedStocksSymbol = selectedItem.Symbol;
             }
-            
 
-            RedrawCandlestickChart(GenStockHistory());
+            RedrawCandlestickChart();
         }
 
         public void OnHelloTextChanged(object source, EventArgs args)
         {
-            HelloTextLocal = helloWorld.HelloText;
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("HelloTextLocal"));
+            HelloTextLocal = helloWorld.HelloText; //TODO: break this out into a fading status process
         }
 
         /// <summary>
@@ -174,15 +152,15 @@ namespace Client
         {
             var symbol = TraderModel.Current.SelectedStocksSymbol;
 
-            if (symbol.Equals(""))
+            if (string.IsNullOrEmpty(symbol))
             {
                 HelloTextLocal = "Please select a stock item before attempting a transaction.";
                 return;
             }
 
-            List<ValuatedStock> selectedVStockHistory;
+            List<ValuatedStock> selectedVStockHistory = TraderModel.Current.GetHistory(symbol);
 
-            if (!TraderModel.Current._stockHistoryBySymbol.TryGetValue(symbol, out selectedVStockHistory) || selectedVStockHistory.Count == 0)
+            if (selectedVStockHistory==null || selectedVStockHistory.Count == 0)
             {
                 HelloTextLocal = $"We have not received a recent update for ({symbol}). Transaction canceled.";
                 return;
@@ -261,21 +239,12 @@ namespace Client
 
         private void BuyEvent(object sender, RoutedEventArgs e)
         {
-
-
             SendTransaction(int.Parse(StockCount));
-
         }
 
         private void SellEvent(object sender, RoutedEventArgs e)
         {
             SendTransaction(-int.Parse(StockCount));
-
-        }
-
-        public void Button_Click_1(object sender, EventArgs e)
-        {
-
         }
 
         public void LeaderboardChanged()
@@ -289,17 +258,10 @@ namespace Client
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("LeaderBoard"));
         }
 
-        public void StockHistoryChanged()
-        {
-
-        }
-
         public void ReDrawPortfolioItems()
         {
             Application.Current?.Dispatcher?.Invoke(() =>
             {
-
-
                 ValueOfAssets.Clear();
                 float totalNetWorth = TraderModel.Current.QtyCash;
 
@@ -340,13 +302,7 @@ namespace Client
 
                         if (stockButton == null)
                         {
-                            float price = 0;//If current price isn't yet known, assume $1
-                            List<ValuatedStock> hist;
-                            if (TraderModel.Current._stockHistoryBySymbol.TryGetValue(vStock.Symbol, out hist))
-                            {
-                                price = hist.Last().Close;
-                            }
-
+                            float price = TraderModel.Current.GetRecentValue(vStock.Symbol);
                             StockList.Add(new StockButton(vStock.Symbol, 0, price));
                         }
                     }
