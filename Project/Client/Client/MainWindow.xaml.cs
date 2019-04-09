@@ -4,21 +4,14 @@ using OxyPlot;
 using OxyPlot.Series;
 using Shared;
 using Shared.Comms.ComService;
-using Shared.Conversations;
-using Shared.MarketStructures;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Shapes;
-using Shared.Comms.Messages;
-using Client.Conversations.LeaderboardUpdate;
-using static Client.Conversations.LeaderboardUpdate.ReceiveLeaderboardUpdateState;
 using static Client.Conversations.StockUpdate.ReceiveStockUpdateState;
-using System.Collections;
-using System.Collections.ObjectModel;
 
 namespace Client
 {
@@ -43,13 +36,13 @@ namespace Client
         {
             public string Symbol { get; set; }
             public int QtyOwned { get; set; }
-            public float Price { get; set; }
+            public string Price { get; set; }
 
-            public StockButton(string symbol,int qtyOwned,float price)
+            public StockButton(string symbol, int qtyOwned, float price)
             {
                 Symbol = symbol;
                 QtyOwned = qtyOwned;
-                Price = Price;
+                Price = price.ToString("C2");
             }
         }
 
@@ -77,15 +70,16 @@ namespace Client
 
             InitializeComponent();
 
+            StockList.Add(new StockButton("GOOG", 42, 45.67f));
+            StockList.Add(new StockButton("AMZN", 42, 32.1f));
+            StockList.Add(new StockButton("AAPL", 42, 150));
+
             TModel = model;
             TModel.Handler = this;
-            this.Title = $"{TModel.Portfolio.Username}'s Portfolio.";
 
-            var cash = TModel.Portfolio.Assets.Where(s => s.Key.Equals("$")).FirstOrDefault().Value;
-            TModel.QtyCash = cash.Quantity;
-            
+            ReDrawPortfolio();
 
-            StockUpdateEventHandler += ReceivedStockUpdate;
+            Title = $"{TModel.Portfolio.Username}'s Portfolio.";
 
             DataContext = this;
 
@@ -94,13 +88,11 @@ namespace Client
 
             GenerateDummyData();
 
-            StockList.Add(new StockButton("AAPL",42,45.67f));
-            StockList.Add(new StockButton("AMZN", 42, 32.1f));
+
 
             this.MyModel = new PlotModel { Title = "Selected Stock Name (SMBL)" };
 
             RedrawCandlestickChart(GenStockHistory());
-            //ReDrawPortfolio();
 
             Log.Debug($"{nameof(MainWindow)} (exit)");
         }
@@ -125,7 +117,8 @@ namespace Client
             return hist;
         }
 
-        private void RedrawCandlestickChart(List<HighLowItem> newData) {
+        private void RedrawCandlestickChart(List<HighLowItem> newData)
+        {
             var chart = new CandleStickSeries();
             chart.Items.AddRange(newData);
             MyModel.Series.Clear();
@@ -167,65 +160,7 @@ namespace Client
                 }
             }
         }
-        public void UpdateStockPanels()
-        {
-            stockPanels.Items.Clear();
-            MarketDay day = mem.History[mem.History.Count - 1];
 
-            foreach (ValuatedStock i in day.TradedCompanies)
-            {
-
-                if (i.Symbol.Equals("$"))
-                {
-                    //TODO: Do something to display the user's cash value
-                    //mem.Cash = i.Close;//Note: this is a awkward place to save the cash value but for now it is the only place.
-                }
-                else
-                {
-                    Canvas shell = new Canvas
-                    {
-                        Height = 52,
-                        Width = 183,
-                    };
-                    Rectangle back = new Rectangle
-                    {
-                        Height = 52,
-                        Width = 183
-                    };
-                    TextBlock sym = new TextBlock
-                    {
-                        Text = i.Symbol,
-                        Padding = new Thickness(5, 5, 0, 0)
-                    };
-                    TextBlock val = new TextBlock
-                    {
-                        Text = i.Close.ToString("C0"),
-                        Width = 179,
-                        Padding = new Thickness(5),
-                        TextAlignment = TextAlignment.Right
-                    };
-
-                    TextBlock amount = new TextBlock
-                    {
-                        Text = "",
-                        Margin = new Thickness(5, 25, 0, 0)
-                    };
-
-                    int qty = mem.MyPortfolio.GetAsset(i.Symbol).Quantity;
-                    if (qty > 0)
-                    {
-                        amount.Text = qty + " Owned";
-                    }
-
-                    shell.Children.Insert(0, back);
-                    shell.Children.Insert(1, sym);
-                    shell.Children.Insert(2, val);
-                    shell.Children.Insert(3, amount);
-                    
-                    stockPanels.Items.Add(shell);
-                }
-            }
-        }
 
         public void OnStockSelected(object sender, RoutedEventArgs e)
         {
@@ -350,7 +285,7 @@ namespace Client
         public void LeaderboardChanged()
         {
             LeaderBoard.Clear();
-            SortedList<float,string> list = TraderModel.Current.Leaderboard;
+            SortedList<float, string> list = TraderModel.Current.Leaderboard;
             for (int i = list.Count - 1; i >= 0 && i > list.Count - 10; i--)
             {
                 LeaderBoard.Add(new Leaders() { value = list.Keys[i].ToString("C0"), name = list.Values[i] });
@@ -370,24 +305,37 @@ namespace Client
             float totalNetWorth = TraderModel.Current.QtyCash;
 
             //show cash first
-            ValueOfAssets.Add(new AssetNetValue("CASH","", TraderModel.Current.QtyCash.ToString("C2")));
+            ValueOfAssets.Add(new AssetNetValue("CASH", "", TraderModel.Current.QtyCash.ToString("C2")));
 
             //Clear qty owned for every item in stock list
-            //foreach(var stockButton in stockPanels.Items)
-            //{
-                //
-            //}
+            foreach (StockButton s in StockList)
+            {
+                s.QtyOwned = 0;
+            }
 
             //repopulate total net box
             var assets = TraderModel.Current.OwnedStocksByValue.Reverse();
-            foreach(var asset in assets)
+            foreach (var asset in assets)
             {
                 var symbol = asset.Value.RelatedStock.Symbol;
-                //TODO: add qty owned for this item in stock list
+                if (symbol.Equals("$")) continue;
+
+                var qtyOwned = asset.Value.Quantity;
+
+                var stockButton = (StockList.Where(s => s.Symbol.Equals(symbol))).FirstOrDefault();
+                if (stockButton == null)
+                {
+                    HelloTextLocal = $"Notice: You own stock in ({symbol}) which we haven't yet received data for.";
+                }
+                else
+                {
+                    stockButton.QtyOwned = qtyOwned;
+                }
+
                 totalNetWorth += asset.Key;
-                ValueOfAssets.Add(new AssetNetValue(symbol, asset.Value.Quantity.ToString(), asset.Key.ToString("C2")));
+                ValueOfAssets.Add(new AssetNetValue(symbol, qtyOwned.ToString(), asset.Key.ToString("C2")));
             }
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ValueOfAssets"));
+            //PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ValueOfAssets"));
             TotalValueGridTextColumn.Header = totalNetWorth.ToString("C2");
         }
 

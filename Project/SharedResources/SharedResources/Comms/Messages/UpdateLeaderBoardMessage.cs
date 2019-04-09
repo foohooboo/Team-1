@@ -8,7 +8,7 @@ namespace Shared.Comms.Messages
     {
         public UpdateLeaderBoardMessage()
         {
-            
+            SerializedRecords = "";
         }
 
 

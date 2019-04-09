@@ -13,14 +13,14 @@ namespace CommSystem
         {
             Log.Debug($"{nameof(HelloWorld)} (enter)");
 
-            _helloText = "Welcome to the Team-1 Stock Sim. Where you can practice without risk. Good luck!";
+            _helloText = "Welcome to the Team-1 Stock Sim.     Good luck!";
 
             //Temporary Task...
             //Update the text from a "different source(thread)" in 10 seconds.
             //Used to ensure changes to this shared resource are reflected in each dependent project. 
             new Task(() =>
             {
-                Thread.Sleep(5000);
+                Thread.Sleep(10000);
                 HelloText = "";
             }).Start();
 

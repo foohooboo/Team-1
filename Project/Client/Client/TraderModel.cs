@@ -2,6 +2,7 @@
 using Shared.PortfolioResources;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace Client
 {
@@ -28,6 +29,16 @@ namespace Client
             set
             {
                 _portfolio = value;
+
+                _ownedStocksByValue.Clear();
+                foreach(var ownedStock in value.Assets.Values)
+                {
+                    //TODO: Either changed the sortedlist to OwnedByQty, or factor in prices right here.
+                    _ownedStocksByValue.Add(ownedStock.Quantity, ownedStock);
+                }
+
+                QtyCash = value.Assets.Where(s => s.Key.Equals("$")).FirstOrDefault().Value.Quantity;
+
                 Handler?.ProfileChanged();
             }
         }
