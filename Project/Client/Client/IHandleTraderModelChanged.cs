@@ -8,9 +8,8 @@ namespace Client
 {
     public interface IHandleTraderModelChanged
     {
-        void ProfileChanged();
         void LeaderboardChanged();
         void StockHistoryChanged();
-        void ReDrawPortfolio();
+        void ReDrawPortfolioItems();
     }
 }

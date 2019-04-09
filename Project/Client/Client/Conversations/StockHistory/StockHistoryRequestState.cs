@@ -27,10 +27,10 @@ namespace Client.Conversations.StockHistory
 
             switch (incomingMessage.Contents)
             {
-                case PortfolioUpdateMessage m:
-                    Log.Debug($"Received portfolio for ...\n{m.PortfolioID}");
+                case StockStreamResponseMessage m:
+                    Log.Debug($"Received stock history for.");
 
-                    // TODO: Update portfolio model data.
+                    TraderModel.Current.StockHistory = m.RecentHistory;
 
                     nextState = new ConversationDoneState(Conversation, this);
                     break;

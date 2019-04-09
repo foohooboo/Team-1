@@ -46,7 +46,7 @@ namespace Broker.Conversations.GetPortfolio
             Log.Debug($"{nameof(Prepare)} (enter)");
             var message = GetMessage();
 
-            // If we retreived a portfolio, add the receiver to the client list.
+            // If we retrieved a portfolio, add the receiver to the client list.
             if (message is PortfolioUpdateMessage m)
             {
                 ClientManager.TryToAdd(To);

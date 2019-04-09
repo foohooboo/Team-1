@@ -4,6 +4,8 @@ using OxyPlot;
 using OxyPlot.Series;
 using Shared;
 using Shared.Comms.ComService;
+using Shared.MarketStructures;
+using Shared.PortfolioResources;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -70,6 +72,8 @@ namespace Client
 
             InitializeComponent();
 
+            
+
             StockList.Add(new StockButton("GOOG", 42, 45.67f));
             StockList.Add(new StockButton("AMZN", 42, 32.1f));
             StockList.Add(new StockButton("AAPL", 42, 150));
@@ -77,7 +81,51 @@ namespace Client
             TModel = model;
             TModel.Handler = this;
 
-            ReDrawPortfolio();
+            var simHistory = new MarketSegment();
+            var simDay = new MarketDay("SomeDate");
+
+            GenerateDummyData();
+
+            simDay.TradedCompanies.Add(
+                new ValuatedStock()
+                {
+                    Symbol = "GOOG",
+                    Name = "Google or something",
+                    Close = 45,
+                    Open = 40,
+                    High = 50,
+                    Low = 30,
+                    Volume = 500
+                });
+
+            simDay.TradedCompanies.Add(
+                new ValuatedStock()
+                {
+                    Symbol = "AAPL",
+                    Name = "Apple Inc.",
+                    Close = 145,
+                    Open = 140,
+                    High = 150,
+                    Low = 130,
+                    Volume = 1500
+                });
+
+            simDay.TradedCompanies.Add(
+                new ValuatedStock()
+                {
+                    Symbol = "AMZN",
+                    Name = "Amazon",
+                    Close = 245,
+                    Open = 240,
+                    High = 250,
+                    Low = 230,
+                    Volume = 2500
+                });
+
+            simHistory.Add(simDay);
+            TModel.StockHistory = simHistory;
+
+            ReDrawPortfolioItems();
 
             Title = $"{TModel.Portfolio.Username}'s Portfolio.";
 
@@ -86,7 +134,7 @@ namespace Client
             helloWorld.HelloTextChanged += OnHelloTextChanged;
             HelloTextLocal = helloWorld.HelloText;
 
-            GenerateDummyData();
+            
 
 
 
@@ -164,7 +212,9 @@ namespace Client
 
         public void OnStockSelected(object sender, RoutedEventArgs e)
         {
-            //TODO: move the logic that tracks what is selected to here instead of in the beginning of transaction.
+            var selectedItem = stockPanels.SelectedItem as StockButton;
+
+            TraderModel.Current.SelectedStocksSymbol = selectedItem.Symbol;
 
             RedrawCandlestickChart(GenStockHistory());
         }
@@ -182,20 +232,15 @@ namespace Client
             //Instead of selling 100 it just sells what you have.
             //instead of buying 100 it just buys as much as your cash can afford.
 
-            var symbol = "";
-            var selectedItem = stockPanels.SelectedItem;
+            var symbol = TraderModel.Current.SelectedStocksSymbol;
 
-            if (selectedItem == null)
+            if (symbol.Equals(""))
             {
-                //TODO: Move the following message to a better location, perhaps the place we will show error messages?
-                HelloTextLocal = "You must select a stock item before attempting a transaction.";
+                HelloTextLocal = "Please select a stock item before attempting a transaction.";
                 return;
             }
 
-            var selectedStockCanvas = selectedItem as Canvas;
-            symbol = (selectedStockCanvas.Children[1] as TextBlock).Text;
-
-            var selectedVStock = mem.History[mem.History.Count - 1].TradedCompanies.SingleOrDefault(tc => tc.Symbol.Equals(symbol));
+            var selectedVStock = TraderModel.Current._stockHistoryBySymbol[symbol].Last();
             if (selectedVStock != null)
             {
                 float value = selectedVStock.Close;
@@ -211,12 +256,27 @@ namespace Client
                 //selling
                 else
                 {
-                    if (-amount > mem.MyPortfolio.GetAsset(symbol).Quantity)
+                    Asset ownedAsset = null;
+                    var amountOwned = 0;
+
+                    if (TraderModel.Current.Portfolio.Assets.TryGetValue(symbol, out ownedAsset))
                     {
-                        amount = -mem.MyPortfolio.GetAsset(symbol).Quantity;
+                        amountOwned = ownedAsset.Quantity;
+                    }
+
+                    if (-amount > amountOwned)
+                    {
+                        amount = -amountOwned;
                     }
                 }
-                HelloTextLocal = $"Initiated transaction for {amount} shares of {selectedVStock.Name} ({selectedVStock.Symbol}).";
+                if (amount == 0)
+                {
+                    HelloTextLocal = "Cannot perform the desired transaction.";
+                }
+                else
+                {
+                    HelloTextLocal = $"Initiated transaction for {amount} shares of {selectedVStock.Name} ({selectedVStock.Symbol}).";
+                }
             }
         }
 
@@ -277,11 +337,6 @@ namespace Client
             //UpdateStockPanels();
         }
 
-        public void ProfileChanged()
-        {
-            throw new NotImplementedException();
-        }
-
         public void LeaderboardChanged()
         {
             LeaderBoard.Clear();
@@ -295,25 +350,21 @@ namespace Client
 
         public void StockHistoryChanged()
         {
-            throw new NotImplementedException();
+            
         }
 
-        public void ReDrawPortfolio()
+        public void ReDrawPortfolioItems()
         {
-            //return;
             ValueOfAssets.Clear();
             float totalNetWorth = TraderModel.Current.QtyCash;
 
             //show cash first
             ValueOfAssets.Add(new AssetNetValue("CASH", "", TraderModel.Current.QtyCash.ToString("C2")));
 
-            //Clear qty owned for every item in stock list
-            foreach (StockButton s in StockList)
-            {
-                s.QtyOwned = 0;
-            }
+            //Clear stock list, then populate with owned stocks, followed by unowned
+            StockList.Clear();
 
-            //repopulate total net box
+            //repopulate total net box and owned stocks in stocklist
             var assets = TraderModel.Current.OwnedStocksByValue.Reverse();
             foreach (var asset in assets)
             {
@@ -322,21 +373,46 @@ namespace Client
 
                 var qtyOwned = asset.Value.Quantity;
 
-                var stockButton = (StockList.Where(s => s.Symbol.Equals(symbol))).FirstOrDefault();
-                if (stockButton == null)
+                float price = 0;//If current price isn't yet known, assume $1
+                List<ValuatedStock> hist;
+
+                if (TraderModel.Current._stockHistoryBySymbol.TryGetValue(symbol, out hist))
                 {
-                    HelloTextLocal = $"Notice: You own stock in ({symbol}) which we haven't yet received data for.";
+                    price = hist.Last().Close;
                 }
-                else
-                {
-                    stockButton.QtyOwned = qtyOwned;
-                }
+
+                StockList.Add(new StockButton(symbol, qtyOwned, price));
 
                 totalNetWorth += asset.Key;
                 ValueOfAssets.Add(new AssetNetValue(symbol, qtyOwned.ToString(), asset.Key.ToString("C2")));
             }
-            //PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ValueOfAssets"));
+
             TotalValueGridTextColumn.Header = totalNetWorth.ToString("C2");
+
+            //Populate unowned stocks in stock list
+            if (TraderModel.Current.StockHistory?.Count > 0)
+            {
+                foreach (var vStock in TraderModel.Current.StockHistory[0].TradedCompanies)
+                {
+                    if (vStock.Symbol.Equals("$")) continue;
+
+                    var stockButton = StockList.Where(s => s.Symbol.Equals(vStock.Symbol)).FirstOrDefault();
+
+                    if (stockButton == null)
+                    {
+                        float price = 0;//If current price isn't yet known, assume $1
+                        List<ValuatedStock> hist;
+                        if (TraderModel.Current._stockHistoryBySymbol.TryGetValue(vStock.Symbol, out hist))
+                        {
+                            price = hist.Last().Close;
+                        }
+
+                        StockList.Add(new StockButton(vStock.Symbol, 0, price));
+                    }
+                }
+            }
+
+            //PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ValueOfAssets"));
         }
 
         public class AssetNetValue
