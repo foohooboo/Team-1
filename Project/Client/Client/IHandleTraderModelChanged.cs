@@ -11,6 +11,6 @@ namespace Client
         void ProfileChanged();
         void LeaderboardChanged();
         void StockHistoryChanged();
-
+        void ReDrawPortfolio();
     }
 }

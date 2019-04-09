@@ -27,11 +27,30 @@ namespace Client
         public TraderModel TModel;
 
         public ObservableCollection<Leaders> LeaderBoard { get; set; } = new ObservableCollection<Leaders>();
+        public ObservableCollection<AssetNetValue> ValueOfAssets { get; set; } = new ObservableCollection<AssetNetValue>();
+
+        public ObservableCollection<StockButton> StockList { get; set; } = new ObservableCollection<StockButton>();
+
+        public float TotalNetWorth { get; set; } = 12234234234.45f;
 
         public class Leaders
         {
             public string value { get; set; }
             public string name { get; set; }
+        }
+
+        public class StockButton
+        {
+            public string Symbol { get; set; }
+            public int QtyOwned { get; set; }
+            public float Price { get; set; }
+
+            public StockButton(string symbol,int qtyOwned,float price)
+            {
+                Symbol = symbol;
+                QtyOwned = qtyOwned;
+                Price = Price;
+            }
         }
 
 
@@ -62,6 +81,10 @@ namespace Client
             TModel.Handler = this;
             this.Title = $"{TModel.Portfolio.Username}'s Portfolio.";
 
+            var cash = TModel.Portfolio.Assets.Where(s => s.Key.Equals("$")).FirstOrDefault().Value;
+            TModel.QtyCash = cash.Quantity;
+            
+
             StockUpdateEventHandler += ReceivedStockUpdate;
 
             DataContext = this;
@@ -71,9 +94,13 @@ namespace Client
 
             GenerateDummyData();
 
+            StockList.Add(new StockButton("AAPL",42,45.67f));
+            StockList.Add(new StockButton("AMZN", 42, 32.1f));
+
             this.MyModel = new PlotModel { Title = "Selected Stock Name (SMBL)" };
 
             RedrawCandlestickChart(GenStockHistory());
+            //ReDrawPortfolio();
 
             Log.Debug($"{nameof(MainWindow)} (exit)");
         }
@@ -158,7 +185,7 @@ namespace Client
                     Canvas shell = new Canvas
                     {
                         Height = 52,
-                        Width = 183
+                        Width = 183,
                     };
                     Rectangle back = new Rectangle
                     {
@@ -168,29 +195,33 @@ namespace Client
                     TextBlock sym = new TextBlock
                     {
                         Text = i.Symbol,
-                        Margin = new Thickness(2)
+                        Padding = new Thickness(5, 5, 0, 0)
                     };
                     TextBlock val = new TextBlock
                     {
-                        Text = i.Close.ToString("0.00"),
+                        Text = i.Close.ToString("C0"),
                         Width = 179,
+                        Padding = new Thickness(5),
                         TextAlignment = TextAlignment.Right
                     };
-                    int qty = mem.MyPortfolio.GetAsset(i.Symbol).Quantity;
 
+                    TextBlock amount = new TextBlock
+                    {
+                        Text = "",
+                        Margin = new Thickness(5, 25, 0, 0)
+                    };
+
+                    int qty = mem.MyPortfolio.GetAsset(i.Symbol).Quantity;
+                    if (qty > 0)
+                    {
+                        amount.Text = qty + " Owned";
+                    }
 
                     shell.Children.Insert(0, back);
                     shell.Children.Insert(1, sym);
                     shell.Children.Insert(2, val);
-                    if (qty != 0)
-                    {
-                        TextBlock amount = new TextBlock
-                        {
-                            Text = qty + " owned",
-                            Margin = new Thickness(2, 20, 0, 0)
-                        };
-                        shell.Children.Insert(3, amount);
-                    }
+                    shell.Children.Insert(3, amount);
+                    
                     stockPanels.Items.Add(shell);
                 }
             }
@@ -308,7 +339,7 @@ namespace Client
             mem.Cash = 100000;
             mem.History = ManagedData.makeupMarketSegment(15, 30);
             mem.MyPortfolio = ManagedData.makeupPortfolio(mem.History[0]);
-            UpdateStockPanels();
+            //UpdateStockPanels();
         }
 
         public void ProfileChanged()
@@ -330,6 +361,48 @@ namespace Client
         public void StockHistoryChanged()
         {
             throw new NotImplementedException();
+        }
+
+        public void ReDrawPortfolio()
+        {
+            //return;
+            ValueOfAssets.Clear();
+            float totalNetWorth = TraderModel.Current.QtyCash;
+
+            //show cash first
+            ValueOfAssets.Add(new AssetNetValue("CASH","", TraderModel.Current.QtyCash.ToString("C2")));
+
+            //Clear qty owned for every item in stock list
+            //foreach(var stockButton in stockPanels.Items)
+            //{
+                //
+            //}
+
+            //repopulate total net box
+            var assets = TraderModel.Current.OwnedStocksByValue.Reverse();
+            foreach(var asset in assets)
+            {
+                var symbol = asset.Value.RelatedStock.Symbol;
+                //TODO: add qty owned for this item in stock list
+                totalNetWorth += asset.Key;
+                ValueOfAssets.Add(new AssetNetValue(symbol, asset.Value.Quantity.ToString(), asset.Key.ToString("C2")));
+            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ValueOfAssets"));
+            TotalValueGridTextColumn.Header = totalNetWorth.ToString("C2");
+        }
+
+        public class AssetNetValue
+        {
+            public string Symbol { get; private set; }
+            public string Quantity { get; private set; }
+            public string TotalValue { get; private set; }
+
+            public AssetNetValue(string symbol, string quantity, string totalValue)
+            {
+                Symbol = symbol;
+                Quantity = quantity;
+                TotalValue = totalValue;
+            }
         }
     }
 }

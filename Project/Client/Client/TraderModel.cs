@@ -7,12 +7,14 @@ namespace Client
 {
     public class TraderModel
     {
-
         public IHandleTraderModelChanged Handler;
 
         private Portfolio _portfolio;
         private MarketSegment _stockHistory;
-        public SortedList<float,string> _leaderboard;
+        private SortedList<float,string> _leaderboard;
+        private float _qtyCash;
+        private SortedList<float, Asset> _ownedStocksByValue = new SortedList<float, Asset>();
+
 
         /// <summary>
         /// This static TraderModel is a shortcut to share the active TraderModel to anyone that needs it (like conversations).
@@ -40,12 +42,33 @@ namespace Client
             }
         }
 
-        public SortedList<float,string> Leaderboard{
+        public SortedList<float,string> Leaderboard
+        {
             get => _leaderboard;
             set
             {
                 _leaderboard = value;
                 Handler?.LeaderboardChanged();
+            }
+        }
+
+        public float QtyCash
+        {
+            get => _qtyCash;
+            set
+            {
+                _qtyCash = value;
+                Handler?.ReDrawPortfolio();
+            }
+        }
+
+        public SortedList<float, Asset> OwnedStocksByValue
+        {
+            get => _ownedStocksByValue;
+            set
+            {
+                _ownedStocksByValue = value;
+                Handler?.ReDrawPortfolio();
             }
         }
     }

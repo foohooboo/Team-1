@@ -24,19 +24,19 @@
         </Grid.ColumnDefinitions>
 
         <oxy:PlotView Model="{Binding MyModel}" Grid.ColumnSpan="3" Background="Black" Foreground="White"/>
-        <ListBox x:Name="stockPanels" Grid.Column="3" Grid.RowSpan="2" Background="#00000000" SelectionChanged="OnStockSelected">
-            <Canvas Height="52" Width="183">
-                <Rectangle Height="52" Width="183" />
-                <TextBlock x:Name="textBlock1" TextWrapping="Wrap" Text="TextBlock" Margin="2"/>
-            </Canvas>
-            <Canvas Height="52" Width="183">
-                <Rectangle Height="52" Width="183" />
-                <TextBlock x:Name="textBlock2" TextWrapping="Wrap" Text="TextBlock" Margin="2"/>
-            </Canvas>
-            <Canvas Height="52" Width="183">
-                <Rectangle Height="52" Width="183" />
-                <TextBlock x:Name="textBlock3" TextWrapping="Wrap" TextAlignment="Right" Text="TextBlock" Canvas.Left="124"/>
-            </Canvas>
+        <ListBox ItemsSource="{Binding StockList}"  x:Name="stockPanels" Grid.Column="3" Grid.RowSpan="2" Background="#00000000" SelectionChanged="OnStockSelected">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="100" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{Binding Symbol}" />
+                        <!--<ProgressBar Grid.Column="1" Minimum="0" Maximum="100" Value="{Binding Completion}" />-->
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
 
         </ListBox>
 
@@ -65,21 +65,53 @@
                 <Button x:Name="Sell" Content="Sell" Click="SellEvent" Grid.Row="3" Margin="2" Grid.Column="1"/>
             </Grid>
         </Border>
-        <DataGrid x:Name="portfolioView" Grid.Column="1" Grid.Row="1" Margin="0" Background="Black" AlternatingRowBackground="DarkSlateGray">
+
+        <!--Assets Value Display-->
+        <DataGrid ItemsSource="{Binding ValueOfAssets}" x:Name="portfolioView" Grid.Column="1" Grid.Row="1" Background="Black" AutoGenerateColumns="False" IsReadOnly="True" CanUserResizeColumns="False" CanUserResizeRows="False" RowHeaderWidth="0" IsHitTestVisible="False" BorderBrush="White">
+            <DataGrid.Resources>
+                <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
+                    <Setter Property="Background" Value="#202020"/>
+                    <Setter Property="Foreground" Value="White" />
+                    <Setter Property="Padding" Value="5,2,0,2" />
+
+                </Style>
+                <Style x:Key="CellRightAlign">
+                    <Setter Property="Control.HorizontalAlignment"
+            Value="Right" />
+                </Style>
+
+            </DataGrid.Resources>
+            <DataGrid.RowBackground>Black</DataGrid.RowBackground>
+
+
             <DataGrid.Columns>
 
+                <DataGridTextColumn Binding="{Binding Path=Symbol}" Header="Net:" Width="25*" Foreground="White"/>
+                <DataGridTextColumn Binding="{Binding Path=Quantity}" Header="" Width="18*" Foreground="White"/>
+                <DataGridTextColumn Binding="{Binding Path=TotalValue}" x:Name="TotalValueGridTextColumn" Header="$1,000,000,000" Width="50*" Foreground="White" CellStyle="{StaticResource CellRightAlign}">
+                    <DataGridTextColumn.HeaderStyle>
+                        <Style TargetType="{x:Type DataGridColumnHeader}">
+                            <Setter Property="HorizontalContentAlignment" Value="Right"/>
+                            <Setter Property="Background" Value="#202020"/>
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter Property="Padding" Value="0,0,5,0"/>
+                        </Style>
+                    </DataGridTextColumn.HeaderStyle>
+                </DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
 
+        <!--Leaderboard-->
         <DataGrid ItemsSource="{Binding LeaderBoard}" x:Name="highScoreView" Grid.Row="1" Background="Black" AutoGenerateColumns="False" IsReadOnly="True" CanUserResizeColumns="False" CanUserResizeRows="False" RowHeaderWidth="0" IsHitTestVisible="False" BorderBrush="White">
             <DataGrid.Resources>
                 <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
                     <Setter Property="Background" Value="#202020"/>
                     <Setter Property="Foreground" Value="White" />
+                    <Setter Property="Padding" Value="5,2,0,2" />
+
                 </Style>
                 <Style x:Key="CellRightAlign">
-                    <Setter Property="Control.HorizontalAlignment"
-            Value="Right" />
+                    <Setter Property="Control.HorizontalAlignment" Value="Right" />
                 </Style>
             </DataGrid.Resources>
             <DataGrid.RowBackground>Black</DataGrid.RowBackground>
