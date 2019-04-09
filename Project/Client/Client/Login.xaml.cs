@@ -4,6 +4,7 @@ using Shared.Comms.ComService;
 using Shared.Conversations;
 using Shared.MarketStructures;
 using Shared.PortfolioResources;
+using System;
 using System.Windows;
 
 namespace Client
@@ -68,13 +69,27 @@ namespace Client
             //Please keep this code in the DEBUG directive. It allows us to advance to MainWindow
             //without having a Broker process running. It should NOT be executed in production.
             //-Dsphar 4/8/2019
+            
             var dummyPortfolio = new Portfolio()
             {
                 Username = "DebugPortfolioName",
                 Password = "password",
             };
-            dummyPortfolio.ModifyAsset(new Asset(new Stock("$", "US Dollars"), 10000));
-            dummyPortfolio.ModifyAsset(new Asset(new Stock("AAPL", "Apple inc"), 30));
+
+            if (TraderModel.Current.StockHistory.Count==0 || TraderModel.Current.StockHistory[0].TradedCompanies.Count == 0)
+            {
+                TraderModel.Current.StockHistory = ManagedData.makeupMarketSegment(10, 30);
+            }
+
+            Random rand = new Random();
+
+            dummyPortfolio.ModifyAsset(new Asset(new Stock() { Symbol = "$" }, rand.Next(10000,500000)));
+
+            for (int i = 0; i < 6; i++)
+            {
+                dummyPortfolio.ModifyAsset(new Asset(TraderModel.Current.StockHistory[0].TradedCompanies[i], rand.Next(1000)));
+            }
+
             LoginSuccess(dummyPortfolio);
 #else
             MessageBox.Show(message);

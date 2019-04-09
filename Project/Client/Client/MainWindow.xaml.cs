@@ -47,9 +47,6 @@ namespace Client
             }
         }
 
-
-        private ManagedData mem = new ManagedData();
-
         public string StockCount { get; set; } = "1";//holds the data in buySell textbox
 
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
@@ -60,11 +57,6 @@ namespace Client
 
         public PlotModel MyModel { get; private set; }
 
-        private void ReceivedStockUpdate(object sender, StockUpdateEventArgs e)
-        {
-            mem.History.Add(e.CurrentDay);
-        }
-
         public MainWindow(TraderModel model)
         {
             Log.Debug($"{nameof(MainWindow)} (enter)");
@@ -73,8 +65,6 @@ namespace Client
 
             TModel = model;
             TModel.Handler = this;
-
-            GenerateDummyData();
 
             Title = $"{TModel.Portfolio.Username}'s Portfolio.";
 
@@ -204,9 +194,10 @@ namespace Client
             //buying
             if (amount > 0)
             {
-                if (mem.Cash < value * amount)
+                var cash = TraderModel.Current.QtyCash;
+                if (cash < value * amount)
                 {
-                    amount = (int)(mem.Cash / value);
+                    amount = (int)(cash / value);
                 }
             }
             //selling
@@ -287,13 +278,6 @@ namespace Client
 
         }
 
-        private void GenerateDummyData()
-        {
-            mem.Cash = 100000;
-            mem.History = ManagedData.makeupMarketSegment(15, 30);
-            mem.MyPortfolio = ManagedData.makeupPortfolio(mem.History[0]);
-        }
-
         public void LeaderboardChanged()
         {
             LeaderBoard.Clear();
@@ -322,26 +306,21 @@ namespace Client
             StockList.Clear();
 
             //repopulate total net box and owned stocks in stocklist
-            var assets = TraderModel.Current.OwnedStocksByValue.Reverse();
+            var assets = TraderModel.Current.OwnedStocksByValue;
             foreach (var asset in assets)
             {
-                var symbol = asset.Value.RelatedStock.Symbol;
+                var symbol = asset.RelatedStock.Symbol;
                 if (symbol.Equals("$")) continue;
 
-                var qtyOwned = asset.Value.Quantity;
+                var qtyOwned = asset.Quantity;
 
-                float price = 0;//If current price isn't yet known, assume $1
-                List<ValuatedStock> hist;
-
-                if (TraderModel.Current._stockHistoryBySymbol.TryGetValue(symbol, out hist))
-                {
-                    price = hist.Last().Close;
-                }
+                float price = TraderModel.Current.GetRecentValue(symbol);
 
                 StockList.Add(new StockButton(symbol, qtyOwned, price));
 
-                totalNetWorth += asset.Key;
-                ValueOfAssets.Add(new AssetNetValue(symbol, qtyOwned.ToString(), asset.Key.ToString("C2")));
+                var assetNet = asset.Quantity * price;
+                totalNetWorth += assetNet;
+                ValueOfAssets.Add(new AssetNetValue(symbol, qtyOwned.ToString(), assetNet.ToString("C2")));
             }
 
             TotalValueGridTextColumn.Header = totalNetWorth.ToString("C2");

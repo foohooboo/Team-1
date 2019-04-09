@@ -1,7 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Shared.MarketStructures;
+﻿using Shared.MarketStructures;
 using Shared.PortfolioResources;
+using SharedResources.DataGeneration;
+using System;
+using System.Collections.Generic;
 
 namespace Client
 {
@@ -11,20 +12,20 @@ namespace Client
         public MarketSegment History { get; set; } = new MarketSegment();
         public Portfolio MyPortfolio { get; set; } = new Portfolio();
         public SortedList<string, string> HighScores { get; set; } = new SortedList<string, string>();
-        
+
         public SortedList<Asset, float> observablePortfolio { get; set; } = new SortedList<Asset, float>();
 
         private static readonly Random random = new Random(54);
-        private static float low, high, open, close,volume;
+        private static float low, high, open, close, volume;
         //Bad data added in manaually for testing
         public static Portfolio makeupPortfolio(MarketDay input)
         {
             Portfolio ret = new Portfolio();
-            foreach(ValuatedStock i in input.TradedCompanies)
+            foreach (ValuatedStock i in input.TradedCompanies)
             {
-                int count=random.Next(0,2);
+                int count = random.Next(0, 2);
                 count *= random.Next(0, 100);
-                ret.Assets.Add(i.Symbol,new Asset(i,count));
+                ret.Assets.Add(i.Symbol, new Asset(i, count));
             }
             return ret;
         }
@@ -33,18 +34,18 @@ namespace Client
         {
             MarketSegment returns = new MarketSegment();
             List<Stock> madeupStocks = new List<Stock>(stocks);
-            for (int i = 0; i < stocks; i++)
+            for (int i = 1; i <= stocks; i++)
             {
                 madeupStocks.Add(makeupStock());
             }
-            for(int i = 0; i < days; i++)
+            for (int i = 0; i < days; i++)
             {
                 List<ValuatedStock> dayList = new List<ValuatedStock>(stocks);
-                for(int j = 0; j < stocks; j++)
+                for (int j = 0; j < stocks; j++)
                 {
                     dayList.Add(makeupValuatedStock(madeupStocks[j]));
                 }
-                MarketDay dayHolder = new MarketDay("3-26-2019",dayList.ToArray());
+                MarketDay dayHolder = new MarketDay("3-26-2019", dayList.ToArray());
                 returns.Add(dayHolder);
             }
 
@@ -52,20 +53,22 @@ namespace Client
         }
         private static Stock makeupStock()
         {
-            string full = random.Next().ToString().GetHashCode().ToString("X");
-            return new Stock(System.Text.RegularExpressions.Regex.Replace(full, @"[\d-]", string.Empty),full);
-
+            return new Stock(DataGenerator.GetRandomString(4), DataGenerator.GetRandomString(15));
         }
         private static ValuatedStock makeupValuatedStock(Stock s)
         {
-            low = (float)random.Next(10000)/100;
-            high = (float)random.Next(1000)/100 + low;
-            open = (float)random.Next((int)low * 100, (int)high * 100) / 100;
-            close = (float)random.Next((int)low * 100, (int)high * 100) / 100;
-            volume = random.Next(100000);
-            string[] holder = { "3-29-19",low.ToString("0.00"), high.ToString("0.00"), open.ToString("0.00"), close.ToString("0.00"), volume.ToString("0") };
-            return new ValuatedStock(holder, s);
+            var vStock = new ValuatedStock();
 
+            vStock.Name = s.Name;
+            vStock.Symbol = s.Symbol;
+
+            vStock.Low = (float)random.Next(1000);
+            vStock.High = (float)random.Next(100) + vStock.Low;
+            vStock.Open = random.Next((int)vStock.Low, (int)vStock.High);
+            vStock.Close = random.Next((int)vStock.Low, (int)vStock.High);
+            vStock.Volume = random.Next(100000);
+
+            return vStock;
         }
 
     }
