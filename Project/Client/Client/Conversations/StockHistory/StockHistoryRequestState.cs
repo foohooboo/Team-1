@@ -30,7 +30,14 @@ namespace Client.Conversations.StockHistory
                 case StockStreamResponseMessage m:
                     Log.Debug($"Received stock history for.");
 
-                    TraderModel.Current.StockHistory = m.RecentHistory;
+                    if(TraderModel.Current == null)
+                    {
+                        Log.Warn("No current TrdaerModel set. Cannot assign incoming stock history");
+                    }
+                    else
+                    {
+                        TraderModel.Current.StockHistory = m.RecentHistory;
+                    }
 
                     nextState = new ConversationDoneState(Conversation, this);
                     break;

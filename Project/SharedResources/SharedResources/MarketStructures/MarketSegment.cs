@@ -13,5 +13,14 @@ namespace Shared.MarketStructures
         {
             
         }
+
+        public MarketSegment(MarketSegment start)
+        {
+            foreach(var day in start)
+            {
+                var dayCopy = new MarketDay(day);
+                this.Add(dayCopy);
+            }
+        }
     }
 }

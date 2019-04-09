@@ -19,6 +19,10 @@ namespace Client
             ConversationManager.Start(ConversationBuilder.Builder);
 
             ComService.AddClient(Config.DEFAULT_UDP_CLIENT, 0);
+
+            TraderModel.Current = new TraderModel();
+
+
         }
 
         private void Submit_Click(object sender, RoutedEventArgs e)
@@ -48,11 +52,7 @@ namespace Client
 
         public void LoginSuccess(Portfolio portfolio)
         {
-
-            TraderModel.Current = new TraderModel()
-            {
-                Portfolio = portfolio
-            };
+            TraderModel.Current.Portfolio = portfolio;
 
             Dispatcher.Invoke(() =>
             {

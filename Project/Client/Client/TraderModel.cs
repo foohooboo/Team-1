@@ -14,7 +14,7 @@ namespace Client
         public IHandleTraderModelChanged Handler;
 
         private Portfolio _portfolio;
-        private MarketSegment _stockHistory;
+        private MarketSegment _stockHistory = new MarketSegment();
         private SortedList<float,string> _leaderboard;
         private float _qtyCash;
         private SortedList<float, Asset> _ownedStocksByValue = new SortedList<float, Asset>();
@@ -69,9 +69,9 @@ namespace Client
             {
                 lock (stockHistoryLock)
                 {
-
-                    //Do we need to perform a deep copy of this so people using it don't mess with it??
-                    return _stockHistory;
+                    //return deep copy so user wont mess with current.
+                    var copy = new MarketSegment(_stockHistory);
+                    return copy;
                 }
             }
             set
@@ -88,7 +88,6 @@ namespace Client
                         }
                     }
 
-                    Handler?.StockHistoryChanged();
                     Handler?.ReDrawPortfolioItems();
                 }
                 

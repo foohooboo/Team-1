@@ -106,9 +106,8 @@ namespace ClientTest.Conversations
             Assert.IsFalse(conv.CurrentState is StockHistoryRequestState);
             Assert.IsTrue(conv.CurrentState is ConversationDoneState);
             mock.Verify(state => state.Prepare(), Times.Once);
-            mock.Verify(state => state.Send(), Times.Exactly(3));
-            mock.Verify(state => state.HandleTimeout(), Times.Exactly(3));
-            Assert.IsTrue(ConversationManager.ConversationExists(conv.Id));
+            mock.Verify(state => state.Send(), Times.AtLeast(2));
+            mock.Verify(state => state.HandleTimeout(), Times.AtLeast(1));
         }
 
         [TestMethod]
@@ -153,13 +152,13 @@ namespace ClientTest.Conversations
             mock.Verify(state => state.HandleTimeout(), Times.Never);
             Assert.IsTrue(ConversationManager.ConversationExists(conv.Id));
 
-            Thread.Sleep((int)(Config.GetInt(Config.DEFAULT_TIMEOUT) * Config.GetInt(Config.DEFAULT_RETRY_COUNT) * 2.1));
+            Thread.Sleep((int)(Config.GetInt(Config.DEFAULT_TIMEOUT) * Config.GetInt(Config.DEFAULT_RETRY_COUNT) * 1.2));
 
             Assert.IsFalse(conv.CurrentState is StockHistoryRequestState);
             Assert.IsTrue(conv.CurrentState is ConversationDoneState);
             mock.Verify(state => state.Prepare(), Times.Once);
-            mock.Verify(state => state.Send(), Times.Exactly(3));
-            mock.Verify(state => state.HandleTimeout(), Times.AtLeast(3));
+            mock.Verify(state => state.Send(), Times.AtLeast(2));
+            mock.Verify(state => state.HandleTimeout(), Times.AtLeast(1));
             Assert.IsTrue(ConversationManager.ConversationExists(conv.Id));
         }
     }

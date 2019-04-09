@@ -39,6 +39,17 @@ namespace Shared.MarketStructures
             TradedCompanies = new List<ValuatedStock> ();
         }
 
+        public MarketDay(MarketDay original)
+        {
+            var copy = new MarketDay(original.Date);
+            TradedCompanies = new List<ValuatedStock>();
+            foreach(var company in original.TradedCompanies)
+            {
+                var copyCompany = new ValuatedStock(company);
+                TradedCompanies.Add(copyCompany);
+            }
+        }
+
         public MarketDay(string date, ValuatedStock[] starterArray)
         {
             Date = date;

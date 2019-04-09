@@ -9,7 +9,6 @@ namespace Client
     public interface IHandleTraderModelChanged
     {
         void LeaderboardChanged();
-        void StockHistoryChanged();
         void ReDrawPortfolioItems();
     }
 }

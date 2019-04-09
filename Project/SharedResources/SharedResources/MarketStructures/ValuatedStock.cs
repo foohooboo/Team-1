@@ -20,6 +20,18 @@ namespace Shared.MarketStructures
             Volume = 0;
         }
 
+        public ValuatedStock(ValuatedStock original)
+        {
+            Symbol = original.Symbol;
+            Name = original.Name;
+
+            Open = original.Open;
+            High = original.Close;
+            Low = original.Low;
+            Close = original.Close;
+            Volume = original.Volume;
+        }
+
         public ValuatedStock(string[] data, Stock s) : base(s)
         {
             //Expected string[] format: date(unused),open,high,low,close,volume
