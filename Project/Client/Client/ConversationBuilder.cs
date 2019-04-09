@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Client.Conversations.LeaderboardUpdate;
+using Client.Conversations.StockUpdate;
 
 namespace Client
 {
@@ -21,6 +22,11 @@ namespace Client
                 case UpdateLeaderBoardMessage m:
                     conv = new ReceiveLeaderboardUpdateConversation(m.ConversationID);
                     conv.SetInitialState(new ReceiveLeaderboardUpdateState(env, conv));
+                    break;
+
+                case StockPriceUpdate m:
+                    conv = new ReceiveStockUpdateConversation(m.ConversationID);
+                    conv.SetInitialState(new ReceiveStockUpdateState(env, conv));
                     break;
             }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using log4net;
+using Shared;
 using Shared.Comms.ComService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
@@ -33,7 +34,7 @@ namespace Client.Conversations.StockUpdate
             }
         }
 
-        public ReceiveStockUpdateState(Envelope env, Conversation conversation) : base(conversation, null)
+        public ReceiveStockUpdateState(Envelope env, Conversation conversation) : base(env, conversation, null)
         {
             var update = env.Contents as StockPriceUpdate;
             var sigServ = new SignatureService();
@@ -60,7 +61,16 @@ namespace Client.Conversations.StockUpdate
         public override Envelope Prepare()
         {
             StockUpdateEventHandler?.Invoke(this, new StockUpdateEventArgs(StockUpdate));
-            return null;
+
+            var ackmessage = MessageFactory.GetMessage<AckMessage>(Config.GetInt(Config.CLIENT_PROCESS_NUM), 0);
+            ackmessage.ConversationID = Conversation.Id;
+
+            var env = new Envelope(ackmessage)
+            {
+                To = this.To
+            };
+
+            return env;
         }
     }
 }

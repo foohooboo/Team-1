@@ -1,10 +1,12 @@
 ﻿using Client.Conversations.StockHistory;
+using Client.Conversations.StockUpdate;
 using Shared.Conversations;
 using Shared.MarketStructures;
 using Shared.PortfolioResources;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static Client.Conversations.StockUpdate.ReceiveStockUpdateState;
 
 namespace Client
 {
@@ -37,6 +39,8 @@ namespace Client
             var getStockHistConv = new StockHistoryRequestConversation();
             getStockHistConv.SetInitialState(new StockHistoryRequestState(getStockHistConv));
             ConversationManager.AddConversation(getStockHistConv);
+
+            ReceiveStockUpdateState.StockUpdateEventHandler += HandleStockUpdate;
         }
 
         public Portfolio Portfolio
@@ -159,6 +163,15 @@ namespace Client
             }
 
             return price;
+        }
+
+        public void HandleStockUpdate(object sender, StockUpdateEventArgs args)
+        {
+            foreach( var vStock in args.CurrentDay.TradedCompanies)
+            {
+                AddStockToHistory(vStock);
+            }
+            Handler?.ReDrawPortfolioItems();
         }
     }
 }
