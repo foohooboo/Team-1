@@ -56,8 +56,8 @@ namespace Client
 
         private static Random rand = new Random();
 
-        public PlotModel CandelestickView { get; private set; }
-        public PlotModel VolumeView { get; private set; }
+        public PlotModel CandelestickView { get; private set; } = new PlotModel { TitleColor = OxyColors.White, IsLegendVisible = false};
+        
 
         public MainWindow(TraderModel model)
         {
@@ -65,21 +65,15 @@ namespace Client
 
             InitializeComponent();
 
+            DataContext = this;
+
             TModel = model;
             TModel.Handler = this;
 
             Title = $"{TModel.Portfolio.Username}'s Portfolio.";
 
-            DataContext = this;
-
             helloWorld.HelloTextChanged += OnHelloTextChanged;
             HelloTextLocal = helloWorld.HelloText;
-
-            CandelestickView = new PlotModel { Title = "" };
-            CandelestickView.TitleColor = OxyColors.White;
-            CandelestickView.IsLegendVisible = false;
-
-            VolumeView = new PlotModel { Title = null };
 
             ReDrawPortfolioItems();
 
@@ -140,10 +134,13 @@ namespace Client
 
         private void RedreawVolume(List<ValuatedStock> history)
         {
+            //Note: There seems to be an oxyplot rendering bug on updated Column series via MVVM. As such, I have to push
+            //a whole new PlotModel every time. But hey, at least it works... -Dsphar 4/9/2019
+
+            var series = new ColumnSeries();
+            
             if (history != null && history.Count > 0)
             {
-                var volumeChart = new ColumnSeries();
-
                 float max = history.Max(x => x.Volume);
                 float min = history.Min(x => x.Volume) - (0.05f*max); //Remove en extra 1% of max, so no % is actually 0.
                 float spread = max - min;
@@ -161,22 +158,30 @@ namespace Client
                     else
                         col.Color = OxyColors.Red;
 
-                    volumeChart.Items.Add(col);
+                    series.Items.Add(col);
                 }
 
-                VolumeView.Series.Clear();
-                VolumeView.Series.Add(volumeChart);
-                VolumeView.InvalidatePlot(true);
-                VolumeView.ResetAllAxes();
-                volumeChart.XAxis.IsZoomEnabled = false;
-                volumeChart.YAxis.IsZoomEnabled = false;
-                volumeChart.XAxis.IsAxisVisible = false;
+                var model = new PlotModel();
 
-                volumeChart.YAxis.TitleColor = OxyColors.White;
-                volumeChart.YAxis.AxislineColor = OxyColors.Gray;
-                volumeChart.YAxis.Title = "Volume as %";
+                model.Axes.Add(new CategoryAxis
+                {
+                    Position = AxisPosition.Left,
+                    IsZoomEnabled = false,
+                    TitleColor = OxyColors.White,
+                    AxislineColor = OxyColors.Gray,
+                    Title = "Relative Volume %"
+                });
 
+                model.Axes.Add(new CategoryAxis
+                {
+                    Position = AxisPosition.Bottom,
+                    IsZoomEnabled = false,
+                    IsAxisVisible = false,
+                });
 
+                model.Series.Add(series);
+
+                Please.Model = model;
             }
             else
             {

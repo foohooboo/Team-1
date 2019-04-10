@@ -31,12 +31,12 @@
 
             <oxy:PlotView Model="{Binding CandelestickView}" Grid.Row="0" Background="Black" Foreground="White"/>
 
-            <oxy:PlotView Model="{Binding VolumeView}" Grid.Row="1" Background="#010101" Foreground="White" BorderBrush="#202020" BorderThickness="0.5"/>
+            <oxy:PlotView Name="Please" Grid.Row="1" Background="#010101" Foreground="White" BorderBrush="#404040" BorderThickness="0.5"/>
 
 
         </Grid>
-        
-        
+
+
         <ListBox ItemsSource="{Binding StockList}"  x:Name="stockPanels" Grid.Column="3" Grid.RowSpan="2" Background="#00000000" SelectionChanged="OnStockSelected">
             <ListBox.ItemTemplate>
                 <DataTemplate>
@@ -135,7 +135,7 @@
                 <DataGridTextColumn Binding="{Binding Path=value}" Header="" Width="50*" Foreground="White" CellStyle="{StaticResource CellRightAlign}"/>
             </DataGrid.Columns>
         </DataGrid>
-        <TextBlock Text="{Binding HelloTextLocal}" TextWrapping="WrapWithOverflow" HorizontalAlignment="Center" Margin="10,0" VerticalAlignment="Bottom" Width="557" Height="22" Grid.ColumnSpan="3" ScrollViewer.VerticalScrollBarVisibility="Disabled" Padding="10,0" TextAlignment="Center"/>
+        <TextBlock Text="{Binding HelloTextLocal}" TextWrapping="WrapWithOverflow" HorizontalAlignment="Center" Margin="10,0,0,128" VerticalAlignment="Bottom" Width="788" Height="22" Grid.ColumnSpan="3" ScrollViewer.VerticalScrollBarVisibility="Disabled" Padding="10,0" TextAlignment="Center"/>
 
     </Grid>
 </Window>
