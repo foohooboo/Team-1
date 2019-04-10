@@ -23,13 +23,26 @@
             <ColumnDefinition Width="215"/>
         </Grid.ColumnDefinitions>
 
-        <oxy:PlotView Model="{Binding MyModel}" Grid.ColumnSpan="3" Background="Black" Foreground="White"/>
+        <Grid Grid.ColumnSpan="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="70*"/>
+                <RowDefinition Height="30*"/>
+            </Grid.RowDefinitions>
+
+            <oxy:PlotView Model="{Binding CandelestickView}" Grid.Row="0" Background="Black" Foreground="White"/>
+
+            <oxy:PlotView Model="{Binding VolumeView}" Grid.Row="1" Background="#010101" Foreground="White" BorderBrush="#202020" BorderThickness="0.5"/>
+
+
+        </Grid>
+        
+        
         <ListBox ItemsSource="{Binding StockList}"  x:Name="stockPanels" Grid.Column="3" Grid.RowSpan="2" Background="#00000000" SelectionChanged="OnStockSelected">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Canvas Height="52" Margin="0,4,0,4">
 
-                        <Rectangle Height="52" Width="200" Fill="{Binding SelectedValue}" />
+                        <Rectangle Height="52" Width="200"/>
                         <TextBlock Text="{Binding Symbol}" Padding="5,5,0,0" />
                         <TextBlock Text="{Binding Price}" Padding="5" TextAlignment="Right" Width="200" />
                         <TextBlock Text="{Binding QtyOwned, StringFormat='\{0} Owned' }" Margin="5,25,0,0"/>

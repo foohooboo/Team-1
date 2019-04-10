@@ -78,7 +78,7 @@ namespace Client
 
             if (TraderModel.Current.StockHistory.Count==0 || TraderModel.Current.StockHistory[0].TradedCompanies.Count == 0)
             {
-                TraderModel.Current.StockHistory = ManagedData.makeupMarketSegment(10, 30);
+                TraderModel.Current.StockHistory = ManagedData.makeupMarketSegment(10, 50);
             }
 
             Random rand = new Random();

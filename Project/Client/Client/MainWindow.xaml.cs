@@ -1,6 +1,7 @@
 ﻿using CommSystem;
 using log4net;
 using OxyPlot;
+using OxyPlot.Axes;
 using OxyPlot.Series;
 using Shared;
 using Shared.Comms.ComService;
@@ -55,7 +56,8 @@ namespace Client
 
         private static Random rand = new Random();
 
-        public PlotModel MyModel { get; private set; }
+        public PlotModel CandelestickView { get; private set; }
+        public PlotModel VolumeView { get; private set; }
 
         public MainWindow(TraderModel model)
         {
@@ -73,7 +75,11 @@ namespace Client
             helloWorld.HelloTextChanged += OnHelloTextChanged;
             HelloTextLocal = helloWorld.HelloText;
 
-            this.MyModel = new PlotModel { Title = "Selected Stock Name (SMBL)" };
+            CandelestickView = new PlotModel { Title = "" };
+            CandelestickView.TitleColor = OxyColors.White;
+            CandelestickView.IsLegendVisible = false;
+
+            VolumeView = new PlotModel { Title = null };
 
             ReDrawPortfolioItems();
 
@@ -85,31 +91,98 @@ namespace Client
             ComService.RemoveClient(Config.DEFAULT_UDP_CLIENT);
         }
 
-        private void RedrawCandlestickChart()
+        private void RedrawStockChartsCharts()
         {
+            var symbol = TraderModel.Current.SelectedStocksSymbol;
             var history = TraderModel.Current.GetHistory(TraderModel.Current.SelectedStocksSymbol);
 
-            if (history != null)
+            if (history != null && history.Count>0)
             {
-                var chart = new CandleStickSeries();
-
-                for (int i=0; i< history.Count; i++)
-                {
-                    chart.Items.Add(new HighLowItem(i+1,history[i].High, history[i].Low, history[i].Open, history[i].Close));
-                }
-                MyModel.Series.Clear();
-                MyModel.Series.Add(chart);
-                MyModel.InvalidatePlot(true);
-                MyModel.ResetAllAxes();
-
-                chart.XAxis.IsZoomEnabled = false;
-                chart.YAxis.IsZoomEnabled = false;
+                CandelestickView.Title = $"{symbol}  --  {history[0].Name}";
+                RedreawCandlestick(history);
+                RedreawVolume(history);
             }
             else
             {
-                MyModel.InvalidatePlot(false);
+                CandelestickView.Title = null;
+                CandelestickView.InvalidatePlot(false);
             }
-        }   
+        }
+        
+        private void RedreawCandlestick(List<ValuatedStock> history)
+        {
+            if (history != null && history.Count>0)
+            {
+                var candlestickChart = new CandleStickSeries();
+
+                for (int i = 0; i < history.Count; i++)
+                {
+                    candlestickChart.Items.Add(new HighLowItem(i + 1, history[i].High, history[i].Low, history[i].Open, history[i].Close));
+                }
+
+                CandelestickView.Series.Clear();
+                CandelestickView.Series.Add(candlestickChart);
+                CandelestickView.InvalidatePlot(true);
+                CandelestickView.ResetAllAxes();
+                candlestickChart.XAxis.IsZoomEnabled = false;
+                candlestickChart.YAxis.IsZoomEnabled = false;
+                candlestickChart.XAxis.IsAxisVisible = false;
+
+                candlestickChart.YAxis.AxislineColor = OxyColors.Gray;
+                candlestickChart.YAxis.TitleColor = OxyColors.White;
+                candlestickChart.YAxis.Title = "US Dollars";
+            }
+            else
+            {
+                CandelestickView.InvalidatePlot(false);
+            }
+        }
+
+        private void RedreawVolume(List<ValuatedStock> history)
+        {
+            if (history != null && history.Count > 0)
+            {
+                var volumeChart = new ColumnSeries();
+
+                float max = history.Max(x => x.Volume);
+                float min = history.Min(x => x.Volume) - (0.05f*max); //Remove en extra 1% of max, so no % is actually 0.
+                float spread = max - min;
+
+                for (int i = 0; i < history.Count; i++)
+                {
+                    float adjusted = history[i].Volume - min;
+                    float fraction = adjusted / spread;
+                    float percent = fraction * 100;
+
+                    var col = new ColumnItem(percent);
+
+                    if (history[i].Close > history[i].Open)
+                        col.Color = OxyColors.Green;
+                    else
+                        col.Color = OxyColors.Red;
+
+                    volumeChart.Items.Add(col);
+                }
+
+                VolumeView.Series.Clear();
+                VolumeView.Series.Add(volumeChart);
+                VolumeView.InvalidatePlot(true);
+                VolumeView.ResetAllAxes();
+                volumeChart.XAxis.IsZoomEnabled = false;
+                volumeChart.YAxis.IsZoomEnabled = false;
+                volumeChart.XAxis.IsAxisVisible = false;
+
+                volumeChart.YAxis.TitleColor = OxyColors.White;
+                volumeChart.YAxis.AxislineColor = OxyColors.Gray;
+                volumeChart.YAxis.Title = "Volume as %";
+
+
+            }
+            else
+            {
+                CandelestickView.InvalidatePlot(false);
+            }
+        }
 
         private string helloTextLocal; //Todo: change this to fading status field
         public string HelloTextLocal
@@ -135,7 +208,7 @@ namespace Client
                 TraderModel.Current.SelectedStocksSymbol = selectedItem.Symbol;
             }
 
-            RedrawCandlestickChart();
+            RedrawStockChartsCharts();
         }
 
         public void OnHelloTextChanged(object source, EventArgs args)
