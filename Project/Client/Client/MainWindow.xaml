@@ -37,7 +37,7 @@
         </Grid>
 
 
-        <ListBox ItemsSource="{Binding StockList}"  x:Name="stockPanels" Grid.Column="3" Grid.RowSpan="2" Background="#00000000" SelectionChanged="OnStockSelected">
+        <ListBox ItemsSource="{Binding StockList}" ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="stockPanels" Grid.Column="3" Grid.RowSpan="2" Background="#00000000" SelectionChanged="OnStockSelected">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Canvas Height="52" Margin="0,4,0,4">
