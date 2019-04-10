@@ -18,6 +18,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media.Imaging;
 using static Client.Conversations.StockUpdate.ReceiveStockUpdateState;
 
 namespace Client
@@ -48,7 +49,6 @@ namespace Client
         private object LockCleanNotify = new object();
         private bool DoCleanNotify = true;
         private DateTime LastNotification = DateTime.Now;
-        public static string TempImageDirPath = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}/images/buttons";
 
         public PlotModel CandelestickView { get; private set; } = new PlotModel { TitleColor = OxyColors.White, IsLegendVisible = false };
 
@@ -63,7 +63,7 @@ namespace Client
             public string Symbol { get; set; }
             public int QtyOwned { get; set; }
             public string Price { get; set; }
-            public string HistoryPath { get; private set; }
+            public BitmapImage History { get; private set; }
 
             public StockButton(string symbol, int qtyOwned, float price)
             {
@@ -71,14 +71,13 @@ namespace Client
                 QtyOwned = qtyOwned;
                 Price = price.ToString("C2");
 
-                //Note: Creating images is probably the most inefficient way to do this, but
-                //it was easy to implement. Also, I know this is too much work for a constructor, 
-                //but I did it anyway, what you gonna do? -Dsphar 4/10/2019
+                //Note: Creating images is not the most efficient way to do this, 
+                //but it was easy to implement. -Dsphar 4/10/2019
                 try
                 {
                     var historySeries = new OxyPlot.Series.LineSeries
                     {
-
+                        LineStyle = LineStyle.Dash,
                     };
 
                     var hist = TraderModel.Current.GetHistory(symbol);
@@ -95,17 +94,40 @@ namespace Client
                         else
                             historySeries.Color = OxyColors.DarkRed;
 
-                        HistoryPath = $"{TempImageDirPath}/{symbol}.png";
-                        PlotModel graph = new PlotModel();
-                        graph.Series.Add(historySeries);
-                        PngExporter.Export(graph, HistoryPath, 200, 100, OxyColors.White);
+                        PlotModel graph = new PlotModel
+                        {
+                            IsLegendVisible = false,
+                            PlotAreaBorderThickness = new OxyThickness(0)
+                        };
+                        graph.Axes.Add(new OxyPlot.Axes.LinearAxis
+                        {
+                            Position = AxisPosition.Bottom,
+                            IsAxisVisible = false
+                        });
+                        graph.Axes.Add(new OxyPlot.Axes.LinearAxis
+                        {
+                            Position = AxisPosition.Left,
+                            IsAxisVisible = false
+                        });
 
+
+                        graph.Series.Add(historySeries);
+
+                        var stream = new MemoryStream();
+                        PngExporter.Export(graph, stream, 200, 52, OxyColors.Transparent);
+
+                        History = new BitmapImage();
+                        History.BeginInit();
+                        History.StreamSource = stream;
+                        History.CacheOption = BitmapCacheOption.OnLoad;
+                        History.EndInit();
+                        History.Freeze();
                     }
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
-                    HistoryPath = $"{TempImageDirPath}/empty.png";
+                    //HistoryPath = $"{TempImageDirPath}/empty.png";
                 }
             }
         }
@@ -119,10 +141,6 @@ namespace Client
 
             TraderModel.Current.Handler = this;
             Title = $"{TraderModel.Current.Portfolio.Username}'s Portfolio.";
-
-            PrepareImageFolder();
-
-
 
             //start notification monitor
             Task.Run(() =>
@@ -473,19 +491,6 @@ namespace Client
                 Quantity = quantity;
                 TotalValue = totalValue;
             }
-        }
-
-        protected void PrepareImageFolder()
-        {
-            Directory.CreateDirectory(TempImageDirPath);
-            var dir = new DirectoryInfo(TempImageDirPath);
-            foreach (var file in dir.GetFiles()) { file.Delete(); }
-
-            Bitmap bmp = new Bitmap(200, 100);
-            Graphics g = Graphics.FromImage(bmp);
-            g.Clear(Color.Transparent);
-            g.Flush();
-            bmp.Save($"{TempImageDirPath}/empty.png",System.Drawing.Imaging.ImageFormat.Png);
         }
     }
 }

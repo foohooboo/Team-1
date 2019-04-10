@@ -41,18 +41,11 @@
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Canvas Height="52" Margin="0,4,0,4">
-
-                        <Rectangle Height="52" Width="200">
-                            <Rectangle.Fill>
-                                <ImageBrush ImageSource="{Binding HistoryPath}"></ImageBrush>
-                            </Rectangle.Fill>
-                        </Rectangle>
-
+                        <Rectangle Height="52" Width="200"/>
+                        <Image Source="{Binding History}" Stretch="Fill" />
                         <TextBlock Text="{Binding Symbol}" Padding="5,5,0,0" />
                         <TextBlock Text="{Binding Price}" Padding="5" TextAlignment="Right" Width="200" />
                         <TextBlock Text="{Binding QtyOwned, StringFormat='\{0} Owned' }" Margin="5,25,0,0"/>
-
-
                     </Canvas>
                 </DataTemplate>
             </ListBox.ItemTemplate>
