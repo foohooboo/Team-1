@@ -150,8 +150,15 @@ namespace Client
                 candlestickChart.YAxis.IsZoomEnabled = false;
                 candlestickChart.XAxis.IsAxisVisible = false;
 
-                candlestickChart.YAxis.AxislineColor = OxyColors.Gray;
+                candlestickChart.YAxis.MajorGridlineColor = OxyColor.FromRgb(40, 40, 40);
+                candlestickChart.YAxis.MajorGridlineStyle = LineStyle.Solid;
+                candlestickChart.YAxis.MinorGridlineColor = OxyColor.FromRgb(32, 32, 32);
+                candlestickChart.YAxis.MinorGridlineStyle = LineStyle.LongDash;
+
+                candlestickChart.YAxis.TextColor = OxyColor.FromRgb(128, 128, 128);
+
                 candlestickChart.YAxis.TitleColor = OxyColors.White;
+                candlestickChart.YAxis.AxisTitleDistance = 15;
                 candlestickChart.YAxis.Title = "US Dollars";
             }
             else
@@ -195,8 +202,14 @@ namespace Client
                 {
                     Position = AxisPosition.Left,
                     IsZoomEnabled = false,
+
+                    MajorGridlineColor = OxyColors.Black,
+                    MajorGridlineStyle = LineStyle.Solid,
+
+                    TextColor = OxyColor.FromRgb(24, 24, 24),
+                    AxisTitleDistance = 15,
+
                     TitleColor = OxyColors.White,
-                    AxislineColor = OxyColors.Gray,
                     Title = "Relative Volume"
                 });
                 model.Axes.Add(new CategoryAxis
@@ -206,7 +219,7 @@ namespace Client
                     IsAxisVisible = false,
                 });
                 model.Series.Add(series);
-                Please.Model = model;
+                VolumeChart.Model = model;
             }
             else
             {

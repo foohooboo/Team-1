@@ -9,19 +9,24 @@ namespace Shared.Client
     {
         private static ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public static ConcurrentBag<IPEndPoint> Clients = new ConcurrentBag<IPEndPoint>();
+        //I switched this from a bag to dictionary because a bag's "TryTake" doesn't guarantee you removes the desired item.
+        //-Dsphar 4/10/2019
+        public static ConcurrentDictionary<IPEndPoint,object> Clients = new ConcurrentDictionary<IPEndPoint, object>();
 
         public static bool TryToAdd(IPEndPoint endPoint)
         {
             Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (enter)");
 
-            if (Clients.Contains(endPoint))
+            if (Clients.ContainsKey(endPoint))
             {
-                Log.Warn($"EndPoint {endPoint.ToString()} is already in the list");
+                Log.Warn($"EndPoint {endPoint.ToString()} is already in the connected client list.");
                 return false;
             }
 
-            Clients.Add(endPoint);
+            if(!Clients.TryAdd(endPoint, null))
+            {
+                Log.Warn($"Something went wrong adding {endPoint.ToString()} to connected client list.");
+            }
 
             Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (exit)");
             return true;
@@ -31,15 +36,15 @@ namespace Shared.Client
         {
             Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (enter)");
 
-            if (!Clients.Contains(endPoint))
+            if (!Clients.ContainsKey(endPoint))
             {
-                Log.Debug($"EndPoint {endPoint.ToString()} is not in the list");
+                Log.Warn($"EndPoint {endPoint.ToString()} is not in the connected client list.");
                 return false;
             }
 
-            if (!Clients.TryTake(out IPEndPoint removedEndPoint))
+            if (!Clients.TryRemove(endPoint, out object dummy))
             {
-                Log.Debug($"Failed to remove endpoint {endPoint}");
+                Log.Warn($"Failed to remove endpoint {endPoint} from connected client list.");
                 return false;
             }
 

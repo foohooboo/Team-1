@@ -77,7 +77,7 @@ namespace StockServer
                 Thread.Sleep(tickDelay);
 
                 var nextMarketDay = StockData.AdvanceDay();
-                foreach(var clientIp in ClientManager.Clients)
+                foreach(var clientIp in ClientManager.Clients.Keys)
                 {
                     Log.Info($"Sending next market day to {clientIp}");
                     var updateConv = new StockUpdateSendConversation(Config.GetInt(Config.STOCK_SERVER_PROCESS_NUM));

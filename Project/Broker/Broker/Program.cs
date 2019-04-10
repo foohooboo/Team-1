@@ -123,7 +123,7 @@ namespace Broker
                         //Send updated leaderboard to clients.
                         Task.Run(() =>
                         {
-                            foreach (var clientIp in ClientManager.Clients)
+                            foreach (var clientIp in ClientManager.Clients.Keys)
                             {
                                 var stockUpdateConv = new LeaderBoardUpdateRequestConversation(Config.GetInt(Config.BROKER_PROCESS_NUM));
                                 stockUpdateConv.SetInitialState(new LeaderboardSendUpdateState(clientIp, stockUpdateConv, null));

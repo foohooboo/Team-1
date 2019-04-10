@@ -80,11 +80,7 @@ namespace BrokerTest.Conversations
             PortfolioManager.ReleaseLock(port);
 
             //clear connected clients (if any leftover from other tests)
-            var clients = ClientManager.Clients;
-            while (!clients.IsEmpty)
-            {
-                clients.TryTake(out IPEndPoint someItem);
-            }
+            ClientManager.Clients.Clear();
         }
 
         [TestCleanup]

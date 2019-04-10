@@ -31,7 +31,7 @@
 
             <oxy:PlotView Model="{Binding CandelestickView}" Grid.Row="0" Background="Black" Foreground="White"/>
 
-            <oxy:PlotView Name="Please" Grid.Row="1" Background="#010101" Foreground="White" BorderBrush="#404040" BorderThickness="0.5"/>
+            <oxy:PlotView Name="VolumeChart" Grid.Row="1" Background="#181818" Foreground="White" BorderBrush="#404040" BorderThickness="0.5"/>
 
 
         </Grid>
