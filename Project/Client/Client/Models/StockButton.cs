@@ -3,6 +3,8 @@ using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Wpf;
 using System;
+using System.Linq;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows.Media.Imaging;
 
@@ -43,12 +45,14 @@ namespace Client.Models
                 var size = hist.Count;
                 if (hist != null && size > 1)
                 {
+                    var prices = new List<float>();
                     for (int i = size - 1; i > 0 && i > size - 11; i--)
                     {
+                        prices.Add(hist[i].Close);
                         historySeries.Points.Add(new DataPoint(10 - i, hist[i].Close));
                     }
 
-                    if (hist[size - 1].Close > hist[size - 2].Close)
+                    if (Trend(prices)>0)
                         historySeries.Color = OxyColors.DarkGreen;
                     else
                         historySeries.Color = OxyColors.DarkRed;
@@ -87,6 +91,59 @@ namespace Client.Models
                 Log.Error(e);
             }
             return image;
+        }
+
+
+        public static double Trensd(List<float> prices)
+        {
+
+            float[] yVals = prices.ToArray();
+            float[] xVals = Enumerable.Range(1, prices.Count).Select(x => x * 1f).ToArray();
+
+            float sumOfX = 0;
+            double sumOfY = 0;
+            double sumOfXSq = 0;
+            double ssX = 0;
+            double sumCodeviates = 0;
+            double sCo = 0;
+            double count = prices.Count-1;
+            for (int ctr = 0; ctr < count; ctr++)
+            {
+                double x = xVals[ctr];
+                double y = yVals[ctr];
+                sumCodeviates += x * y;
+            }
+            ssX = sumOfXSq - ((sumOfX * sumOfX) / count);
+            sCo = sumCodeviates - ((sumOfX * sumOfY) / count);
+            return sCo / ssX;
+        }
+
+        public static float Trend(List<float> prices)
+        {
+            float[] xVals = Enumerable.Range(1, prices.Count).Select(x => x * 1f).ToArray();
+            float[] yVals = prices.ToArray();
+
+            float sumOfX = 0;
+            float sumOfY = 0;
+            float sumOfXSq = 0;
+            float sumCodeviates = 0;
+
+            for (var i = 0; i < xVals.Length; i++)
+            {
+                var x = xVals[i];
+                var y = yVals[i];
+                sumCodeviates += x * y;
+                sumOfX += x;
+                sumOfY += y;
+                sumOfXSq += x * x;
+            }
+
+            var count = xVals.Length;
+            var ssX = sumOfXSq - ((sumOfX * sumOfX) / count);
+
+            var sCo = sumCodeviates - ((sumOfX * sumOfY) / count);
+
+            return sCo / ssX;
         }
     }
 }
