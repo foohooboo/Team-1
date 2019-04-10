@@ -197,7 +197,7 @@ namespace Client
                     IsZoomEnabled = false,
                     TitleColor = OxyColors.White,
                     AxislineColor = OxyColors.Gray,
-                    Title = "Relative Volume %"
+                    Title = "Relative Volume"
                 });
                 model.Axes.Add(new CategoryAxis
                 {
