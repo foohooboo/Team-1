@@ -3,6 +3,7 @@ using log4net;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
+using OxyPlot.Wpf;
 using Shared;
 using Shared.Comms.ComService;
 using Shared.MarketStructures;
@@ -11,6 +12,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,7 +30,7 @@ namespace Client
         public ObservableCollection<Leaders> LeaderBoard { get; set; } = new ObservableCollection<Leaders>();
         public ObservableCollection<AssetNetValue> ValueOfAssets { get; set; } = new ObservableCollection<AssetNetValue>();
         public ObservableCollection<StockButton> StockList { get; set; } = new ObservableCollection<StockButton>();
-        public string StockCount { get; set; } = "1";//holds the data in buySell textbox
+        public static string StockCount { get; set; } = "1";//holds the data in buySell textbox
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -45,7 +48,8 @@ namespace Client
         private object LockCleanNotify = new object();
         private bool DoCleanNotify = true;
         private DateTime LastNotification = DateTime.Now;
-        
+        public static string TempImageDirPath = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}/images/buttons";
+
         public PlotModel CandelestickView { get; private set; } = new PlotModel { TitleColor = OxyColors.White, IsLegendVisible = false };
 
         public class Leaders
@@ -59,12 +63,50 @@ namespace Client
             public string Symbol { get; set; }
             public int QtyOwned { get; set; }
             public string Price { get; set; }
+            public string HistoryPath { get; private set; }
 
             public StockButton(string symbol, int qtyOwned, float price)
             {
                 Symbol = symbol;
                 QtyOwned = qtyOwned;
                 Price = price.ToString("C2");
+
+                //Note: Creating images is probably the most inefficient way to do this, but
+                //it was easy to implement. Also, I know this is too much work for a constructor, 
+                //but I did it anyway, what you gonna do? -Dsphar 4/10/2019
+                try
+                {
+                    var historySeries = new OxyPlot.Series.LineSeries
+                    {
+
+                    };
+
+                    var hist = TraderModel.Current.GetHistory(symbol);
+                    var size = hist.Count;
+                    if (hist != null && size > 1)
+                    {
+                        for (int i = size - 1; i > 0 && i > size - 11; i--)
+                        {
+                            historySeries.Points.Add(new DataPoint(10 - i, hist[i].Close));
+                        }
+
+                        if (hist[size - 1].Close > hist[size - 2].Close)
+                            historySeries.Color = OxyColors.DarkGreen;
+                        else
+                            historySeries.Color = OxyColors.DarkRed;
+
+                        HistoryPath = $"{TempImageDirPath}/{symbol}.png";
+                        PlotModel graph = new PlotModel();
+                        graph.Series.Add(historySeries);
+                        PngExporter.Export(graph, HistoryPath, 200, 100, OxyColors.White);
+
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    HistoryPath = $"{TempImageDirPath}/empty.png";
+                }
             }
         }
 
@@ -78,6 +120,11 @@ namespace Client
             TraderModel.Current.Handler = this;
             Title = $"{TraderModel.Current.Portfolio.Username}'s Portfolio.";
 
+            PrepareImageFolder();
+
+
+
+            //start notification monitor
             Task.Run(() =>
             {
                 var clean = true;
@@ -172,7 +219,7 @@ namespace Client
             //Note: There seems to be an oxyplot rendering bug when updating ColumnSeries via MVVM. As such, I have to push
             //a whole new PlotModel every time. But hey, at least it works... -Dsphar 4/9/2019
 
-            var series = new ColumnSeries();
+            var series = new OxyPlot.Series.ColumnSeries();
             
             if (history != null && history.Count > 0)
             {
@@ -198,7 +245,7 @@ namespace Client
 
                 var model = new PlotModel();
 
-                model.Axes.Add(new CategoryAxis
+                model.Axes.Add(new OxyPlot.Axes.CategoryAxis
                 {
                     Position = AxisPosition.Left,
                     IsZoomEnabled = false,
@@ -212,7 +259,7 @@ namespace Client
                     TitleColor = OxyColors.White,
                     Title = "Relative Volume"
                 });
-                model.Axes.Add(new CategoryAxis
+                model.Axes.Add(new OxyPlot.Axes.CategoryAxis
                 {
                     Position = AxisPosition.Bottom,
                     IsZoomEnabled = false,
@@ -380,7 +427,10 @@ namespace Client
 
                     var assetNet = asset.Quantity * price;
                     totalNetWorth += assetNet;
+
                     ValueOfAssets.Add(new AssetNetValue(symbol, qtyOwned.ToString(), assetNet.ToString("C2")));
+
+
                 }
 
                 TotalValueGridTextColumn.Header = totalNetWorth.ToString("C2");
@@ -397,6 +447,7 @@ namespace Client
                         if (stockButton == null)
                         {
                             float price = TraderModel.Current.GetRecentValue(vStock.Symbol);
+
                             StockList.Add(new StockButton(vStock.Symbol, 0, price));
                         }
                     }
@@ -415,13 +466,26 @@ namespace Client
             public string Symbol { get; private set; }
             public string Quantity { get; private set; }
             public string TotalValue { get; private set; }
-
+            
             public AssetNetValue(string symbol, string quantity, string totalValue)
             {
                 Symbol = symbol;
                 Quantity = quantity;
                 TotalValue = totalValue;
             }
+        }
+
+        protected void PrepareImageFolder()
+        {
+            Directory.CreateDirectory(TempImageDirPath);
+            var dir = new DirectoryInfo(TempImageDirPath);
+            foreach (var file in dir.GetFiles()) { file.Delete(); }
+
+            Bitmap bmp = new Bitmap(200, 100);
+            Graphics g = Graphics.FromImage(bmp);
+            g.Clear(Color.Transparent);
+            g.Flush();
+            bmp.Save($"{TempImageDirPath}/empty.png",System.Drawing.Imaging.ImageFormat.Png);
         }
     }
 }

@@ -160,5 +160,8 @@
   <ItemGroup>
     <Resource Include="logo_2BW_icon.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Capture.PNG" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
