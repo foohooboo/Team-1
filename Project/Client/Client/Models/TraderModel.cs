@@ -1,5 +1,4 @@
 ﻿using Client.Conversations.StockHistory;
-using Client.Conversations.StockUpdate;
 using Shared;
 using Shared.Conversations;
 using Shared.MarketStructures;
@@ -9,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using static Client.Conversations.StockUpdate.ReceiveStockUpdateState;
 
-namespace Client
+namespace Client.Models
 {
     public class TraderModel
     {

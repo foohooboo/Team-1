@@ -1,4 +1,5 @@
 ﻿using Client.Conversations.GetPortfolio;
+using Client.Models;
 using Shared;
 using Shared.Comms.ComService;
 using Shared.Conversations;

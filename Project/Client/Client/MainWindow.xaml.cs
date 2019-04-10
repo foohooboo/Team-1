@@ -1,9 +1,8 @@
-﻿using CommSystem;
+﻿using Client.Models;
 using log4net;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
-using OxyPlot.Wpf;
 using Shared;
 using Shared.Comms.ComService;
 using Shared.MarketStructures;
@@ -12,14 +11,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Media.Imaging;
-using static Client.Conversations.StockUpdate.ReceiveStockUpdateState;
 
 namespace Client
 {
@@ -51,86 +46,6 @@ namespace Client
         private DateTime LastNotification = DateTime.Now;
 
         public PlotModel CandelestickView { get; private set; } = new PlotModel { TitleColor = OxyColors.White, IsLegendVisible = false };
-
-        public class Leaders
-        {
-            public string value { get; set; }
-            public string name { get; set; }
-        }
-
-        public class StockButton
-        {
-            public string Symbol { get; set; }
-            public int QtyOwned { get; set; }
-            public string Price { get; set; }
-            public BitmapImage History { get; private set; }
-
-            public StockButton(string symbol, int qtyOwned, float price)
-            {
-                Symbol = symbol;
-                QtyOwned = qtyOwned;
-                Price = price.ToString("C2");
-
-                //Note: Creating images is not the most efficient way to do this, 
-                //but it was easy to implement. -Dsphar 4/10/2019
-                try
-                {
-                    var historySeries = new OxyPlot.Series.LineSeries
-                    {
-                        LineStyle = LineStyle.Dash,
-                    };
-
-                    var hist = TraderModel.Current.GetHistory(symbol);
-                    var size = hist.Count;
-                    if (hist != null && size > 1)
-                    {
-                        for (int i = size - 1; i > 0 && i > size - 11; i--)
-                        {
-                            historySeries.Points.Add(new DataPoint(10 - i, hist[i].Close));
-                        }
-
-                        if (hist[size - 1].Close > hist[size - 2].Close)
-                            historySeries.Color = OxyColors.DarkGreen;
-                        else
-                            historySeries.Color = OxyColors.DarkRed;
-
-                        PlotModel graph = new PlotModel
-                        {
-                            IsLegendVisible = false,
-                            PlotAreaBorderThickness = new OxyThickness(0)
-                        };
-                        graph.Axes.Add(new OxyPlot.Axes.LinearAxis
-                        {
-                            Position = AxisPosition.Bottom,
-                            IsAxisVisible = false
-                        });
-                        graph.Axes.Add(new OxyPlot.Axes.LinearAxis
-                        {
-                            Position = AxisPosition.Left,
-                            IsAxisVisible = false
-                        });
-
-
-                        graph.Series.Add(historySeries);
-
-                        var stream = new MemoryStream();
-                        PngExporter.Export(graph, stream, 200, 52, OxyColors.Transparent);
-
-                        History = new BitmapImage();
-                        History.BeginInit();
-                        History.StreamSource = stream;
-                        History.CacheOption = BitmapCacheOption.OnLoad;
-                        History.EndInit();
-                        History.Freeze();
-                    }
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    //HistoryPath = $"{TempImageDirPath}/empty.png";
-                }
-            }
-        }
 
         public MainWindow()
         {
@@ -178,7 +93,7 @@ namespace Client
             }
         }
 
-        private void RedrawStockChartsCharts()
+        private void RedrawStockCharts()
         {
             var symbol = TraderModel.Current.SelectedStocksSymbol;
             var history = TraderModel.Current.GetHistory(TraderModel.Current.SelectedStocksSymbol);
@@ -200,7 +115,10 @@ namespace Client
         {
             if (history != null && history.Count>0)
             {
-                var candlestickChart = new CandleStickSeries();
+                var candlestickChart = new CandleStickSeries
+                {
+
+                };
 
                 for (int i = 0; i < history.Count; i++)
                 {
@@ -237,7 +155,7 @@ namespace Client
             //Note: There seems to be an oxyplot rendering bug when updating ColumnSeries via MVVM. As such, I have to push
             //a whole new PlotModel every time. But hey, at least it works... -Dsphar 4/9/2019
 
-            var series = new OxyPlot.Series.ColumnSeries();
+            var series = new ColumnSeries();
             
             if (history != null && history.Count > 0)
             {
@@ -263,7 +181,7 @@ namespace Client
 
                 var model = new PlotModel();
 
-                model.Axes.Add(new OxyPlot.Axes.CategoryAxis
+                model.Axes.Add(new CategoryAxis
                 {
                     Position = AxisPosition.Left,
                     IsZoomEnabled = false,
@@ -277,7 +195,7 @@ namespace Client
                     TitleColor = OxyColors.White,
                     Title = "Relative Volume"
                 });
-                model.Axes.Add(new OxyPlot.Axes.CategoryAxis
+                model.Axes.Add(new CategoryAxis
                 {
                     Position = AxisPosition.Bottom,
                     IsZoomEnabled = false,
@@ -299,7 +217,7 @@ namespace Client
             {
                 TraderModel.Current.SelectedStocksSymbol = selectedItem.Symbol;
             }
-            RedrawStockChartsCharts();
+            RedrawStockCharts();
         }
 
         /// <summary>
@@ -476,21 +394,7 @@ namespace Client
                 {
                     stockPanels.SelectedItem = selectedButton;
                 }
-            });   
-        }
-
-        public class AssetNetValue
-        {
-            public string Symbol { get; private set; }
-            public string Quantity { get; private set; }
-            public string TotalValue { get; private set; }
-            
-            public AssetNetValue(string symbol, string quantity, string totalValue)
-            {
-                Symbol = symbol;
-                Quantity = quantity;
-                TotalValue = totalValue;
-            }
+            });
         }
     }
 }

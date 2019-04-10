@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Threading;
+using Client.Models;
 using log4net;
 using Shared;
 using Shared.Comms.ComService;

@@ -1,14 +1,10 @@
-﻿using log4net;
+﻿using Client.Models;
+using log4net;
 using Shared;
 using Shared.Comms.ComService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Client.Conversations.StockHistory
 {
