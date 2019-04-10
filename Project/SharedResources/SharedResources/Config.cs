@@ -11,6 +11,7 @@ namespace Shared
         public const string
 
             CLEANUP_DEAD_CLIENTS = "cleanupDeadClients",
+            MAX_STOCK_HISTORY = "MaxStockHistorySize",
 
             DEFAULT_UDP_CLIENT = "defaultUdpClientName",
             DEFAULT_TIMEOUT = "defaultTimeout",

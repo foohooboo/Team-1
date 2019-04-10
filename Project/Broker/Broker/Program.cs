@@ -39,23 +39,15 @@ namespace Broker
             otherguyPortfolio.ModifyAsset(new Asset(new Stock("AMZN", "Amazon"), 30));
 
             ConversationManager.Start(ConversationBuilder);
-
             ComService.AddClient(Config.DEFAULT_UDP_CLIENT, Config.GetInt(Config.BROKER_PORT));
 
+            RequestStockStream();
             PrintMenu();
-            var input = Console.ReadLine();
 
+            var input = Console.ReadLine();
             while (!input.Equals("exit"))
             {
-                var conv = new ConvI_StockStreamRequest(
-                    Config.GetInt(Config.BROKER_PROCESS_NUM)
-                    );
-                conv.SetInitialState(new InitialState_ConvI_StockStreamRequest(conv));
-
-                Log.Info($"Starting new conversation: {conv.Id}");
-
-                ConversationManager.AddConversation(conv);
-
+                RequestStockStream();
                 PrintMenu();
                 input = Console.ReadLine();
             }
@@ -69,7 +61,7 @@ namespace Broker
         {
             Console.WriteLine("Input Options:");
             Console.WriteLine("   -\"exit\" to end");
-            Console.WriteLine("   -anything else to start a StockStreamRequest conversation.");
+            Console.WriteLine("   -anything else to request a stock stream.");
         }
 
         public static Conversation ConversationBuilder(Envelope e)
@@ -143,6 +135,13 @@ namespace Broker
             }
 
             return conv;
+        }
+
+        private static void RequestStockStream()
+        {
+            var conv = new ConvI_StockStreamRequest(Config.GetInt(Config.BROKER_PROCESS_NUM));
+            conv.SetInitialState(new InitialState_ConvI_StockStreamRequest(conv));
+            ConversationManager.AddConversation(conv);
         }
     }
 }

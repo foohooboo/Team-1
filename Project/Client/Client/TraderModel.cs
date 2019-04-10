@@ -1,5 +1,6 @@
 ﻿using Client.Conversations.StockHistory;
 using Client.Conversations.StockUpdate;
+using Shared;
 using Shared.Conversations;
 using Shared.MarketStructures;
 using Shared.PortfolioResources;
@@ -99,10 +100,13 @@ namespace Client
                 _stockHistoryBySymbol.Add(vStock.Symbol, new List<ValuatedStock>());
             }
 
-            //Question, do we want to limit the size of this history? Maybe by a configurable length?
-            _stockHistoryBySymbol[vStock.Symbol].Add(vStock);
+            var history = _stockHistoryBySymbol[vStock.Symbol];
+            while (history.Count > Config.GetInt(Config.MAX_STOCK_HISTORY))
+            {
+                history.RemoveAt(0);
+            }
 
-            //TODO: add candlestick for this day. Again, do we want to limit the history here?
+            history.Add(vStock);
         }
 
         public SortedList<float, string> Leaderboard
