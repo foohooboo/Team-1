@@ -12,6 +12,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using static Client.Conversations.StockUpdate.ReceiveStockUpdateState;
 
@@ -19,14 +21,32 @@ namespace Client
 {
     public partial class MainWindow : Window, INotifyPropertyChanged, IHandleTraderModelChanged
     {
-        public TraderModel TModel;
+        private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        
 
         public ObservableCollection<Leaders> LeaderBoard { get; set; } = new ObservableCollection<Leaders>();
         public ObservableCollection<AssetNetValue> ValueOfAssets { get; set; } = new ObservableCollection<AssetNetValue>();
-
         public ObservableCollection<StockButton> StockList { get; set; } = new ObservableCollection<StockButton>();
+        public string StockCount { get; set; } = "1";//holds the data in buySell textbox
 
-        public float TotalNetWorth { get; set; } = 12234234234.45f;
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private string _notification = "Welcome to Team-1's Stock Trading Simulation.   Good luck!!";
+        public string Notification
+        {
+            get => _notification;
+            set
+            {
+                _notification = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Notification"));
+                LastNotification = DateTime.Now;
+            }
+        }
+        private object LockCleanNotify = new object();
+        private bool DoCleanNotify = true;
+        private DateTime LastNotification = DateTime.Now;
+        
+        public PlotModel CandelestickView { get; private set; } = new PlotModel { TitleColor = OxyColors.White, IsLegendVisible = false };
 
         public class Leaders
         {
@@ -48,32 +68,35 @@ namespace Client
             }
         }
 
-        public string StockCount { get; set; } = "1";//holds the data in buySell textbox
-
-        private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        private HelloWorld helloWorld = new HelloWorld();
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private static Random rand = new Random();
-
-        public PlotModel CandelestickView { get; private set; } = new PlotModel { TitleColor = OxyColors.White, IsLegendVisible = false};
-        
-
-        public MainWindow(TraderModel model)
+        public MainWindow()
         {
             Log.Debug($"{nameof(MainWindow)} (enter)");
 
             InitializeComponent();
-
             DataContext = this;
 
-            TModel = model;
-            TModel.Handler = this;
+            TraderModel.Current.Handler = this;
+            Title = $"{TraderModel.Current.Portfolio.Username}'s Portfolio.";
 
-            Title = $"{TModel.Portfolio.Username}'s Portfolio.";
-
-            helloWorld.HelloTextChanged += OnHelloTextChanged;
-            HelloTextLocal = helloWorld.HelloText;
+            Task.Run(() =>
+            {
+                var clean = true;
+                while (clean)
+                {
+                    double ellapsed;
+                    lock (LockCleanNotify)
+                    {
+                        ellapsed = (DateTime.Now - LastNotification).TotalSeconds;
+                        clean = DoCleanNotify;
+                    }
+                    if (ellapsed > 3.5)
+                    {
+                        _notification = "";
+                        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Notification"));
+                    }
+                    Thread.Sleep(500);
+                }
+            });
 
             ReDrawPortfolioItems();
 
@@ -83,6 +106,11 @@ namespace Client
         ~MainWindow()
         {
             ComService.RemoveClient(Config.DEFAULT_UDP_CLIENT);
+
+            lock (LockCleanNotify)
+            {
+                DoCleanNotify = false;
+            }
         }
 
         private void RedrawStockChartsCharts()
@@ -134,7 +162,7 @@ namespace Client
 
         private void RedreawVolume(List<ValuatedStock> history)
         {
-            //Note: There seems to be an oxyplot rendering bug on updated Column series via MVVM. As such, I have to push
+            //Note: There seems to be an oxyplot rendering bug when updating ColumnSeries via MVVM. As such, I have to push
             //a whole new PlotModel every time. But hey, at least it works... -Dsphar 4/9/2019
 
             var series = new ColumnSeries();
@@ -171,16 +199,13 @@ namespace Client
                     AxislineColor = OxyColors.Gray,
                     Title = "Relative Volume %"
                 });
-
                 model.Axes.Add(new CategoryAxis
                 {
                     Position = AxisPosition.Bottom,
                     IsZoomEnabled = false,
                     IsAxisVisible = false,
                 });
-
                 model.Series.Add(series);
-
                 Please.Model = model;
             }
             else
@@ -189,36 +214,14 @@ namespace Client
             }
         }
 
-        private string helloTextLocal; //Todo: change this to fading status field
-        public string HelloTextLocal
-        {
-            get => helloTextLocal;
-            set
-            {
-                if (helloTextLocal != value)
-                {
-                    helloTextLocal = value;
-                    helloWorld.HelloText = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("HelloTextLocal"));
-                }
-            }
-        }
-
         public void OnStockSelected(object sender, RoutedEventArgs e)
         {
             var selectedItem = stockPanels.SelectedItem as StockButton;
-
             if (selectedItem != null)
             {
                 TraderModel.Current.SelectedStocksSymbol = selectedItem.Symbol;
             }
-
             RedrawStockChartsCharts();
-        }
-
-        public void OnHelloTextChanged(object source, EventArgs args)
-        {
-            HelloTextLocal = helloWorld.HelloText; //TODO: break this out into a fading status process
         }
 
         /// <summary>
@@ -232,7 +235,7 @@ namespace Client
 
             if (string.IsNullOrEmpty(symbol))
             {
-                HelloTextLocal = "Please select a stock item before attempting a transaction.";
+                Notification = "Please select a stock item before attempting a transaction.";
                 return;
             }
 
@@ -240,7 +243,7 @@ namespace Client
 
             if (selectedVStockHistory==null || selectedVStockHistory.Count == 0)
             {
-                HelloTextLocal = $"We have not received a recent update for ({symbol}). Transaction canceled.";
+                Notification = $"We have not received a recent update for ({symbol}). Transaction canceled.";
                 return;
             };
 
@@ -274,11 +277,11 @@ namespace Client
             }
             if (amount == 0)
             {
-                HelloTextLocal = "Cannot perform the desired transaction.";
+                Notification = "Cannot perform the desired transaction.";
             }
             else
             {
-                HelloTextLocal = $"Initiated transaction for {amount} shares of {selectedVStock.Name} ({selectedVStock.Symbol}).";
+                Notification = $"Initiated transaction for {amount} shares of {selectedVStock.Name} ({selectedVStock.Symbol}).";
 
                 //TODO: Start transaction request conversation.
                 ReDrawPortfolioItems();

@@ -135,7 +135,7 @@
                 <DataGridTextColumn Binding="{Binding Path=value}" Header="" Width="50*" Foreground="White" CellStyle="{StaticResource CellRightAlign}"/>
             </DataGrid.Columns>
         </DataGrid>
-        <TextBlock Text="{Binding HelloTextLocal}" TextWrapping="WrapWithOverflow" HorizontalAlignment="Center" Margin="10,0,0,128" VerticalAlignment="Bottom" Width="788" Height="22" Grid.ColumnSpan="3" ScrollViewer.VerticalScrollBarVisibility="Disabled" Padding="10,0" TextAlignment="Center"/>
+        <TextBlock Text="{Binding Notification}" TextWrapping="WrapWithOverflow" HorizontalAlignment="Center" Margin="10,0,0,128" VerticalAlignment="Bottom" Width="788" Height="22" Grid.ColumnSpan="3" ScrollViewer.VerticalScrollBarVisibility="Disabled" Padding="10,0" TextAlignment="Center"/>
 
     </Grid>
 </Window>

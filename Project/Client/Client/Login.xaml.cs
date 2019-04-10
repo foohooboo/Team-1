@@ -57,7 +57,7 @@ namespace Client
 
             Dispatcher.Invoke(() =>
             {
-                MainWindow main = new MainWindow(TraderModel.Current);
+                MainWindow main = new MainWindow();
                 Application.Current.Windows[0].Close();
                 main.ShowDialog();
             });
