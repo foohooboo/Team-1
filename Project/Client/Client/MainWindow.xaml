@@ -29,10 +29,10 @@
                 <RowDefinition Height="30*"/>
             </Grid.RowDefinitions>
 
-            <oxy:PlotView Model="{Binding CandelestickView}" Grid.Row="0" Background="Black" Foreground="White"/>
+            <oxy:PlotView Model="{Binding CandlestickView}" Grid.Row="0" Background="Black" Foreground="White"/>
 
+            <TextBlock Text="{Binding Notification}" Grid.Row="0" TextWrapping="WrapWithOverflow" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Width="788" Height="22" ScrollViewer.VerticalScrollBarVisibility="Disabled" TextAlignment="Center"/>
             <oxy:PlotView Name="VolumeChart" Grid.Row="1" Background="#181818" Foreground="White" BorderBrush="#404040" BorderThickness="0.5"/>
-
 
         </Grid>
 
@@ -79,23 +79,18 @@
         </Border>
 
         <!--Assets Value Display-->
-        <DataGrid ItemsSource="{Binding ValueOfAssets}" x:Name="portfolioView" Grid.Column="1" Grid.Row="1" Background="Black" AutoGenerateColumns="False" IsReadOnly="True" CanUserResizeColumns="False" CanUserResizeRows="False" RowHeaderWidth="0" IsHitTestVisible="False" BorderBrush="White">
+        <DataGrid ItemsSource="{Binding ValueOfAssets}" Height="136" x:Name="portfolioView" Grid.Column="1" CanUserResizeRows="False" CanUserResizeColumns="False" Grid.Row="1" AutoGenerateColumns="False" IsReadOnly="True" VerticalScrollBarVisibility="Hidden"  Background="Black" RowHeaderWidth="0" BorderBrush="White">
             <DataGrid.Resources>
                 <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
                     <Setter Property="Background" Value="#202020"/>
                     <Setter Property="Foreground" Value="White" />
                     <Setter Property="Padding" Value="5,2,0,2" />
-
                 </Style>
                 <Style x:Key="CellRightAlign">
-                    <Setter Property="Control.HorizontalAlignment"
-            Value="Right" />
+                    <Setter Property="Control.HorizontalAlignment" Value="Right" />
                 </Style>
-
             </DataGrid.Resources>
             <DataGrid.RowBackground>Black</DataGrid.RowBackground>
-
-
             <DataGrid.Columns>
 
                 <DataGridTextColumn Binding="{Binding Path=Symbol}" Header="Portfolio" Width="35*" Foreground="White"/>
@@ -114,7 +109,7 @@
         </DataGrid>
 
         <!--Leaderboard-->
-        <DataGrid ItemsSource="{Binding LeaderBoard}" x:Name="highScoreView" Grid.Row="1" Background="Black" AutoGenerateColumns="False" IsReadOnly="True" CanUserResizeColumns="False" CanUserResizeRows="False" RowHeaderWidth="0" IsHitTestVisible="False" BorderBrush="White">
+        <DataGrid ItemsSource="{Binding LeaderBoard}" Height="136" x:Name="highScoreView" Grid.Row="1" Background="Black" AutoGenerateColumns="False" IsReadOnly="True" CanUserResizeColumns="False" CanUserResizeRows="False" VerticalScrollBarVisibility="Hidden" RowHeaderWidth="0" BorderBrush="White">
             <DataGrid.Resources>
                 <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
                     <Setter Property="Background" Value="#202020"/>
@@ -133,7 +128,5 @@
                 <DataGridTextColumn Binding="{Binding Path=value}" Header="" Width="50*" Foreground="White" CellStyle="{StaticResource CellRightAlign}"/>
             </DataGrid.Columns>
         </DataGrid>
-        <TextBlock Text="{Binding Notification}" TextWrapping="WrapWithOverflow" HorizontalAlignment="Center" Margin="10,0,0,128" VerticalAlignment="Bottom" Width="788" Height="22" Grid.ColumnSpan="3" ScrollViewer.VerticalScrollBarVisibility="Disabled" Padding="10,0" TextAlignment="Center"/>
-
     </Grid>
 </Window>

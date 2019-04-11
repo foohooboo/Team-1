@@ -145,6 +145,20 @@ namespace Client.Models
             }
         }
 
+        public List<Asset> OwnedStocksBySymbol
+        {
+            get
+            {
+                _ownedStocks.Sort((a, b) => a.RelatedStock.Symbol.CompareTo(b.RelatedStock.Symbol));
+                return _ownedStocks;
+            }
+            set
+            {
+                _ownedStocks = value;
+                Handler?.ReDrawPortfolioItems();
+            }
+        }
+
         /// <summary>
         /// Returns the net worth of the given asset based on the most recent market value. If no recent value
         /// is known, assume $0.

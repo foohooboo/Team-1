@@ -12,6 +12,7 @@ namespace Shared
 
             CLEANUP_DEAD_CLIENTS = "cleanupDeadClients",
             MAX_STOCK_HISTORY = "MaxStockHistorySize",
+            MAX_BTN_STOCK_HISTORY = "MaxStockHistorySizeForButtons",
 
             DEFAULT_UDP_CLIENT = "defaultUdpClientName",
             DEFAULT_TIMEOUT = "defaultTimeout",

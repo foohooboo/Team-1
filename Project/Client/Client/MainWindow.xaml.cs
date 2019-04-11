@@ -21,7 +21,7 @@ namespace Client
     public partial class MainWindow : Window, INotifyPropertyChanged, IHandleTraderModelChanged
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        
+
 
         public ObservableCollection<Leaders> LeaderBoard { get; set; } = new ObservableCollection<Leaders>();
         public ObservableCollection<AssetNetValue> ValueOfAssets { get; set; } = new ObservableCollection<AssetNetValue>();
@@ -45,7 +45,7 @@ namespace Client
         private bool DoCleanNotify = true;
         private DateTime LastNotification = DateTime.Now;
 
-        public PlotModel CandelestickView { get; private set; } = new PlotModel { TitleColor = OxyColors.White, IsLegendVisible = false };
+        public PlotModel CandlestickView { get; private set; } = new PlotModel { TitleColor = OxyColors.White, IsLegendVisible = false };
 
         public MainWindow()
         {
@@ -78,6 +78,27 @@ namespace Client
                 }
             });
 
+            CandlestickView.Axes.Add(new LinearAxis
+            {
+                Position = AxisPosition.Bottom,
+                IsZoomEnabled = false,
+                IsAxisVisible = false
+            });
+
+            CandlestickView.Axes.Add(new LinearAxis
+            {
+                Position = AxisPosition.Left,
+                IsZoomEnabled = false,
+                MajorGridlineColor = OxyColor.FromRgb(40, 40, 40),
+                MajorGridlineStyle = LineStyle.Solid,
+                MinorGridlineColor = OxyColor.FromRgb(32, 32, 32),
+                MinorGridlineStyle = LineStyle.LongDash,
+                TextColor = OxyColor.FromRgb(128, 128, 128),
+                TitleColor = OxyColors.White,
+                AxisTitleDistance = 15,
+                Title = "US Dollars"
+            });
+
             ReDrawPortfolioItems();
 
             Log.Debug($"{nameof(MainWindow)} (exit)");
@@ -98,22 +119,22 @@ namespace Client
             var symbol = TraderModel.Current.SelectedStocksSymbol;
             var history = TraderModel.Current.GetHistory(TraderModel.Current.SelectedStocksSymbol);
 
-            if (history != null && history.Count>0)
+            if (history != null && history.Count > 0)
             {
-                CandelestickView.Title = $"{symbol}  --  {history[0].Name}";
+                CandlestickView.Title = $"{symbol}  --  {history[0].Name}";
                 RedreawCandlestick(history);
                 RedreawVolume(history);
             }
             else
             {
-                CandelestickView.Title = null;
-                CandelestickView.InvalidatePlot(false);
+                CandlestickView.Title = null;
+                CandlestickView.InvalidatePlot(false);
             }
         }
-        
+
         private void RedreawCandlestick(List<ValuatedStock> history)
         {
-            if (history != null && history.Count>0)
+            if (history != null && history.Count > 0)
             {
                 var candlestickChart = new CandleStickSeries
                 {
@@ -125,28 +146,14 @@ namespace Client
                     candlestickChart.Items.Add(new HighLowItem(i + 1, history[i].High, history[i].Low, history[i].Open, history[i].Close));
                 }
 
-                CandelestickView.Series.Clear();
-                CandelestickView.Series.Add(candlestickChart);
-                CandelestickView.InvalidatePlot(true);
-                CandelestickView.ResetAllAxes();
-                candlestickChart.XAxis.IsZoomEnabled = false;
-                candlestickChart.YAxis.IsZoomEnabled = false;
-                candlestickChart.XAxis.IsAxisVisible = false;
-
-                candlestickChart.YAxis.MajorGridlineColor = OxyColor.FromRgb(40, 40, 40);
-                candlestickChart.YAxis.MajorGridlineStyle = LineStyle.Solid;
-                candlestickChart.YAxis.MinorGridlineColor = OxyColor.FromRgb(32, 32, 32);
-                candlestickChart.YAxis.MinorGridlineStyle = LineStyle.LongDash;
-
-                candlestickChart.YAxis.TextColor = OxyColor.FromRgb(128, 128, 128);
-
-                candlestickChart.YAxis.TitleColor = OxyColors.White;
-                candlestickChart.YAxis.AxisTitleDistance = 15;
-                candlestickChart.YAxis.Title = "US Dollars";
+                CandlestickView.Series.Clear();
+                CandlestickView.Series.Add(candlestickChart);
+                CandlestickView.InvalidatePlot(true);
+                CandlestickView.ResetAllAxes();
             }
             else
             {
-                CandelestickView.InvalidatePlot(false);
+                CandlestickView.InvalidatePlot(false);
             }
         }
 
@@ -156,11 +163,11 @@ namespace Client
             //a whole new PlotModel every time. But hey, at least it works... -Dsphar 4/9/2019
 
             var series = new ColumnSeries();
-            
+
             if (history != null && history.Count > 0)
             {
                 float max = history.Max(x => x.Volume);
-                float min = history.Min(x => x.Volume) - (0.05f*max); //Remove en extra 1% of max, so no % is actually 0.
+                float min = history.Min(x => x.Volume) - (0.05f * max); //Remove en extra 1% of max, so no % is actually 0.
                 float spread = max - min;
 
                 for (int i = 0; i < history.Count; i++)
@@ -206,7 +213,7 @@ namespace Client
             }
             else
             {
-                CandelestickView.InvalidatePlot(false);
+                CandlestickView.InvalidatePlot(false);
             }
         }
 
@@ -237,7 +244,7 @@ namespace Client
 
             List<ValuatedStock> selectedVStockHistory = TraderModel.Current.GetHistory(symbol);
 
-            if (selectedVStockHistory==null || selectedVStockHistory.Count == 0)
+            if (selectedVStockHistory == null || selectedVStockHistory.Count == 0)
             {
                 Notification = $"We have not received a recent update for ({symbol}). Transaction canceled.";
                 return;
@@ -339,17 +346,31 @@ namespace Client
         {
             Application.Current?.Dispatcher?.Invoke(() =>
             {
+
+                RedrawStockCharts();
+
+                var currentBtn = 0;
+
+                //Update Net Asset box
                 ValueOfAssets.Clear();
                 float totalNetWorth = TraderModel.Current.QtyCash;
-
-                //show cash first
                 ValueOfAssets.Add(new AssetNetValue("CASH", "", TraderModel.Current.QtyCash.ToString("C2")));
-
-                //Clear stock list, then populate with owned stocks, followed by unowned
-                StockList.Clear();
-
-                //repopulate total net box and owned stocks in stocklist
                 var assets = TraderModel.Current.OwnedStocksByValue;
+                foreach (var asset in assets)
+                {
+                    var symbol = asset.RelatedStock.Symbol;
+                    if (symbol.Equals("$")) continue;
+                    var qtyOwned = asset.Quantity;
+                    float price = TraderModel.Current.GetRecentValue(symbol);
+                    var assetNet = asset.Quantity * price;
+                    totalNetWorth += assetNet;
+
+                    ValueOfAssets.Add(new AssetNetValue(symbol, qtyOwned.ToString(), assetNet.ToString("C2")));
+                }
+                TotalValueGridTextColumn.Header = totalNetWorth.ToString("C2");
+
+                //Update owned stocks in StockList
+                assets = TraderModel.Current.OwnedStocksBySymbol;
                 foreach (var asset in assets)
                 {
                     var symbol = asset.RelatedStock.Symbol;
@@ -359,32 +380,26 @@ namespace Client
 
                     float price = TraderModel.Current.GetRecentValue(symbol);
 
-                    StockList.Add(new StockButton(symbol, qtyOwned, price));
-
-                    var assetNet = asset.Quantity * price;
-                    totalNetWorth += assetNet;
-
-                    ValueOfAssets.Add(new AssetNetValue(symbol, qtyOwned.ToString(), assetNet.ToString("C2")));
-
-
+                    StockList.Insert(currentBtn, new StockButton(symbol, qtyOwned, price));
+                    currentBtn++;
+                    if (currentBtn < StockList.Count)
+                        StockList.RemoveAt(currentBtn);
                 }
 
-                TotalValueGridTextColumn.Header = totalNetWorth.ToString("C2");
-
-                //Populate unowned stocks in stock list
+                //Update unowned stocks in StockList
                 if (TraderModel.Current.StockHistory?.Count > 0)
                 {
                     foreach (var vStock in TraderModel.Current.StockHistory[0].TradedCompanies)
                     {
                         if (vStock.Symbol.Equals("$")) continue;
-
-                        var stockButton = StockList.Where(s => s.Symbol.Equals(vStock.Symbol)).FirstOrDefault();
-
+                        var stockButton = assets.Where(s => s.RelatedStock.Symbol.Equals(vStock.Symbol)).FirstOrDefault();
                         if (stockButton == null)
                         {
                             float price = TraderModel.Current.GetRecentValue(vStock.Symbol);
-
-                            StockList.Add(new StockButton(vStock.Symbol, 0, price));
+                            StockList.Insert(currentBtn, new StockButton(vStock.Symbol, 0, price));
+                            currentBtn++;
+                            if (currentBtn < StockList.Count)
+                                StockList.RemoveAt(currentBtn);
                         }
                     }
                 }

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Media.Imaging;
+using Shared;
 
 namespace Client.Models
 {
@@ -42,16 +43,21 @@ namespace Client.Models
                 };
 
                 var hist = TraderModel.Current.GetHistory(symbol);
-                var size = hist.Count;
+                var size = hist?.Count ?? 0;
+                var maxSize = Config.GetInt(Config.MAX_BTN_STOCK_HISTORY);
                 if (hist != null && size > 1)
                 {
                     var prices = new List<float>();
-                    for (int i = size - 1; i > 0 && i > size - 11; i--)
+                    int index = size - maxSize;
+                    if (index < 0)
+                        index = 0;
+                    while (index < size)
                     {
-                        prices.Add(hist[i].Close);
-                        historySeries.Points.Add(new DataPoint(10 - i, hist[i].Close));
+                        prices.Add(hist[index].Close);
+                        historySeries.Points.Add(new DataPoint(index, hist[index].Close));
+                        index++;
                     }
-
+                    
                     if (Trend(prices)>0)
                         historySeries.Color = OxyColors.DarkGreen;
                     else
@@ -91,31 +97,6 @@ namespace Client.Models
                 Log.Error(e);
             }
             return image;
-        }
-
-
-        public static double Trensd(List<float> prices)
-        {
-
-            float[] yVals = prices.ToArray();
-            float[] xVals = Enumerable.Range(1, prices.Count).Select(x => x * 1f).ToArray();
-
-            float sumOfX = 0;
-            double sumOfY = 0;
-            double sumOfXSq = 0;
-            double ssX = 0;
-            double sumCodeviates = 0;
-            double sCo = 0;
-            double count = prices.Count-1;
-            for (int ctr = 0; ctr < count; ctr++)
-            {
-                double x = xVals[ctr];
-                double y = yVals[ctr];
-                sumCodeviates += x * y;
-            }
-            ssX = sumOfXSq - ((sumOfX * sumOfX) / count);
-            sCo = sumCodeviates - ((sumOfX * sumOfY) / count);
-            return sCo / ssX;
         }
 
         public static float Trend(List<float> prices)
