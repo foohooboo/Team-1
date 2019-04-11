@@ -1,10 +1,12 @@
-﻿using Client.Models;
+﻿using Client.Conversations;
+using Client.Models;
 using log4net;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 using Shared;
 using Shared.Comms.ComService;
+using Shared.Conversations;
 using Shared.MarketStructures;
 using Shared.PortfolioResources;
 using System;
@@ -286,7 +288,16 @@ namespace Client
             {
                 Notification = $"Initiated transaction for {amount} shares of {selectedVStock.Name} ({selectedVStock.Symbol}).";
 
-                //TODO: Start transaction request conversation.
+                //Prepare and send transaction request
+                var stock = new ValuatedStock()
+                {
+                    Symbol = symbol,
+                    Close = TraderModel.Current.GetRecentValue(symbol)
+                };
+                var request = new InitiateTransactionConversation(TraderModel.Current.Portfolio.PortfolioID, stock, amount);
+                request.SetInitialState(new InitTransactionStartingState(request));
+                ConversationManager.AddConversation(request);
+
                 ReDrawPortfolioItems();
             }
         }

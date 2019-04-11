@@ -1,9 +1,11 @@
-﻿using log4net;
+﻿using Client.Models;
+using log4net;
 using Shared;
 using Shared.Comms.ComService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
+using Shared.PortfolioResources;
 using System.Net;
 
 namespace Client.Conversations
@@ -26,7 +28,17 @@ namespace Client.Conversations
             {
                 case PortfolioUpdateMessage m:
                     Log.Info($"Received PortfolioUpdate message as reply.");
-                    //TODO: Update portfolio elements
+
+                    if(TraderModel.Current != null && TraderModel.Current.Portfolio!=null)
+                    {
+                        var updatedPortfolio = new Portfolio(TraderModel.Current.Portfolio) { Assets = m.Assets };
+                        TraderModel.Current.Portfolio = updatedPortfolio;
+                    }
+                    else
+                    {
+                        Log.Error("Transaction verified, but no local portfolio to update.");
+                    }
+                    
                     nextState = new ConversationDoneState(Conversation, this);
                     break;
                 case ErrorMessage m:
@@ -45,11 +57,10 @@ namespace Client.Conversations
         public override Envelope Prepare()
         {
             Log.Debug($"{nameof(Prepare)} (enter)");
-                       
-            var m = MessageFactory.GetMessage<TransactionRequestMessage>(
-                Config.GetInt(Config.CLIENT_PROCESS_NUM),
-                (Conversation as InitiateTransactionConversation).PortfoliId
-                ) as TransactionRequestMessage;
+
+            var m = MessageFactory.GetMessage<TransactionRequestMessage>(Config.GetInt(Config.CLIENT_PROCESS_NUM), 0);
+            m.ConversationID = Conversation.Id;
+
             Envelope env = new Envelope(m, Config.GetString(Config.BROKER_IP), Config.GetInt(Config.BROKER_PORT));
 
             Log.Debug($"{nameof(Prepare)} (exit)");

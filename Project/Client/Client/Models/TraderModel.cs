@@ -53,7 +53,6 @@ namespace Client.Models
                 _ownedStocks.Clear();
                 foreach (var ownedStock in value.Assets.Values)
                 {
-                    //TODO: Either changed the sortedlist to OwnedByQty, or factor in prices right here.
                     _ownedStocks.Add(ownedStock);
                 }
 

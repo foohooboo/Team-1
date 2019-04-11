@@ -16,6 +16,7 @@ using Shared.MarketStructures;
 using Shared.PortfolioResources;
 using Shared.Security;
 using System;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Broker
@@ -76,62 +77,93 @@ namespace Broker
                     break;
 
                 case GetPortfolioRequest m:
-
-                    var user = m.Account.Username;
-                    var pass = m.Account.Password;
-
-                    Log.Info($"Received GetPortfolioRequest from {e.To.ToString()} for user:{user} with password:{pass}");
-
-                    if (PortfolioManager.TryToGet(user, pass, out Portfolio portfolio))
-                    {
-                        Log.Info($"Valid credentials, returning portfolio.");
-                        conv = new GetPortfoliolResponseConversation(m.ConversationID);
-                        conv.SetInitialState(new GetPortfolioReceiveState(e, conv));
-                    }
-                    else
-                    {
-                        Log.Info($"Invalid credentials, return error.");
-                        conv = new SendErrorMessageConversation(m.ConversationID);
-                        conv.SetInitialState(new SendErrorMessageState("Invalid login credentials.", e, conv, null, Config.GetInt(Config.BROKER_PROCESS_NUM)));
-                    }
-
+                    conv = HandleGetPortfolio(e);
                     break;
 
                 case StockPriceUpdate m:
-
-                    Log.Info($"Processing StockPriceUpdate message");
-
-                    var sigServ = new SignatureService();
-                    var bits = Convert.FromBase64String(m.SerializedStockList);
-                    var StocksList = sigServ.Deserialize<MarketDay>(bits);
-
-                    if (!sigServ.VerifySignature(StocksList, m.StockListSignature))
-                    {
-                        Log.Error("Stock Price Update signature validation failed. Ignoring message.");
-                    }
-                    else
-                    {
-
-                        LeaderboardManager.Market = StocksList;
-                        Log.Info("Stock Price Update signature verified, updating leaderboard.");
-                        var t = new Temp();
-                        t.LogStockDay(StocksList);
-
-                        conv = new StockUpdateConversation(m.ConversationID);
-                        conv.SetInitialState(new ProcessStockUpdateState(e, conv));
-
-                        //Send updated leaderboard to clients.
-                        Task.Run(() =>
-                        {
-                            foreach (var clientIp in ClientManager.Clients.Keys)
-                            {
-                                var stockUpdateConv = new LeaderBoardUpdateRequestConversation(Config.GetInt(Config.BROKER_PROCESS_NUM));
-                                stockUpdateConv.SetInitialState(new LeaderboardSendUpdateState(clientIp, stockUpdateConv, null));
-                                ConversationManager.AddConversation(stockUpdateConv);
-                            }
-                        });
-                    }
+                    conv = HandleStockPriceUpdate(e);
                     break;
+
+                case TransactionRequestMessage m:
+                    Log.Info($"Processing TransactionRequestMessage message");
+                    conv = HandleTransactionRequest(e);
+                    break;
+            }
+            return conv;
+        }
+
+        private static Conversation HandleTransactionRequest(Envelope e)
+        {
+            Conversation conv = null;
+
+            TransactionRequestMessage m = e.Contents as TransactionRequestMessage;
+
+            if(PortfolioManager.TryToGet(m.PortfolioId, out Portfolio portfolio)){
+                portfolio.ModifyAsset(new Asset(m.StockValue, m.Quantity));
+            }
+
+
+
+            Log.Info("Hanling a transaction request");
+            return conv;
+        }
+
+        private static Conversation HandleStockPriceUpdate(Envelope e)
+        {
+            Conversation conv = null;
+
+            StockPriceUpdate m = e.Contents as StockPriceUpdate;
+            Log.Info($"Processing StockPriceUpdate message");
+            var sigServ = new SignatureService();
+            var bits = Convert.FromBase64String(m.SerializedStockList);
+            var StocksList = sigServ.Deserialize<MarketDay>(bits);
+
+            if (!sigServ.VerifySignature(StocksList, m.StockListSignature))
+            {
+                Log.Error("Stock Price Update signature validation failed. Ignoring message.");
+            }
+            else
+            {
+                LeaderboardManager.Market = StocksList;
+                Log.Info("Stock Price Update signature verified, updating leaderboard.");
+                var t = new Temp();
+                t.LogStockDay(StocksList);
+
+                conv = new StockUpdateConversation(m.ConversationID);
+                conv.SetInitialState(new ProcessStockUpdateState(e, conv));
+
+                //Send updated leaderboard to clients.
+                Task.Run(() =>
+                {
+                    foreach (var clientIp in ClientManager.Clients.Keys)
+                    {
+                        var stockUpdateConv = new LeaderBoardUpdateRequestConversation(Config.GetInt(Config.BROKER_PROCESS_NUM));
+                        stockUpdateConv.SetInitialState(new LeaderboardSendUpdateState(clientIp, stockUpdateConv, null));
+                        ConversationManager.AddConversation(stockUpdateConv);
+                    }
+                });
+            }
+            return conv;
+        }
+
+        private static Conversation HandleGetPortfolio(Envelope e)
+        {
+            Conversation conv = null;
+
+            GetPortfolioRequest m = e.Contents as GetPortfolioRequest;
+
+            var user = m.Account.Username;
+            var pass = m.Account.Password;
+
+            if (PortfolioManager.TryToGet(user, pass, out Portfolio portfolio))
+            {
+                conv = new GetPortfoliolResponseConversation(m.ConversationID);
+                conv.SetInitialState(new GetPortfolioReceiveState(e, conv));
+            }
+            else
+            {
+                conv = new SendErrorMessageConversation(m.ConversationID);
+                conv.SetInitialState(new SendErrorMessageState("Invalid login credentials.", e, conv, null, Config.GetInt(Config.BROKER_PROCESS_NUM)));
             }
 
             return conv;
