@@ -85,7 +85,7 @@ namespace Client
             var assets = new Dictionary<string,Asset>();
             assets.Add("$", new Asset(new Stock() { Symbol = "$" }, rand.Next(10000, 500000)));
 
-            for (int i = 0; i < 6; i++)
+            for (int i = 1; i < 6; i++)
             {
                 var asset = new Asset(TraderModel.Current.StockHistory[0].TradedCompanies[i], rand.Next(1000));
                 assets.Add(asset.RelatedStock.Symbol, asset);

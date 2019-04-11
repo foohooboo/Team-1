@@ -9,6 +9,15 @@
         
         Title="Stock Portfolio Portal" Height="600" Width="1020">
 
+    <Window.Resources>
+        <ResourceDictionary>
+            <LinearGradientBrush x:Key="ButtonBackground" StartPoint="0,1" EndPoint="0,0">
+                <GradientStop Color="#FFA9A9A9" Offset="0"/>
+                <GradientStop Color="#FF808080" Offset=".75"/>
+            </LinearGradientBrush>
+        </ResourceDictionary>
+    </Window.Resources>
+
     <Grid Background="#101010">
 
         <Grid.RowDefinitions>
@@ -52,8 +61,8 @@
 
         </ListBox>
 
-        <Border Grid.Column="2" Margin="0,0,0,0" Grid.Row="1">
-            <Grid Height="136" VerticalAlignment="Bottom" Margin="0,0,0,0" >
+        <Border Grid.Column="2" Margin="0,0,0,0" Grid.Row="1" BorderBrush="White" BorderThickness="1" Padding="3">
+            <Grid Height="130" VerticalAlignment="Bottom">
 
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*"/>
@@ -66,15 +75,15 @@
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <Button x:Name="SellOut" Content="Sell Out" Click="SellOutEvent" Margin="2"/>
-                <Button x:Name="Sell100" Content="Sell 100" Click="Sell100Event" Grid.Row="1" Margin="2"/>
-                <Button x:Name="Sell10" Content="Sell 10" Click="Sell10Event" Grid.Row="2" Margin="2"/>
-                <Button x:Name="BuyOut" Content="Buy Out" Click="BuyOutEvent" Grid.Column="1" Margin="2" Grid.ColumnSpan="2"/>
-                <Button x:Name="Buy100" Content="Buy 100" Click="Buy100Event" Grid.Column="1" Grid.Row="1" Margin="2" Grid.ColumnSpan="2"/>
-                <Button x:Name="Buy10" Content="Buy 10" Click="Buy10Event" Grid.Column="1" Grid.Row="2" Margin="2" Grid.ColumnSpan="2"/>
-                <Button x:Name="TextBuyButton" Content="Buy" Click="BuyEvent" Grid.Column="2" Grid.Row="3" Margin="2"/>
-                <TextBox x:Name="BuyBox"  TextWrapping="Wrap" Text="{Binding StockCount, UpdateSourceTrigger=PropertyChanged}" Grid.Row="3" Margin="2"/>
-                <Button x:Name="Sell" Content="Sell" Click="SellEvent" Grid.Row="3" Margin="2" Grid.Column="1"/>
+                <Button x:Name="SellOut" BorderBrush="LightGray" Content="Sell Out" Click="SellOutEvent" Grid.Row="0" Margin="2" Background="{StaticResource ButtonBackground}"/>
+                <Button x:Name="Sell100" BorderBrush="LightGray" Content="Sell 100" Click="Sell100Event" Grid.Row="1" Margin="2" Background="{StaticResource ButtonBackground}"/>
+                <Button x:Name="Sell10" BorderBrush="LightGray" Content="Sell 10" Click="Sell10Event" Grid.Row="2" Margin="2" Background="{StaticResource ButtonBackground}"/>
+                <Button x:Name="BuyOut" BorderBrush="LightGray" Content="Buy Out" Click="BuyOutEvent" Grid.Column="1" Margin="2" Grid.ColumnSpan="2" Background="{StaticResource ButtonBackground}"/>
+                <Button x:Name="Buy100" BorderBrush="LightGray" Content="Buy 100" Click="Buy100Event" Grid.Column="1" Grid.Row="1" Margin="2" Grid.ColumnSpan="2" Background="{StaticResource ButtonBackground}"/>
+                <Button x:Name="Buy10" BorderBrush="LightGray" Content="Buy 10" Click="Buy10Event" Grid.Column="1" Grid.Row="2" Margin="2" Grid.ColumnSpan="2" Background="{StaticResource ButtonBackground}"/>
+                <Button x:Name="TextBuyButton" BorderBrush="LightGray" Content="Buy" Click="BuyEvent" Grid.Column="2" Grid.Row="3" Margin="2" Background="{StaticResource ButtonBackground}"/>
+                <TextBox x:Name="BuyBox"  TextWrapping="Wrap" Text="{Binding StockCount, UpdateSourceTrigger=PropertyChanged}" Grid.Row="3" Margin="2" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                <Button x:Name="Sell" BorderBrush="LightGray" Content="Sell" Click="SellEvent" Grid.Row="3" Margin="2" Grid.Column="1" Background="{StaticResource ButtonBackground}"/>
             </Grid>
         </Border>
 
