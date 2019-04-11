@@ -383,7 +383,7 @@ namespace Client
 
                 //Update owned stocks in StockList
                 assets = TraderModel.Current.OwnedStocksBySymbol;
-                foreach (var asset in assets)
+                foreach (var asset in assets.ToList())
                 {
                     var symbol = asset.RelatedStock.Symbol;
                     if (symbol.Equals("$")) continue;

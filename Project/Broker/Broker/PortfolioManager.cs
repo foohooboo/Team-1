@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using Shared.MarketStructures;
 using Shared.PortfolioResources;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -234,17 +235,20 @@ namespace Broker
                         //Selling (complete)
                         else
                         {
+                            quantity = Math.Abs(quantity);
                             if (ownedAsset == null)
                             {
                                 errorMessage = $"You do not own any {stockSymbol} stocks.";
                             }
                             else if (ownedAsset.Quantity < quantity)
                             {
-                                errorMessage = $"You do not own {quantity} {stockSymbol} stocks. Transaction canceled";
+                                errorMessage = $"You do not own {quantity} {stockSymbol} stocks. Transaction canceled.";
                             }
                             else
                             {
                                 ownedAsset.Quantity -= quantity;
+                                if (ownedAsset.Quantity == 0)
+                                    internalPortfolio.Assets.Remove(ownedAsset.RelatedStock.Symbol);
                                 cashOnHand.Quantity += price * quantity;
                                 updatedPortfolio = new Portfolio(internalPortfolio);//Copy because internal should never leave this class.
                                 success = true;

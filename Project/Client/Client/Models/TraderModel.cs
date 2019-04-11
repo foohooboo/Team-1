@@ -18,6 +18,8 @@ namespace Client.Models
         private Portfolio _portfolio;
         private MarketSegment _stockHistory = new MarketSegment();
         private SortedList<float, string> _leaderboard;
+
+        private object LockOwnedStock = new object();
         private List<Asset> _ownedStocks = new List<Asset>();
 
         private Dictionary<string, List<ValuatedStock>> _stockHistoryBySymbol = new Dictionary<string, List<ValuatedStock>>();
@@ -49,15 +51,11 @@ namespace Client.Models
             set
             {
                 _portfolio = value;
-
-                _ownedStocks.Clear();
-                foreach (var ownedStock in value.Assets.Values)
+                lock (LockOwnedStock)
                 {
-                    _ownedStocks.Add(ownedStock);
+                    _ownedStocks = value.Assets.Values.ToList();
                 }
-
                 QtyCash = value.Assets.Where(s => s.Key.Equals("$")).FirstOrDefault().Value.Quantity;
-
                 Handler?.ReDrawPortfolioItems();
             }
         }
@@ -121,11 +119,14 @@ namespace Client.Models
         {
             get
             {
-                var cashAsAsset = _ownedStocks.Where(s => s.RelatedStock.Symbol.Equals("$")).FirstOrDefault();
-                if (cashAsAsset == null)
-                    return 0;
-                else
-                    return cashAsAsset.Quantity;
+                lock (LockOwnedStock)
+                {
+                    var cashAsAsset = _ownedStocks.Where(s => s.RelatedStock.Symbol.Equals("$")).FirstOrDefault();
+                    if (cashAsAsset == null)
+                        return 0;
+                    else
+                        return cashAsAsset.Quantity;
+                }
             }
             private set { }
         }
@@ -134,12 +135,18 @@ namespace Client.Models
         {
             get
             {
-                _ownedStocks.Sort((a, b) => -GetStockNet(a).CompareTo(GetStockNet(b)));
-                return _ownedStocks;
+                lock (LockOwnedStock)
+                {
+                    _ownedStocks.Sort((a, b) => -GetStockNet(a).CompareTo(GetStockNet(b)));
+                    return _ownedStocks;
+                }
             }
             set
             {
-                _ownedStocks = value;
+                lock (LockOwnedStock)
+                {
+                    _ownedStocks = value;
+                }
                 Handler?.ReDrawPortfolioItems();
             }
         }
@@ -148,12 +155,21 @@ namespace Client.Models
         {
             get
             {
-                _ownedStocks.Sort((a, b) => a.RelatedStock.Symbol.CompareTo(b.RelatedStock.Symbol));
+                List<Asset> sortedBySymbol = new List<Asset>();
+                lock (LockOwnedStock)
+                {
+                    sortedBySymbol = _ownedStocks.Select(asset => new Asset(asset.RelatedStock, asset.Quantity)).ToList();
+                }
+                sortedBySymbol.Sort((a, b) => a.RelatedStock.Symbol.CompareTo(b.RelatedStock.Symbol));
+
                 return _ownedStocks;
             }
             set
             {
-                _ownedStocks = value;
+                lock (LockOwnedStock)
+                {
+                    _ownedStocks = value;
+                }
                 Handler?.ReDrawPortfolioItems();
             }
         }

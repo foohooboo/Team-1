@@ -69,7 +69,7 @@ namespace Client.Conversations
             m.ConversationID = Conversation.Id;
             m.Quantity = Quantity;
             m.StockValue = Stock;
-            m.PortfolioId = TraderModel.Current.Portfolio.PortfolioID;
+            m.PortfolioId = TraderModel.Current?.Portfolio?.PortfolioID ?? -1;
 
             Envelope env = new Envelope(m, Config.GetString(Config.BROKER_IP), Config.GetInt(Config.BROKER_PORT));
 

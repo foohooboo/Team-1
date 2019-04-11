@@ -71,11 +71,11 @@ namespace ClientTest.Conversations
             var testStock = new Stock("TST", "Test Stock");
             var vStock = new ValuatedStock(("1984-02-22,11.0289,11.0822,10.7222,10.7222,197402").Split(','), testStock);
 
-            var conv = new InitiateTransactionConversation(portfolioId, vStock, 1);
+            var conv = new InitiateTransactionConversation(portfolioId);
             int requests = 0;
 
             //setup response message and mock
-            var mock = new Mock<InitTransactionStartingState>(conv) { CallBase = true };
+            var mock = new Mock<InitTransactionStartingState>(conv, vStock, 1) { CallBase = true };
             mock.Setup(prep => prep.Prepare()).Verifiable();//ensure DoPrepare is called.
             mock.Setup(st => st.OnHandleMessage(It.IsAny<Envelope>(),0)).CallBase();//Skip mock's HandleMessage override.
             mock.Setup(st => st.Send())//Pretend message is sent and response comes back...
@@ -118,10 +118,10 @@ namespace ClientTest.Conversations
             var testStock = new Stock("TST", "Test Stock");
             var vStock = new ValuatedStock(("1984-02-22,11.0289,11.0822,10.7222,10.7222,197402").Split(','), testStock);
 
-            var conv = new InitiateTransactionConversation(portfolioId, vStock, 1);
+            var conv = new InitiateTransactionConversation(portfolioId);
 
             //setup response message and mock
-            var mock = new Mock<InitTransactionStartingState>(conv) { CallBase = true };
+            var mock = new Mock<InitTransactionStartingState>(conv, vStock, 1) { CallBase = true };
             mock.Setup(prep => prep.Prepare()).Verifiable();//ensure DoPrepare is called.
             mock.Setup(st => st.OnHandleMessage(It.IsAny<Envelope>(),0)).CallBase();//Skip mock's HandleMessage override.
             mock.Setup(st => st.Send()).CallBase().Verifiable();
