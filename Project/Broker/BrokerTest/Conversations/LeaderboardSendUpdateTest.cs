@@ -68,16 +68,13 @@ namespace BrokerTest.Conversations
 
             //create fake portfolios to populate leaderboard
             PortfolioManager.TryToCreate("port1", "pass1", out Portfolio port);
-            port.ModifyAsset(new Asset(user1VStock, 1));
-            PortfolioManager.ReleaseLock(port);
+            PortfolioManager.PerformTransaction(port.PortfolioID, user1VStock.Symbol, 1, 1, out port, out string error);
 
             PortfolioManager.TryToCreate("port2", "pass2", out port);
-            port.ModifyAsset(new Asset(user2VStock, 1));
-            PortfolioManager.ReleaseLock(port);
+            PortfolioManager.PerformTransaction(port.PortfolioID, user2VStock.Symbol, 1, 1, out port, out error);
 
             PortfolioManager.TryToCreate("port3", "pass3", out port);
-            port.ModifyAsset(new Asset(user3VStock, 1));
-            PortfolioManager.ReleaseLock(port);
+            PortfolioManager.PerformTransaction(port.PortfolioID, user3VStock.Symbol, 1, 1, out port, out error);
 
             //clear connected clients (if any leftover from other tests)
             ClientManager.Clients.Clear();

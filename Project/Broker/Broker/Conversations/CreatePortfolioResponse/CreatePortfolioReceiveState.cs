@@ -83,7 +83,6 @@ namespace Broker.Conversations.CreatePortfolio
             message.ConversationID = Conversation.Id;
             message.PortfolioID = portfolio.PortfolioID;
             message.Assets = portfolio.CloneAssets();
-            PortfolioManager.ReleaseLock(portfolio);
 
             return message;
         }

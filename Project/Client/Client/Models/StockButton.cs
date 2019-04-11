@@ -16,11 +16,11 @@ namespace Client.Models
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public string Symbol { get; set; }
-        public int QtyOwned { get; set; }
+        public float QtyOwned { get; set; }
         public string Price { get; set; }
         public BitmapImage History { get; private set; }
 
-        public StockButton(string symbol, int qtyOwned, float price)
+        public StockButton(string symbol, float qtyOwned, float price)
         {
             Symbol = symbol;
             QtyOwned = qtyOwned;

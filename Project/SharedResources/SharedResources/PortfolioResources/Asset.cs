@@ -9,7 +9,7 @@ namespace Shared.PortfolioResources
             RelatedStock = new Stock();
         }
 
-        public Asset(Stock relatedStock, int quantity)
+        public Asset(Stock relatedStock, float quantity)
         {
             RelatedStock = relatedStock;
             Quantity = quantity;
@@ -26,7 +26,7 @@ namespace Shared.PortfolioResources
             get; set;
         }
 
-        public int Quantity
+        public float Quantity
         {
             get; set;
         }

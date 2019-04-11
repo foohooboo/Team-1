@@ -234,7 +234,7 @@ namespace Client
         /// largest possible amount if necessary.
         /// </summary>
         /// <param name="amount"></param>
-        private void SendTransaction(int amount)
+        private void SendTransaction(float amount)
         {
             var symbol = TraderModel.Current.SelectedStocksSymbol;
 
@@ -268,7 +268,7 @@ namespace Client
             else
             {
                 Asset ownedAsset = null;
-                var amountOwned = 0;
+                var amountOwned = 0f;
 
                 if (TraderModel.Current.Portfolio.Assets.TryGetValue(symbol, out ownedAsset))
                 {
@@ -294,9 +294,10 @@ namespace Client
                     Symbol = symbol,
                     Close = TraderModel.Current.GetRecentValue(symbol)
                 };
-                var request = new InitiateTransactionConversation(TraderModel.Current.Portfolio.PortfolioID, stock, amount);
-                request.SetInitialState(new InitTransactionStartingState(request));
-                ConversationManager.AddConversation(request);
+                var requestConv = new InitiateTransactionConversation(TraderModel.Current.Portfolio.PortfolioID);
+
+                requestConv.SetInitialState(new InitTransactionStartingState(requestConv, stock, amount));
+                ConversationManager.AddConversation(requestConv);
 
                 ReDrawPortfolioItems();
             }
@@ -421,6 +422,11 @@ namespace Client
                     stockPanels.SelectedItem = selectedButton;
                 }
             });
+        }
+
+        public void ShowStatus(string message)
+        {
+            Notification = message;
         }
     }
 }

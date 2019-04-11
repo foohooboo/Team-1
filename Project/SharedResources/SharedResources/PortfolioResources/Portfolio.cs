@@ -1,4 +1,5 @@
 ﻿using log4net;
+using System;
 using System.Collections.Generic;
 
 namespace Shared.PortfolioResources
@@ -7,14 +8,9 @@ namespace Shared.PortfolioResources
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        //TODO: It might be good to break this class into two. 
-        //1- A readonly portfolio with name, password, and assets.
-        //2- A managed portfolio, which extends the base Portfolio, but can also modify the assets, etc.
-        //-Dsphar 4/10/2019
-
         public Portfolio()
         {
-            
+            Assets = new Dictionary<string, Asset>();
         }
 
         public Portfolio(Portfolio original)
@@ -45,68 +41,18 @@ namespace Shared.PortfolioResources
             get; set;
         }
 
-        private object LockAssets = new object();
-        private readonly Dictionary<string, Asset> _assets = new Dictionary<string, Asset>();
         public Dictionary<string, Asset> Assets
         {
-            get
-            {
-                //return a copy of the owned assets to prevent accidental changes
-                Dictionary<string, Asset> assets = null;
-                lock (LockAssets)
-                {
-                    assets = CloneAssets();
-                }
-                return assets;
-            }
-            private set
-            { 
-                //never set the asset directly, always use the ModifyAsset function
-            }
+            get; set;
         }
 
-        /// <summary>
-        /// Add(+qty) or remove(-qty) the desired quantity stock with the provided symbol.
-        /// Do nothing and return false if entire transaction cannot be completed (insufficient funds, etc).
-        /// </summary>
-        /// <param name="symbol"></param>
-        /// <param name="quantity"></param>
-        /// <param name="errorMessage"></param>
-        /// <returns></returns>
-        public bool ModifyAsset(string symbol, int quantity, out string errorMessage)
+        //Add/Remove an Asset object in the Portfolio
+        //If the specific Asset already exists within the portfolio, increment/decrement the Quantity
+        //ass quantity can be < 0 for removal of Assets
+        //fails silently
+        //These two methods could maybe take a stock symbol and a quantity as parameters instead of an Asset object
+        public void ModifyAsset(Asset asset)
         {
-            errorMessage = "";
-            if (quantity == 0)
-            {
-                errorMessage = "You cannot make a transaction for 0 stocks.";
-                return false;
-            }
-
-            lock (LockAssets)
-            {
-
-                //Buying
-                if (quantity > 0)
-                {
-
-                }
-
-                //Selling
-                else
-                {
-                    if (!Assets.ContainsKey(symbol))
-                    {
-                        errorMessage = $"You do not own any {symbol} stocks.";
-                        return false;
-                    }
-
-                    if
-                }
-            }
-
-
-
-
             if (Assets.ContainsKey(asset.RelatedStock.Symbol))
             {
                 Assets[asset.RelatedStock.Symbol].Quantity += asset.Quantity;
@@ -143,7 +89,7 @@ namespace Shared.PortfolioResources
 
         public Dictionary<string, Asset> CloneAssets()
         {
-            return new Dictionary<string, Asset>(_assets);
+            return new Dictionary<string, Asset>(Assets);
         }
     }
 }

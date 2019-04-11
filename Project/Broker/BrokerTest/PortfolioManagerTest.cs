@@ -14,7 +14,6 @@ namespace BrokerTest
         {
             Assert.IsTrue(PortfolioManager.TryToCreate(DataGenerator.GetRandomString(3), DataGenerator.GetRandomString(6), out Portfolio portfolio));
 
-            PortfolioManager.ReleaseLock(portfolio);
             PortfolioManager.TryToRemove(portfolio.PortfolioID);
         }
 
@@ -22,7 +21,6 @@ namespace BrokerTest
         public void AddPortfolioFailTest()
         {
             PortfolioManager.TryToCreate(DataGenerator.GetRandomString(3), DataGenerator.GetRandomString(6), out Portfolio portfolio);
-            PortfolioManager.ReleaseLock(portfolio);
 
             Assert.IsFalse(PortfolioManager.TryToCreate(portfolio.Username, DataGenerator.GetRandomString(6), out Portfolio newPortfolio));
             Assert.IsNull(newPortfolio);
@@ -39,14 +37,11 @@ namespace BrokerTest
             var username = portfolio.Username;
             var password = portfolio.Password;
 
-            PortfolioManager.ReleaseLock(portfolio);
-
             Assert.IsTrue(PortfolioManager.TryToGet(id, out Portfolio newPullPortfolio));
             Assert.AreEqual(id, newPullPortfolio.PortfolioID);
             Assert.AreEqual(username, newPullPortfolio.Username);
             Assert.AreEqual(password, newPullPortfolio.Password);
 
-            PortfolioManager.ReleaseLock(newPullPortfolio);
             PortfolioManager.TryToRemove(portfolio.PortfolioID);
         }
 
@@ -59,14 +54,11 @@ namespace BrokerTest
             var username = portfolio.Username;
             var password = portfolio.Password;
 
-            PortfolioManager.ReleaseLock(portfolio);
-
             Assert.IsTrue(PortfolioManager.TryToGet(username, password, out Portfolio newPullPortfolio));
             Assert.AreEqual(id, newPullPortfolio.PortfolioID);
             Assert.AreEqual(username, newPullPortfolio.Username);
             Assert.AreEqual(password, newPullPortfolio.Password);
 
-            PortfolioManager.ReleaseLock(newPullPortfolio);
             PortfolioManager.TryToRemove(portfolio.PortfolioID);
         }
 
@@ -83,10 +75,9 @@ namespace BrokerTest
             PortfolioManager.TryToCreate(DataGenerator.GetRandomString(3), DataGenerator.GetRandomString(6), out Portfolio portfolio);
             var count = PortfolioManager.Portfolios.Count;
 
-            Assert.IsFalse(PortfolioManager.TryToRemove(portfolio.PortfolioID));
+            Assert.IsFalse(PortfolioManager.TryToRemove(portfolio.PortfolioID+123));
             Assert.AreEqual(count, PortfolioManager.Portfolios.Count);
 
-            PortfolioManager.ReleaseLock(portfolio);
             PortfolioManager.TryToRemove(portfolio.PortfolioID);
         }
 
@@ -96,7 +87,6 @@ namespace BrokerTest
             PortfolioManager.TryToCreate(DataGenerator.GetRandomString(3), DataGenerator.GetRandomString(6), out Portfolio portfolio);
             var count = PortfolioManager.Portfolios.Count;
             var id = portfolio.PortfolioID;
-            PortfolioManager.ReleaseLock(portfolio);
 
             Assert.IsTrue(PortfolioManager.TryToRemove(id));
             Assert.AreEqual(count - 1, PortfolioManager.Portfolios.Count);

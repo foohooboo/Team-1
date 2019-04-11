@@ -10,5 +10,6 @@ namespace Client
     {
         void LeaderboardChanged();
         void ReDrawPortfolioItems();
+        void ShowStatus(string message);
     }
 }

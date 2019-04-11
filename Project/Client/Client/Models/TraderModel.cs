@@ -195,5 +195,10 @@ namespace Client.Models
             }
             Handler?.ReDrawPortfolioItems();
         }
+
+        public void PassStatus(string message)
+        {
+            Handler?.ShowStatus(message);
+        }
     }
 }

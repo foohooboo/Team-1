@@ -3,6 +3,7 @@ using Broker.Conversations.GetPortfolio;
 using Broker.Conversations.GetPortfolioResponse;
 using Broker.Conversations.LeaderBoardUpdate;
 using Broker.Conversations.StockUpdate;
+using Broker.Conversations.TransactionRequest;
 using log4net;
 using Shared;
 using Shared.Client;
@@ -33,11 +34,14 @@ namespace Broker
 
             //TODO: remove the following 3 dummy portfolio creations
             PortfolioManager.TryToCreate("DevTrader", "password", out Portfolio devPortfolio);
-            devPortfolio.ModifyAsset(new Asset(new Stock("AAPL", "apple"), 600));
+            PortfolioManager.PerformTransaction(devPortfolio.PortfolioID, "AAPL", 60, 0, out devPortfolio, out string error);
+            PortfolioManager.PerformTransaction(devPortfolio.PortfolioID, "AMZN", 60, 0, out devPortfolio, out error);
+
             PortfolioManager.TryToCreate("SomeCompetitor", "password", out Portfolio competitorPortfolio);
-            competitorPortfolio.ModifyAsset(new Asset(new Stock("AMZN", "Amazon"), 60));
+            PortfolioManager.PerformTransaction(competitorPortfolio.PortfolioID, "AMZN", 120, 0, out competitorPortfolio, out error);
+                        
             PortfolioManager.TryToCreate("Otherguy", "password", out Portfolio otherguyPortfolio);
-            otherguyPortfolio.ModifyAsset(new Asset(new Stock("AMZN", "Amazon"), 30));
+            PortfolioManager.PerformTransaction(otherguyPortfolio.PortfolioID, "AAPL", 120, 0, out otherguyPortfolio, out error);
 
             ConversationManager.Start(ConversationBuilder);
             ComService.AddClient(Config.DEFAULT_UDP_CLIENT, Config.GetInt(Config.BROKER_PORT));
@@ -85,26 +89,10 @@ namespace Broker
                     break;
 
                 case TransactionRequestMessage m:
-                    Log.Info($"Processing TransactionRequestMessage message");
-                    conv = HandleTransactionRequest(e);
+                    conv = new RespondTransactionConversation(e);
+                    conv.SetInitialState(new RespondTransaction_InitialState(conv, e));
                     break;
             }
-            return conv;
-        }
-
-        private static Conversation HandleTransactionRequest(Envelope e)
-        {
-            Conversation conv = null;
-
-            TransactionRequestMessage m = e.Contents as TransactionRequestMessage;
-
-            if(PortfolioManager.TryToGet(m.PortfolioId, out Portfolio portfolio)){
-                portfolio.ModifyAsset(new Asset(m.StockValue, m.Quantity));
-            }
-
-
-
-            Log.Info("Hanling a transaction request");
             return conv;
         }
 

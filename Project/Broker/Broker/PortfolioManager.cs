@@ -130,7 +130,7 @@ namespace Broker
             {
                 lock (LockPortfolios)//probably not needed since we aren't modifying the localPortfolio, but added as reminder.
                 {
-                    sucess = !_portfolios.TryRemove(portfolioID, out Portfolio localPortfolio);
+                    sucess = _portfolios.TryRemove(portfolioID, out Portfolio localPortfolio);
                 }
             }
 
@@ -179,7 +179,7 @@ namespace Broker
         /// <param name="updatedPortfolio"></param>
         /// <param name="errorMessage"></param>
         /// <returns></returns>
-        public static bool PerformTransaction(int portfolioId, string stockSymbol, int quantity, float price, out Portfolio updatedPortfolio, out string errorMessage)
+        public static bool PerformTransaction(int portfolioId, string stockSymbol, float quantity, float price, out Portfolio updatedPortfolio, out string errorMessage)
         {
             bool success = false;
             errorMessage = "";
@@ -209,10 +209,29 @@ namespace Broker
                         //Buying
                         if (quantity > 0)
                         {
-
+                            var totalCost = quantity * price;
+                            if(cashOnHand.Quantity < totalCost)
+                            {
+                                errorMessage = "You do not have enough cash to make this purchase. Transaction canceled.";
+                            }
+                            else
+                            {
+                                cashOnHand.Quantity -= totalCost;
+                                if (ownedAsset == null)
+                                {
+                                    ownedAsset = new Asset(new Stock(stockSymbol, ""), quantity);
+                                    internalPortfolio.Assets.Add(stockSymbol, ownedAsset);
+                                }
+                                else
+                                {
+                                    ownedAsset.Quantity += quantity;
+                                }
+                                updatedPortfolio = new Portfolio(internalPortfolio);//Copy so internal doesn't leave.
+                                success = true;
+                            }
                         }
 
-                        //Selling
+                        //Selling (complete)
                         else
                         {
                             if (ownedAsset == null)
@@ -225,7 +244,10 @@ namespace Broker
                             }
                             else
                             {
-                                cashOnHand.Quantity += price * quantity
+                                ownedAsset.Quantity -= quantity;
+                                cashOnHand.Quantity += price * quantity;
+                                updatedPortfolio = new Portfolio(internalPortfolio);//Copy because internal should never leave this class.
+                                success = true;
                             }
                         }
                     }
@@ -236,6 +258,38 @@ namespace Broker
                 }
             }
             return success;
+        }
+
+        public static int PortfolioCount
+        {
+            get
+            {
+                return _portfolios.Count;
+            }
+            private set { }
+        }
+
+        public static void Clear()
+        {
+            _portfolios.Clear();
+        }
+
+        public static Dictionary<int,Portfolio> Portfolios
+        {
+            get
+            {
+                var dictionary = new Dictionary<int, Portfolio>();
+
+                lock (LockPortfolios)
+                {
+                    foreach (var entry in _portfolios)
+                    {
+                        dictionary.Add(entry.Key, new Portfolio(entry.Value));
+                    }
+                }
+                return dictionary;
+            }
+            private set { }
         }
     }
 }

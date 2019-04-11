@@ -5,6 +5,7 @@ using Shared.Comms.ComService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
+using Shared.MarketStructures;
 using Shared.PortfolioResources;
 using System.Net;
 
@@ -14,8 +15,12 @@ namespace Client.Conversations
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public InitTransactionStartingState(Conversation conv) : base(conv, null) {
-            
+        ValuatedStock Stock;
+        float Quantity;
+
+        public InitTransactionStartingState(Conversation conv, ValuatedStock vStock, float quantity) : base(conv, null) {
+            Stock = vStock;
+            Quantity = quantity;
         }
 
         public override ConversationState HandleMessage(Envelope incomingMessage)
@@ -36,6 +41,7 @@ namespace Client.Conversations
                     }
                     else
                     {
+                        
                         Log.Error("Transaction verified, but no local portfolio to update.");
                     }
                     
@@ -43,6 +49,7 @@ namespace Client.Conversations
                     break;
                 case ErrorMessage m:
                     Log.Error($"Received error message as reply...\n{m.ErrorText}");
+                    TraderModel.Current.PassStatus(m.ErrorText);
                     nextState = new ConversationDoneState(Conversation, this);
                     break;
                 default:
@@ -58,8 +65,11 @@ namespace Client.Conversations
         {
             Log.Debug($"{nameof(Prepare)} (enter)");
 
-            var m = MessageFactory.GetMessage<TransactionRequestMessage>(Config.GetInt(Config.CLIENT_PROCESS_NUM), 0);
+            var m = MessageFactory.GetMessage<TransactionRequestMessage>(Config.GetInt(Config.CLIENT_PROCESS_NUM), 0) as TransactionRequestMessage;
             m.ConversationID = Conversation.Id;
+            m.Quantity = Quantity;
+            m.StockValue = Stock;
+            m.PortfolioId = TraderModel.Current.Portfolio.PortfolioID;
 
             Envelope env = new Envelope(m, Config.GetString(Config.BROKER_IP), Config.GetInt(Config.BROKER_PORT));
 
