@@ -1,7 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Shared.PortfolioResources;
+﻿using System.Collections.Generic;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Shared.MarketStructures;
-using System.Collections.Generic;
+using Shared.PortfolioResources;
 
 namespace SharedTest.PortfolioTests
 {
@@ -10,6 +10,18 @@ namespace SharedTest.PortfolioTests
     {
         public PortfolioTest()
         {
+
+        }
+
+        [TestMethod]
+        public void GetTestPortfolioTeset()
+        {
+            var portfolio = Portfolio.GetTestPortfolio();
+
+            Assert.IsNotNull(portfolio.PortfolioID);
+            Assert.IsNotNull(portfolio.Username);
+            Assert.IsNotNull(portfolio.Password);
+            Assert.AreEqual(portfolio.Assets.Count, 3);
 
         }
 

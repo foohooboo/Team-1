@@ -1,9 +1,19 @@
-﻿using Shared.MarketStructures;
+﻿using System.Collections.Generic;
+using Shared.MarketStructures;
 
 namespace Shared.PortfolioResources
 {
     public class Asset
     {
+        public static Asset GetTestAsset()
+        {
+            return new Asset()
+            {
+                RelatedStock = Stock.GetTestStock(),
+                Quantity = 500
+            };
+        }
+
         public Asset()
         {
             RelatedStock = new Stock();
@@ -29,6 +39,22 @@ namespace Shared.PortfolioResources
         public float Quantity
         {
             get; set;
+        }
+
+        public override bool Equals(object obj)
+        {
+            var asset = obj as Asset;
+            return asset != null &&
+                   EqualityComparer<Stock>.Default.Equals(RelatedStock, asset.RelatedStock) &&
+                   Quantity == asset.Quantity;
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = 300933774;
+            hashCode = hashCode * -1521134295 + EqualityComparer<Stock>.Default.GetHashCode(RelatedStock);
+            hashCode = hashCode * -1521134295 + Quantity.GetHashCode();
+            return hashCode;
         }
     }
 }
