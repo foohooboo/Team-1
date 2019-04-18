@@ -4,7 +4,7 @@ namespace Client.Conversations.GetPortfolio
 {
     public class GetPortfolioRequestConversation : Conversation
     {
-        public GetPortfolioRequestConversation(int processID) : base(processID)
+        public GetPortfolioRequestConversation(long processID) : base(processID)
         {
 
         }

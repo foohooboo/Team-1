@@ -1,12 +1,12 @@
-﻿using log4net;
-using Newtonsoft.Json;
-using Shared.MarketStructures;
-using Shared.PortfolioResources;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using log4net;
+using Newtonsoft.Json;
+using Shared.MarketStructures;
+using Shared.PortfolioResources;
 
 namespace Broker
 {
@@ -14,9 +14,9 @@ namespace Broker
     {
         private static ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public static string PortfolioData => $"";
+        public static string PortfolioData => $"C:\\Users\\{Environment.UserName}\\AppData\\Local\\Team1\\Broker\\portfolios.txt";
 
-        private static object LockPortfolios = new object();
+        private static readonly object portfolioLock = new object();
         private static ConcurrentDictionary<int, Portfolio> _portfolios = new ConcurrentDictionary<int, Portfolio>();
 
         //Use this function to ALWAYS return a copy of the managed portfolio. You never want an outside source to have
@@ -25,10 +25,12 @@ namespace Broker
         public static Portfolio GetPortfolioSafe(int portfolioId)
         {
             Portfolio portfolio = null;
-            lock (LockPortfolios)
+            lock (portfolioLock)
             {
                 if (!_portfolios.TryGetValue(portfolioId, out portfolio))
+                {
                     Log.Warn($"Could not find portfolio {portfolioId}.");
+                }
             }
             return portfolio;
         }
@@ -47,7 +49,7 @@ namespace Broker
                 return false;
             }
 
-            lock (LockPortfolios)
+            lock (portfolioLock)
             {
                 var internalPortfolio = new Portfolio()
                 {
@@ -80,7 +82,7 @@ namespace Broker
             bool sucess = false;
             portfolio = null;
 
-            lock (LockPortfolios)
+            lock (portfolioLock)
             {
                 var localPorfolio = _portfolios.Where(
                     p => p.Value.Username.Equals(username) &&
@@ -116,7 +118,7 @@ namespace Broker
             Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (exit)");
             return success;
         }
-        
+
         public static bool TryToRemove(int portfolioID)
         {
             Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (enter)");
@@ -129,7 +131,7 @@ namespace Broker
             }
             else
             {
-                lock (LockPortfolios)//probably not needed since we aren't modifying the localPortfolio, but added as reminder.
+                lock (portfolioLock)//probably not needed since we aren't modifying the localPortfolio, but added as reminder.
                 {
                     sucess = _portfolios.TryRemove(portfolioID, out Portfolio localPortfolio);
                 }
@@ -141,13 +143,17 @@ namespace Broker
 
         public static void SavePortfolios()
         {
-            lock (LockPortfolios)
+            lock (portfolioLock)
             {
-                using (StreamWriter file = File.CreateText(PortfolioData))
+                Directory.CreateDirectory(Path.GetDirectoryName(PortfolioData));
+
+                using (StreamWriter file = new StreamWriter(PortfolioData))
                 {
                     new JsonSerializer().Serialize(file, _portfolios.Values.ToArray());
                 }
             }
+
+            Clear();
         }
 
         public static void LoadPortfolios()
@@ -159,7 +165,7 @@ namespace Broker
                 loadedPortfolios = JsonConvert.DeserializeObject<List<Portfolio>>(reader.ReadToEnd());
             }
 
-            lock (LockPortfolios) //probably not needed since we aren't modifying the localPortfolios, but added as reminder.
+            lock (portfolioLock) //probably not needed since we aren't modifying the localPortfolios, but added as reminder.
             {
                 _portfolios.Clear();
                 foreach (var portfolio in loadedPortfolios)
@@ -168,7 +174,6 @@ namespace Broker
                 }
             }
         }
-
 
         /// <summary>
         /// Add(+qty) or remove(-qty) the desired quantity stock with the provided symbol.
@@ -200,9 +205,9 @@ namespace Broker
             {
                 //Lock is to fully complete transaction before opening up the internalPortfolio for others to access/change.
                 //I suppose we could rely on the portfolio lock itself, but this logic below is fast enough it shouldn't matter.
-                lock (LockPortfolios)
+                lock (portfolioLock)
                 {
-                    if(_portfolios.TryGetValue(portfolioId, out Portfolio internalPortfolio))
+                    if (_portfolios.TryGetValue(portfolioId, out Portfolio internalPortfolio))
                     {
                         Asset ownedAsset = internalPortfolio.Assets.Where(a => a.Value.RelatedStock.Symbol.Equals(stockSymbol)).LastOrDefault().Value;
                         Asset cashOnHand = internalPortfolio.Assets.Where(a => a.Value.RelatedStock.Symbol.Equals("$")).LastOrDefault().Value;
@@ -211,7 +216,7 @@ namespace Broker
                         if (quantity > 0)
                         {
                             var totalCost = quantity * price;
-                            if(cashOnHand.Quantity < totalCost)
+                            if (cashOnHand.Quantity < totalCost)
                             {
                                 errorMessage = "You do not have enough cash to make this purchase. Transaction canceled.";
                             }
@@ -248,7 +253,10 @@ namespace Broker
                             {
                                 ownedAsset.Quantity -= quantity;
                                 if (ownedAsset.Quantity == 0)
+                                {
                                     internalPortfolio.Assets.Remove(ownedAsset.RelatedStock.Symbol);
+                                }
+
                                 cashOnHand.Quantity += price * quantity;
                                 updatedPortfolio = new Portfolio(internalPortfolio);//Copy because internal should never leave this class.
                                 success = true;
@@ -266,11 +274,10 @@ namespace Broker
 
         public static int PortfolioCount
         {
-            get
+            get => _portfolios.Count;
+            private set
             {
-                return _portfolios.Count;
             }
-            private set { }
         }
 
         public static void Clear()
@@ -278,13 +285,13 @@ namespace Broker
             _portfolios.Clear();
         }
 
-        public static Dictionary<int,Portfolio> Portfolios
+        public static Dictionary<int, Portfolio> Portfolios
         {
             get
             {
                 var dictionary = new Dictionary<int, Portfolio>();
 
-                lock (LockPortfolios)
+                lock (portfolioLock)
                 {
                     foreach (var entry in _portfolios)
                     {
@@ -293,7 +300,9 @@ namespace Broker
                 }
                 return dictionary;
             }
-            private set { }
+            private set
+            {
+            }
         }
     }
 }

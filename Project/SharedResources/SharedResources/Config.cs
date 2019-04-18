@@ -1,12 +1,14 @@
-﻿using log4net;
-using System;
+﻿using System;
 using System.Configuration;
+using log4net;
 
 namespace Shared
 {
     public static class Config
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+        private static long _processID;
 
         public const string
 
@@ -20,7 +22,7 @@ namespace Shared
             DEFAULT_TIMEOUT = "defaultTimeout",
             DEFAULT_RETRY_COUNT = "defaultRetryCount",
 
-            CLIENT_PROCESS_NUM = "clientProcessNum",
+            //CLIENT_PROCESS_NUM = "clientProcessNum",
 
             BROKER_IP = "brokerIp",
             BROKER_PORT = "brokerPort",
@@ -33,6 +35,17 @@ namespace Shared
 
             STOCK_TICK_DELAY = "stockTickDelay";
 
+
+        public static long GetClientProcessNumber()
+        {
+            if (default(long).Equals(_processID))
+            {
+                _processID = DateTime.Now.Ticks;
+            }
+
+            return _processID;
+        }
+
         public static string GetString(string key)
         {
             string val = "";
@@ -40,8 +53,10 @@ namespace Shared
             {
                 var appSettings = ConfigurationManager.AppSettings;
                 val = appSettings[key];
-                if (string.IsNullOrEmpty(val))
+                if (String.IsNullOrEmpty(val))
+                {
                     Log.Warn($"Empty value for {key} configuration.");
+                }
             }
             catch (ConfigurationErrorsException e)
             {
@@ -53,7 +68,7 @@ namespace Shared
         public static int GetInt(string key)
         {
             var value = GetString(key);
-            if (int.TryParse(value, out int val))
+            if (Int32.TryParse(value, out int val))
             {
                 return val;
             }

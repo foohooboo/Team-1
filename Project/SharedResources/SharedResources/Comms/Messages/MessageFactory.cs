@@ -49,7 +49,7 @@ namespace Shared.Comms.Messages
             return message;
         }
 
-        public static Message GetMessage<TMessage>(int processID, int portfolioID)
+        public static Message GetMessage<TMessage>(long processID, int portfolioID)
         {
             Log.Debug($"{nameof(GetMessage)} (enter)");
 

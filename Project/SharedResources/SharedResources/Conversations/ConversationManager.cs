@@ -90,7 +90,7 @@ namespace Shared.Conversations
             Log.Debug($"{nameof(AddConversation)} (exit)");
         }
 
-        public static string GenerateNextId(int processID)
+        public static string GenerateNextId(long processID)
         {
             return $"{processID}-{NextConversationCount}";
         }

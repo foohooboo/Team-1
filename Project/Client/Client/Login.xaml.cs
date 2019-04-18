@@ -1,13 +1,13 @@
-﻿using Client.Conversations.GetPortfolio;
+﻿using System;
+using System.Collections.Generic;
+using System.Windows;
+using Client.Conversations.GetPortfolio;
 using Client.Models;
 using Shared;
 using Shared.Comms.ComService;
 using Shared.Conversations;
 using Shared.MarketStructures;
 using Shared.PortfolioResources;
-using System;
-using System.Collections.Generic;
-using System.Windows;
 
 namespace Client
 {
@@ -42,7 +42,7 @@ namespace Client
             //logging in
             else
             {
-                var loginConv = new GetPortfolioRequestConversation(Config.GetInt(Config.CLIENT_PROCESS_NUM));
+                var loginConv = new GetPortfolioRequestConversation(Config.GetClientProcessNumber());
                 loginConv.SetInitialState(new GetPortfolioRequestState(user.Text, pass.Password, this, loginConv));
                 ConversationManager.AddConversation(loginConv);
             }
@@ -75,15 +75,17 @@ namespace Client
 
 
 
-            if (TraderModel.Current.StockHistory.Count==0 || TraderModel.Current.StockHistory[0].TradedCompanies.Count == 0)
+            if (TraderModel.Current.StockHistory.Count == 0 || TraderModel.Current.StockHistory[0].TradedCompanies.Count == 0)
             {
                 TraderModel.Current.StockHistory = ManagedData.makeupMarketSegment(10, 50);
             }
 
             Random rand = new Random();
 
-            var assets = new Dictionary<string,Asset>();
-            assets.Add("$", new Asset(new Stock() { Symbol = "$" }, rand.Next(10000, 500000)));
+            var assets = new Dictionary<string, Asset>
+            {
+                { "$", new Asset(new Stock() { Symbol = "$" }, rand.Next(10000, 500000)) }
+            };
 
             for (int i = 1; i < 6; i++)
             {

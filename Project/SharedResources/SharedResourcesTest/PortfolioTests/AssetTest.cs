@@ -8,6 +8,15 @@ namespace SharedTest.PortfolioTests
     public class AssetTest
     {
         [TestMethod]
+        public void GetTestAssetTest()
+        {
+            var asset = Asset.GetTestAsset();
+
+            Assert.IsNotNull(asset.RelatedStock);
+            Assert.AreEqual(500, asset.Quantity);
+        }
+
+        [TestMethod]
         public void TestConstructor()
         {
             var ass = new Asset();

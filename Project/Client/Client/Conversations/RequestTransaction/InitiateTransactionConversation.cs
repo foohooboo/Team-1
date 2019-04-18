@@ -8,7 +8,7 @@ namespace Client.Conversations
     {
         public readonly int PortfoliId;
 
-        public InitiateTransactionConversation(int portfolioId) : base(Config.GetInt(Config.CLIENT_PROCESS_NUM))
+        public InitiateTransactionConversation(int portfolioId) : base(Config.GetClientProcessNumber())
         {
             PortfoliId = portfolioId;
         }
