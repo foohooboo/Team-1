@@ -1,11 +1,11 @@
-﻿using log4net;
+﻿using System.Threading.Tasks;
+using log4net;
 using Shared;
 using Shared.Comms.ComService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
 using Shared.PortfolioResources;
-using System.Threading.Tasks;
 
 namespace Client.Conversations.GetPortfolio
 {
@@ -14,8 +14,8 @@ namespace Client.Conversations.GetPortfolio
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private string Username;
-        private string Password;
-        private IHandleLogin LoginHandler;
+        private readonly string Password;
+        private readonly IHandleLogin LoginHandler;
 
         public GetPortfolioRequestState(string username, string password, IHandleLogin loginHandler, Conversation conversation) : base(conversation, null)
         {
@@ -36,8 +36,8 @@ namespace Client.Conversations.GetPortfolio
                 case ErrorMessage m:
                     Log.Error($"Received error message as reply...\n{m.ErrorText}");
 
-                    Task.Run(() => LoginHandler?.LoginFailure(m.ErrorText)); 
-                    
+                    Task.Run(() => LoginHandler?.LoginFailure(m.ErrorText));
+
                     nextState = new ConversationDoneState(Conversation, this);
                     ConversationManager.RemoveConversation(Conversation.Id);
                     break;
@@ -58,7 +58,7 @@ namespace Client.Conversations.GetPortfolio
                     ConversationManager.RemoveConversation(Conversation.Id);
 
                     Task.Run(() => LoginHandler?.LoginSuccess(port));
-                    
+
                     break;
                 default:
                     Log.Error($"No logic to process incoming message of type {incomingMessage.Contents?.GetType()}. Ignoring message.");
@@ -73,7 +73,7 @@ namespace Client.Conversations.GetPortfolio
         {
             Log.Debug($"{nameof(Prepare)} (enter)");
 
-            var message = MessageFactory.GetMessage<GetPortfolioRequest>(Config.GetInt(Config.CLIENT_PROCESS_NUM), 0) as GetPortfolioRequest;
+            var message = MessageFactory.GetMessage<GetPortfolioRequest>(Config.GetClientProcessNumber(), 0) as GetPortfolioRequest;
             message.ConversationID = Conversation.Id;
             message.Account = new Portfolio()
             {

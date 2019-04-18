@@ -18,7 +18,7 @@ namespace Shared.Conversations
         /// <summary>
         /// Creates a conversation with a newly generated ConversationId.
         /// </summary>
-        public Conversation(int processId)
+        public Conversation(long processId)
         {
             Id = ConversationManager.GenerateNextId(processId);
         }

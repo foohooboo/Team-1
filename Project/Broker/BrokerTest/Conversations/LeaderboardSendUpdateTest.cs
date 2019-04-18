@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading;
 using Broker;
-using Broker.Conversations.GetPortfolio;
 using Broker.Conversations.LeaderBoardUpdate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -24,8 +23,7 @@ namespace BrokerTest.Conversations
     [DoNotParallelize]
     public class LeaderboardSendUpdateTest
     {
-
-        SignatureService sigServe = new SignatureService();
+        private SignatureService sigServe = new SignatureService();
 
         private readonly ValuatedStock user1VStock = new ValuatedStock()
         {
