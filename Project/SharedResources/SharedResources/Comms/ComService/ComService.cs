@@ -11,19 +11,16 @@ namespace Shared.Comms.ComService
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        //private static UdpClient DefaultUdp = new UdpClient()
-
-
-        //TODO: tcp?
+        //NOTE: left this to hold both the UDP client as well as any TCP clients
         public static Dictionary<string,Client> Clients = new Dictionary<string, Client>();
 
-        //TODO: tcp?
         public static bool HasClient()
         {
             return Clients.Count > 0;
         }
 
         //TODO: tcp?
+        //TODO: needs to know if it's adding a upd or tcp client/listener
         public static Client AddClient(string clientId, int localPort)
         {
             Log.Debug($"{nameof(AddClient)} (enter)");

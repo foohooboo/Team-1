@@ -15,6 +15,8 @@ namespace Shared
             MAX_BTN_STOCK_HISTORY = "MaxStockHistorySizeForButtons",
 
             DEFAULT_UDP_CLIENT = "defaultUdpClientName",
+            DEFAULT_TCP_CLIENT = "defaultTcpClientName",
+            DEFAULT_TCP_LISTENER = "defaultTcpListenerName",
             DEFAULT_TIMEOUT = "defaultTimeout",
             DEFAULT_RETRY_COUNT = "defaultRetryCount",
 
@@ -26,6 +28,7 @@ namespace Shared
 
             STOCK_SERVER_IP = "stockServerIp",
             STOCK_SERVER_PORT = "stockServerPort",
+            STOCK_SERVER_TCP_PORT = "stockServerTcpPort",
             STOCK_SERVER_PROCESS_NUM = "stockServerProcesNum",
 
             STOCK_TICK_DELAY = "stockTickDelay";

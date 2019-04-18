@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
+
 namespace Shared.Comms.ComService
 {
     public class TcpClient : Client
@@ -62,7 +63,16 @@ namespace Shared.Comms.ComService
                 var envelope = GetIncomingMessages();
                 if (envelope != null)
                 {
-                    ComService.HandleIncomingMessage(envelope);
+                    try
+                    {
+                        ComService.HandleIncomingMessage(envelope);
+
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error($"Problem encountered while handling incoming message...");
+                        Log.Error(e);
+                    }
                     waitHandle.Set();
                 }
             }
