@@ -41,16 +41,27 @@ namespace Shared.Comms.ComService
             return box;
         }
 
-        //TODO: Finish this method when TcpClient class is built
-        //NOTE: last hangup is how to assign it's key, unless we want it to connect with a distant end immediately upon creation.
-        public static Client AddTcpClient(string clientId, int localPort)
+        public static Client AddTcpClient(int localPort, IPEndPoint remoteEndpoint)
         {
             Log.Debug($"{nameof(AddTcpClient)} (enter)");
 
             var box = new TcpClient(localPort);
-            Clients.Add(clientId, box);
+
+            //NOTE: used to connect at the time of the first send, but in order to store the box by it's remote ep
+            //we need to connect immediately.
+            if (box.Connect(remoteEndpoint))
+            {
+                Clients.Add(((IPEndPoint)box.myTcpClient.Client.RemoteEndPoint).ToString(), box);
+            }
+            else
+            {
+                box = null;
+                Log.Error("failed to connect TcpClient to remote endpoint.");
+            }
 
             Log.Debug($"{nameof(AddTcpClient)} (exit)");
+
+            
             return box;
         }
 
@@ -59,7 +70,7 @@ namespace Shared.Comms.ComService
             Log.Debug($"{nameof(AddTcpClient)} (enter)");
 
             var box = new TcpClient(client);
-            string key = ((IPEndPoint)client.Client.LocalEndPoint).ToString();
+            string key = ((IPEndPoint)client.Client.RemoteEndPoint).ToString();
 
             Clients.Add(key, box);
 

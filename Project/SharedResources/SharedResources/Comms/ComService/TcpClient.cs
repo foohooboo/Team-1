@@ -65,16 +65,19 @@ namespace Shared.Comms.ComService
                 {
                     if (((IPEndPoint)myTcpClient.Client.LocalEndPoint) != envelope.To)
                     {
-                        throw new Exception($"Connected endpoint {myTcpClient.Client.LocalEndPoint.ToString()} does not match envelope address {envelope.To.ToString()}");
+                        throw new Exception($"Connected endpoint {((IPEndPoint)myTcpClient.Client.RemoteEndPoint).Address.ToString()} does not match envelope address {((IPEndPoint)envelope.To).Address.ToString()}");
                     }
                 }
                 else
                 {
-                    myTcpClient.Connect(envelope.To);
+                    //NOTE: This try/catch used to connect on the first send, but now connection happens at initialization
+                    //myTcpClient.Connect(envelope.To);
+                    throw new Exception($"client not connected.");
                 }
 
                 System.Net.Sockets.NetworkStream stream = myTcpClient.GetStream();
                 stream.Write(bytesToSend, 0, bytesToSend.Length);
+                stream.Close();
             }
             catch (Exception e)
             {
@@ -83,11 +86,11 @@ namespace Shared.Comms.ComService
             }
         }
 
-        
-        public bool Connect()
+        public bool Connect(IPEndPoint distantEnd)
         {
+            myTcpClient.Connect(distantEnd);
 
-            return false;
+            return myTcpClient.Connected;
         }
 
         public void ListenForMessages()
