@@ -30,7 +30,7 @@ namespace StockServer
             StockData.Init();
             ConversationManager.Start(ConversationBuilder);
 
-            ComService.AddClient(Config.DEFAULT_UDP_CLIENT, Config.GetInt(Config.STOCK_SERVER_PORT));
+            ComService.AddUdpClient(Config.DEFAULT_UDP_CLIENT, Config.GetInt(Config.STOCK_SERVER_PORT));
             //TODO: add tcp listener
 
             Log.Info("Starting simulation.");

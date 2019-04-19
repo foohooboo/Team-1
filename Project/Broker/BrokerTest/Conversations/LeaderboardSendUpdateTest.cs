@@ -62,7 +62,7 @@ namespace BrokerTest.Conversations
         [TestInitialize]
         public void TestInitialize()
         {
-            ComService.AddClient(Config.DEFAULT_UDP_CLIENT, 0);
+            ComService.AddUdpClient(Config.DEFAULT_UDP_CLIENT, 0);
             ConversationManager.Start(null);
 
             //create fake portfolios to populate leaderboard

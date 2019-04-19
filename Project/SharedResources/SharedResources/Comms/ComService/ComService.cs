@@ -20,14 +20,14 @@ namespace Shared.Comms.ComService
             return Clients.Count > 0;
         }
 
-        public static Client AddClient(string clientId, int localPort)
+        public static Client AddUdpClient(string clientId, int localPort)
         {
-            Log.Debug($"{nameof(AddClient)} (enter)");
+            Log.Debug($"{nameof(AddUdpClient)} (enter)");
 
             var box = new UdpClient(localPort);
             Clients.TryAdd(clientId, box);
 
-            Log.Debug($"{nameof(AddClient)} (exit)");
+            Log.Debug($"{nameof(AddUdpClient)} (exit)");
             return box;
         }
 

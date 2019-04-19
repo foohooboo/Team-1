@@ -21,7 +21,7 @@ namespace ClientTest.Conversations
         public void TestInitialize()
         {
             ConversationManager.Start(null);
-            ComService.AddClient(Config.DEFAULT_UDP_CLIENT,0);
+            ComService.AddUdpClient(Config.DEFAULT_UDP_CLIENT,0);
         }
 
         [TestCleanup]

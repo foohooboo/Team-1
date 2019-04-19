@@ -14,7 +14,7 @@ namespace SharedTest.CommSystem
             var a1_id = "a1Id";
 
             Assert.IsFalse(ComService.HasClient());
-            ComService.AddClient(a1_id, a1_localPort);
+            ComService.AddUdpClient(a1_id, a1_localPort);
             Assert.IsTrue(ComService.HasClient());
             ComService.RemoveClient(a1_id);
         }
@@ -34,9 +34,9 @@ namespace SharedTest.CommSystem
 
             
 
-            ComService.AddClient(a1_id, a1_localPort);
-            ComService.AddClient(a2_id, a2_localPort);
-            ComService.AddClient(a3_id, a3_localPort);
+            ComService.AddUdpClient(a1_id, a1_localPort);
+            ComService.AddUdpClient(a2_id, a2_localPort);
+            ComService.AddUdpClient(a3_id, a3_localPort);
 
             var pb = ComService.GetClient(a2_id);
             Assert.AreEqual(a2_localPort, pb.getConnectedPort());
@@ -55,8 +55,8 @@ namespace SharedTest.CommSystem
             var a2_localPort = 241;
             var a2_id = "a2Id";
 
-            ComService.AddClient(a1_id, a1_localPort);
-            ComService.AddClient(a2_id, a2_localPort);
+            ComService.AddUdpClient(a1_id, a1_localPort);
+            ComService.AddUdpClient(a2_id, a2_localPort);
 
             Assert.IsNotNull(ComService.GetClient(a2_id));
             ComService.RemoveClient(a2_id);

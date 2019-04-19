@@ -42,7 +42,7 @@ namespace Broker
             PortfolioManager.PerformTransaction(otherguyPortfolio.PortfolioID, "FB", 60, 0, out otherguyPortfolio, out error);
 
             ConversationManager.Start(ConversationBuilder);
-            ComService.AddClient(Config.DEFAULT_UDP_CLIENT, Config.GetInt(Config.BROKER_PORT));
+            ComService.AddUdpClient(Config.DEFAULT_UDP_CLIENT, Config.GetInt(Config.BROKER_PORT));
 
             RequestStockStream();
             PrintMenu();
