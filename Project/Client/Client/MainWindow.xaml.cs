@@ -7,6 +7,7 @@ using OxyPlot.Series;
 using Shared;
 using Shared.Comms.ComService;
 using Shared.Conversations;
+using Shared.Leaderboard;
 using Shared.MarketStructures;
 using Shared.PortfolioResources;
 using System;
@@ -346,10 +347,10 @@ namespace Client
         public void LeaderboardChanged()
         {
             LeaderBoard.Clear();
-            SortedList<float, string> list = TraderModel.Current.Leaderboard;
+            List<LeaderboardRecord> list = TraderModel.Current.Leaderboard;
             for (int i = list.Count - 1; i >= 0 && i > list.Count - 10; i--)
             {
-                LeaderBoard.Add(new Leaders() { value = list.Keys[i].ToString("C0"), name = list.Values[i] });
+                LeaderBoard.Add(new Leaders() { value = list[i].TotalAssetValue.ToString("C0"), name = list[i].Username });
             }
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("LeaderBoard"));
         }

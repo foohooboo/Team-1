@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows;
+﻿using Client.Conversations.CreatePortfolio;
 using Client.Conversations.GetPortfolio;
 using Client.Models;
 using Shared;
@@ -8,6 +6,9 @@ using Shared.Comms.ComService;
 using Shared.Conversations;
 using Shared.MarketStructures;
 using Shared.PortfolioResources;
+using System;
+using System.Collections.Generic;
+using System.Windows;
 
 namespace Client
 {
@@ -33,12 +34,9 @@ namespace Client
             //registering
             if (register.IsChecked.Value)
             {
-                if (pass.Password == confirm.Password)//If they equal
-                {
-                    Client.Conversations.CreatePortfolio.CreatePortfolioRequestConversation PRC=new Client.Conversations.CreatePortfolio.CreatePortfolioRequestConversation(1);
-                    PRC.SetInitialState(new GetPortfolioRequestState(user.Text,pass.Password,this,PRC));
-                    
-                }
+                var PRC = new CreatePortfolioRequestConversation(Config.GetClientProcessNumber());
+                PRC.SetInitialState(new CreatePortfolioRequestState(user.Text, pass.Password, confirm.Password, this, PRC, null));
+                ConversationManager.AddConversation(PRC);
             }
 
             //logging in
@@ -74,35 +72,42 @@ namespace Client
             //without having a Broker process running. It should NOT be executed in production.
             //-Dsphar 4/8/2019
 
-
-
-
-            if (TraderModel.Current.StockHistory.Count == 0 || TraderModel.Current.StockHistory[0].TradedCompanies.Count == 0)
+            if (string.IsNullOrEmpty(message))
             {
-                TraderModel.Current.StockHistory = ManagedData.makeupMarketSegment(10, 50);
-            }
 
-            Random rand = new Random();
+                if (TraderModel.Current.StockHistory.Count == 0 || TraderModel.Current.StockHistory[0].TradedCompanies.Count == 0)
+                {
+                    TraderModel.Current.StockHistory = ManagedData.makeupMarketSegment(10, 50);
+                }
 
-            var assets = new Dictionary<string, Asset>
+                Random rand = new Random();
+
+                var assets = new Dictionary<string, Asset>
             {
                 { "$", new Asset(new Stock() { Symbol = "$" }, rand.Next(10000, 500000)) }
             };
 
-            for (int i = 1; i < 6; i++)
+                for (int i = 1; i < 6; i++)
+                {
+                    var asset = new Asset(TraderModel.Current.StockHistory[0].TradedCompanies[i], rand.Next(1000));
+                    assets.Add(asset.RelatedStock.Symbol, asset);
+                }
+
+                var dummyPortfolio = new Portfolio()
+                {
+                    Username = "DebugPortfolioName",
+                    Password = "password",
+                    Assets = assets
+                };
+
+                LoginSuccess(dummyPortfolio);
+            }
+            else
             {
-                var asset = new Asset(TraderModel.Current.StockHistory[0].TradedCompanies[i], rand.Next(1000));
-                assets.Add(asset.RelatedStock.Symbol, asset);
+                MessageBox.Show(message);
             }
 
-            var dummyPortfolio = new Portfolio()
-            {
-                Username = "DebugPortfolioName",
-                Password = "password",
-                Assets = assets
-            };
 
-            LoginSuccess(dummyPortfolio);
 #else
             MessageBox.Show(message);
 #endif

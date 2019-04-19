@@ -6,6 +6,7 @@ using log4net;
 using Shared.Client;
 using Shared.Comms.ComService;
 using Shared.Comms.Messages;
+using Shared.Leaderboard;
 using Shared.Security;
 
 namespace Shared.Conversations.SharedStates
@@ -43,14 +44,23 @@ namespace Shared.Conversations.SharedStates
 
             var message = MessageFactory.GetMessage<UpdateLeaderBoardMessage>(Config.GetInt(Config.BROKER_PROCESS_NUM), 0) as UpdateLeaderBoardMessage;
             message.ConversationID = Conversation.Id;
+            
 
-            var leaders = new SortedList<float, string>();
+            var leaders = new List<LeaderboardRecord>();
 
-            foreach (var portfolio in PortfolioManager.Portfolios)
+            try
             {
-                var record = LeaderboardManager.GetLeaderboardRecord(portfolio.Value);
-                leaders.Add(record.TotalAssetValue, record.Username);
+                foreach (var portfolio in PortfolioManager.Portfolios)
+                {
+                    var record = LeaderboardManager.GetLeaderboardRecord(portfolio.Value);
+                    leaders.Add(record);
+                }
+            } catch(Exception e)
+            {
+                Log.Error(e);
             }
+
+            leaders.Sort((a, b) => a.TotalAssetValue.CompareTo(b.TotalAssetValue));
 
             var sigServ = new SignatureService();
             message.SerializedRecords = Convert.ToBase64String(sigServ.Serialize(leaders));

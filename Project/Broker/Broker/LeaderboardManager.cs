@@ -1,7 +1,7 @@
-﻿using System.Linq;
-using Shared.Leaderboard;
+﻿using Shared.Leaderboard;
 using Shared.MarketStructures;
 using Shared.PortfolioResources;
+using System.Linq;
 
 namespace Broker
 {
@@ -18,8 +18,7 @@ namespace Broker
 
             foreach (var asset in portfolio.Assets)
             {
-                var stockValue = Market.TradedCompanies.Single(stock => stock.Symbol == asset.Key).Close;
-
+                var stockValue = Market.TradedCompanies.Where(s => s.Symbol == asset.Key).FirstOrDefault()?.Close ?? 0;
                 float assetValue = stockValue * asset.Value.Quantity;
                 totalAssetValue += assetValue;
             }

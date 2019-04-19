@@ -6,6 +6,7 @@ using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
 using Shared.PortfolioResources;
+using System.Linq;
 
 namespace Broker.Conversations.CreatePortfolio
 {
@@ -23,16 +24,20 @@ namespace Broker.Conversations.CreatePortfolio
             get; set;
         }
 
+        private string ConfirmPassword
+        {
+            get; set;
+        }
+
 
         public CreatePortfolioReceiveState(Envelope envelope, Conversation conversation) : base(envelope, conversation, null)
         {
             if (!(envelope.Contents is CreatePortfolioRequestMessage request))
                 throw new System.Exception("CreatePortflioReceieveState requires CreatePortfolioRequestMessage.");
-            if (request.Account.Password.Equals(request.ConfirmPassword))
-            {
-                Username = request.Account.Username;
-                Password = request.Account.Password;
-            }
+
+            Username = request.Account.Username;
+            Password = request.Account.Password;
+            ConfirmPassword = request.ConfirmPassword;
         }
 
         public override ConversationState HandleMessage(Envelope incomingMessage)
@@ -68,13 +73,22 @@ namespace Broker.Conversations.CreatePortfolio
 
         private Message GetMessage()
         {
-            if (!PortfolioManager.TryToCreate(Username, Password, out Portfolio portfolio))
+            var errorMessage = "";
+            Portfolio portfolio = null;
+
+            if (!Password.Equals(ConfirmPassword))
+                errorMessage = "Passwords do not match";
+            else if (PortfolioManager.Portfolios.Any(p=>p.Value.Username.Equals(Username)))
+                errorMessage = "A portfolio with that name already exists.";
+            else if (!PortfolioManager.TryToCreate(Username, Password, out portfolio))
+                errorMessage = "Broker could not create portfolio.";
+
+            if (!string.IsNullOrEmpty(errorMessage))
             {
                 var errormessage = MessageFactory.GetMessage<ErrorMessage>(Config.GetInt(Config.BROKER_PROCESS_NUM), 0) as ErrorMessage;
-
+                errormessage.ErrorText = errorMessage;
                 errormessage.ConversationID = Conversation.Id;
                 errormessage.ReferenceMessageID = this.MessageId;
-
                 return errormessage;
             }
 

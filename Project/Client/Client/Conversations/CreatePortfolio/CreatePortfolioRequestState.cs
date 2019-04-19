@@ -20,12 +20,14 @@ namespace Client.Conversations.CreatePortfolio
         private string Username;
         private string Password;
         private string ConfirmPassword;
+        private readonly IHandleLogin LoginHandler;
 
-        public CreatePortfolioRequestState(string username, string password, string confirmPassword, Conversation conversation, ConversationState previousState) : base(conversation, previousState)
+        public CreatePortfolioRequestState(string username, string password, string confirmPassword, IHandleLogin loginHandler, Conversation conversation, ConversationState previousState) : base(conversation, previousState)
         {
             Username = username;
             Password = password;
             ConfirmPassword = confirmPassword;
+            LoginHandler = loginHandler;
         }
 
         public override ConversationState HandleMessage(Envelope incomingMessage)
@@ -38,11 +40,23 @@ namespace Client.Conversations.CreatePortfolio
             {
                 case PortfolioUpdateMessage m:
                     Log.Info($"Received PortfolioUpdate message as reply.");
-                    //TODO: Update portfolio elements
+
+                    var port = new Portfolio()
+                    {
+                        Assets = m.Assets,
+                        Username = Username,
+                        PortfolioID = m.PortfolioID
+                    };
+
                     nextState = new ConversationDoneState(Conversation, this);
+                    Task.Run(() => LoginHandler?.LoginSuccess(port));
+
                     break;
                 case ErrorMessage m:
                     Log.Error($"Received error message as reply...\n{m.ErrorText}");
+
+                    Task.Run(() => LoginHandler?.LoginFailure(m.ErrorText));
+
                     nextState = new ConversationDoneState(Conversation, this);
                     break;
                 default:

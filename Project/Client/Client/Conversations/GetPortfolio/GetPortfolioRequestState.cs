@@ -52,7 +52,7 @@ namespace Client.Conversations.GetPortfolio
                         PortfolioID = m.PortfolioID
                     };
 
-                    // TODO: Update portfolio model data.
+                    
 
                     nextState = new ConversationDoneState(Conversation, this);
                     ConversationManager.RemoveConversation(Conversation.Id);

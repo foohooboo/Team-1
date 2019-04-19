@@ -10,9 +10,7 @@ namespace Shared.Comms.Messages
         {
             SerializedRecords = "";
         }
-
-
-
+               
         /// <summary>
         /// The json serializer was giving me grief with the sorted lists (generic and old-school).
         /// Hence I change the message to contain a base 64 string encoding of a serialized Generic SortedList.

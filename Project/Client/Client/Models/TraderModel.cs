@@ -1,6 +1,7 @@
 ﻿using Client.Conversations.StockHistory;
 using Shared;
 using Shared.Conversations;
+using Shared.Leaderboard;
 using Shared.MarketStructures;
 using Shared.PortfolioResources;
 using System;
@@ -17,7 +18,7 @@ namespace Client.Models
         public string SelectedStocksSymbol { get; set; } = "";
         private Portfolio _portfolio;
         private MarketSegment _stockHistory = new MarketSegment();
-        private SortedList<float, string> _leaderboard;
+        private List<LeaderboardRecord> _leaderboard;
 
         private object LockOwnedStock = new object();
         private List<Asset> _ownedStocks = new List<Asset>();
@@ -105,7 +106,7 @@ namespace Client.Models
             history.Add(vStock);
         }
 
-        public SortedList<float, string> Leaderboard
+        public List<LeaderboardRecord> Leaderboard
         {
             get => _leaderboard;
             set

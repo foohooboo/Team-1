@@ -1,5 +1,8 @@
-﻿namespace Shared.Leaderboard
+﻿using System;
+
+namespace Shared.Leaderboard
 {
+    [Serializable]
     public class LeaderboardRecord
     {
         public string Username

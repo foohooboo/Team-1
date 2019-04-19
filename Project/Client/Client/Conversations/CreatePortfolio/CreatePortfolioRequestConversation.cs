@@ -2,7 +2,7 @@
 {
     public class CreatePortfolioRequestConversation : Shared.Conversations.Conversation
     {
-        public CreatePortfolioRequestConversation(int processId) : base(processId)
+        public CreatePortfolioRequestConversation(long processId) : base(processId)
         {
         }
     }

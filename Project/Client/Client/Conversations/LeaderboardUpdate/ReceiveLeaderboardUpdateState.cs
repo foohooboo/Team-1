@@ -9,6 +9,7 @@ using Shared.Comms.ComService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
+using Shared.Leaderboard;
 using Shared.Security;
 
 namespace Client.Conversations.LeaderboardUpdate
@@ -17,7 +18,7 @@ namespace Client.Conversations.LeaderboardUpdate
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public SortedList<float,string> Records
+        public List<LeaderboardRecord> Records
         {
             get; private set;
         }
@@ -25,7 +26,7 @@ namespace Client.Conversations.LeaderboardUpdate
         public ReceiveLeaderboardUpdateState(Envelope env, Conversation conversation) : base(env, conversation, null)
         {
             var sigServe = new SignatureService();
-            Records = sigServe.Deserialize<SortedList<float,string>>(Convert.FromBase64String((env.Contents as UpdateLeaderBoardMessage).SerializedRecords));
+            Records = sigServe.Deserialize<List<LeaderboardRecord>>(Convert.FromBase64String((env.Contents as UpdateLeaderBoardMessage).SerializedRecords));
         }
 
         public override ConversationState HandleMessage(Envelope incomingMessage)
