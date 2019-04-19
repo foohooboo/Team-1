@@ -30,7 +30,6 @@ namespace Shared.Comms.ComService
         {
             Insert(message);
             To = new IPEndPoint(IPAddress.Parse(ip), port);
-            Contents = message;
         }
 
         public bool HasMessage()

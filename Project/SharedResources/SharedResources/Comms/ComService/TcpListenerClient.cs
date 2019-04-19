@@ -30,10 +30,8 @@ namespace Shared.Comms.ComService
             myTcpListenerClient = new System.Net.Sockets.TcpListener(bindLocalEndPoint);
 
             myTcpListenerClient.Start();
-            //TODO: at some point, we need to connect to the tcp server (TcpListener class) on the other side.
-            //NOTE: This occurs in the myTcpListenerClient.AcceptTcpClient call in the GetIncomingMessages method.
 
-            Log.Info($"Started TcpListener on port ${((IPEndPoint)myTcpListenerClient.LocalEndpoint).Port}");
+            Log.Info($"Started TcpListener on port {((IPEndPoint)myTcpListenerClient.LocalEndpoint).Port}");
 
             isActive = true;
             new Task(() => ListenForMessages()).Start();
@@ -73,21 +71,24 @@ namespace Shared.Comms.ComService
 
         private Envelope GetIncomingMessages()
         {
-            Envelope newEnvelope = null;
+            TcpEnvelope newEnvelope = null;
+            //Envelope newEnvelope = null;
 
             //Docs say that AcceptTcpClient() is a blocking call, so it won't just spin it's wheels. There is an asynch, AcceptTcpClientAsync. 
             Log.Info($"Waiting for TCP connection on port ${((IPEndPoint)myTcpListenerClient.LocalEndpoint).Port}");
+
             System.Net.Sockets.TcpClient client = myTcpListenerClient.AcceptTcpClient();
-            Log.Info($"Incoming TCP Connection established with ${((IPEndPoint)client.Client.LocalEndPoint).Address}");
 
-            System.Net.Sockets.NetworkStream stream = client.GetStream();
-            var receivedBytes = ReceiveBytes(1000, stream);
+            Log.Info($"Incoming TCP Connection established with {((IPEndPoint)client.Client.LocalEndPoint).Address}");
 
-            var message = MessageFactory.GetMessage(receivedBytes, true);
+            //string key = ((IPEndPoint)client.Client.LocalEndPoint).Address.ToString();
+
+            ComService.AddTcpClient(client);
 
             return newEnvelope;
         }
 
+        //unused in a TcpListener
         private byte[] ReceiveBytes(int timeout, System.Net.Sockets.NetworkStream stream)
         {
             byte[] buffer = new byte[256];
@@ -103,9 +104,22 @@ namespace Shared.Comms.ComService
                 {
                     //NOTE: If messages can't be deserialized, check for 1-off errors here!
                     int bytesRead = stream.Read(buffer, 0, buffer.Length);
-                    Array.Copy(buffer, 0, receivedBytes, receivedBytesIndex - 1, bytesRead);
-                    size -= bytesRead;
-                    receivedBytesIndex += bytesRead;
+
+                    if (bytesRead == 0)
+                    {
+                        timeout -= 10;
+
+                        if (timeout <= 0)
+                        {
+                            throw new Exception("Tcp receive timeout");
+                        }
+                    }
+                    else
+                    {
+                        Array.Copy(buffer, 0, receivedBytes, receivedBytesIndex - 1, bytesRead);
+                        size -= bytesRead;
+                        receivedBytesIndex += bytesRead;
+                    }
                 }
                 catch (Exception err)
                 {
@@ -113,6 +127,7 @@ namespace Shared.Comms.ComService
                 }
             }
 
+            stream.Close();
             return receivedBytes;
         }
 

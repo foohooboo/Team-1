@@ -19,20 +19,56 @@ namespace Shared.Comms.ComService
             return Clients.Count > 0;
         }
 
-        //TODO: tcp?
-        //TODO: needs to know if it's adding a upd or tcp client/listener
         public static Client AddClient(string clientId, int localPort)
         {
             Log.Debug($"{nameof(AddClient)} (enter)");
 
-            var box = new UdpClient(localPort);//TODO: change to tcp client
+            var box = new UdpClient(localPort);
             Clients.Add(clientId, box);
 
             Log.Debug($"{nameof(AddClient)} (exit)");
             return box;
         }
 
+        public static Client AddTcpListener(string clientId, int localPort)
+        {
+            Log.Debug($"{nameof(AddTcpClient)} (enter)");
+
+            var box = new TcpListenerClient(localPort);
+            Clients.Add(clientId, box);
+
+            Log.Debug($"{nameof(AddTcpClient)} (exit)");
+            return box;
+        }
+
+        //TODO: Finish this method when TcpClient class is built
+        //NOTE: last hangup is how to assign it's key, unless we want it to connect with a distant end immediately upon creation.
+        public static Client AddTcpClient(string clientId, int localPort)
+        {
+            Log.Debug($"{nameof(AddTcpClient)} (enter)");
+
+            var box = new TcpClient(localPort);
+            Clients.Add(clientId, box);
+
+            Log.Debug($"{nameof(AddTcpClient)} (exit)");
+            return box;
+        }
+
+        public static Client AddTcpClient(System.Net.Sockets.TcpClient client)
+        {
+            Log.Debug($"{nameof(AddTcpClient)} (enter)");
+
+            var box = new TcpClient(client);
+            string key = ((IPEndPoint)client.Client.LocalEndPoint).ToString();
+
+            Clients.Add(key, box);
+
+            Log.Debug($"{nameof(AddTcpClient)} (exit)");
+            return box;
+        }
+
         //TODO: tcp? Following method not currently used. Would be a good way to get tcp clients if we had a tcp unique identifier
+        //NOTE: Certain, default tcp identifiers are now in the config files, others will simply use a string of their endpoint as their key
         public static Client GetClient(string address)
         {
             Log.Debug($"{nameof(GetClient)} (enter)");

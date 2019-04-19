@@ -25,9 +25,17 @@ namespace Shared.Comms.ComService
             var bindLocalEndPoint = new IPEndPoint(IPAddress.Any, localPort);
             myTcpClient = new System.Net.Sockets.TcpClient(bindLocalEndPoint);
 
-            //TODO: at some point, we need to connect to the tcp server (TcpListener class) on the other side.
+            Log.Info($"Started TcpClient on port {((IPEndPoint)myTcpClient.Client.LocalEndPoint).Port}");
 
-            Log.Info($"Started TcpClient on port ${((IPEndPoint)myTcpClient.Client.LocalEndPoint).Port}");
+            isActive = true;
+            new Task(() => ListenForMessages()).Start();
+        }
+
+        public TcpClient(System.Net.Sockets.TcpClient client)
+        {
+            myTcpClient = client;
+
+            Log.Info($"Started TcpClient on port {((IPEndPoint)myTcpClient.Client.LocalEndPoint).Port}");
 
             isActive = true;
             new Task(() => ListenForMessages()).Start();
@@ -40,20 +48,46 @@ namespace Shared.Comms.ComService
 
         public override void Send(Envelope envelope)
         {
-            //TODO: send over TCP (I left udp send for inspiration, although tcp may be different)
+            var messageId = envelope?.Contents?.MessageID ?? null;
+            Log.Info($"Sending message {messageId} to {envelope.To}");
+            
+            byte[] messageBytes = envelope.Contents.Encode();
+            byte[] messageLength = BitConverter.GetBytes(messageBytes.Length);
 
-            //var messageId = envelope?.Contents?.MessageID ?? null;
-            //Log.Info($"Sending message {messageId} to {envelope.To}");
-            //byte[] bytesToSend = envelope.Contents.Encode();
-            //try
-            //{
-            //    myTcpClient.Send(bytesToSend, bytesToSend.Length, envelope.To);
-            //}
-            //catch (Exception e)
-            //{
-            //    Log.Error($"Error sending message to {envelope.To}");
-            //    Log.Error(e.Message);
-            //}
+            byte[] bytesToSend = new byte[messageLength.Length + messageBytes.Length];
+
+            System.Buffer.BlockCopy(messageLength,0,bytesToSend,0,bytesToSend.Length);
+            System.Buffer.BlockCopy(messageBytes, 0, bytesToSend, messageLength.Length, bytesToSend.Length);
+
+            try
+            {
+                if (myTcpClient.Connected)
+                {
+                    if (((IPEndPoint)myTcpClient.Client.LocalEndPoint) != envelope.To)
+                    {
+                        throw new Exception($"Connected endpoint {myTcpClient.Client.LocalEndPoint.ToString()} does not match envelope address {envelope.To.ToString()}");
+                    }
+                }
+                else
+                {
+                    myTcpClient.Connect(envelope.To);
+                }
+
+                System.Net.Sockets.NetworkStream stream = myTcpClient.GetStream();
+                stream.Write(bytesToSend, 0, bytesToSend.Length);
+            }
+            catch (Exception e)
+            {
+                Log.Error($"error sending message to {envelope.To}");
+                Log.Error(e.Message);
+            }
+        }
+
+        
+        public bool Connect()
+        {
+
+            return false;
         }
 
         public void ListenForMessages()
@@ -80,45 +114,70 @@ namespace Shared.Comms.ComService
 
         private Envelope GetIncomingMessages()
         {
-            Envelope newEnvelope = null;
+            TcpEnvelope newEnvelope = null;
 
-            var receivedBytes = ReceiveBytes(1000, out IPEndPoint endPoint);
-            if (receivedBytes != null &&
-                receivedBytes.Length > 0)
+            int incomingData = myTcpClient.Available;
+
+            if (myTcpClient.Connected && (incomingData > 0))
             {
+                System.Net.Sockets.NetworkStream stream = myTcpClient.GetStream();
+
+                var receivedBytes = ReceiveBytes(1000, stream);
+
                 var message = MessageFactory.GetMessage(receivedBytes, true);
-                newEnvelope = new Envelope(message)
+                Log.Info($"Received {message.GetType()} message from {((IPEndPoint)myTcpClient.Client.LocalEndPoint).Address} via TCP");
+
+                string key = ((IPEndPoint)myTcpClient.Client.LocalEndPoint).Address.ToString();
+
+                newEnvelope = new TcpEnvelope(message)
                 {
-                    To = endPoint
+                    To = (IPEndPoint)myTcpClient.Client.LocalEndPoint,
+                    Key = key
                 };
             }
+
             return newEnvelope;
         }
 
-        private byte[] ReceiveBytes(int timeout, out IPEndPoint endPoint)
+        private byte[] ReceiveBytes(int timeout, System.Net.Sockets.NetworkStream stream)
         {
-            byte[] receivedBytes = null;
-            endPoint = null;
+            byte[] buffer = new byte[256];
+            byte[] receivedBytes = new byte[256];
+            int receivedBytesIndex = 0;
 
-            try
+            stream.Read(buffer, 0, 32);
+            int size = BitConverter.ToInt32(buffer, 0);
+
+            while (size > 0)
             {
-                while (isActive && myTcpClient?.Available <= 0 && timeout > 0)
+                try
                 {
-                    Thread.Sleep(10);
-                    timeout -= 10;
+                    //NOTE: If messages can't be deserialized, check for 1-off errors here!
+                    int bytesRead = stream.Read(buffer, 0, buffer.Length);
+
+                    if (bytesRead == 0)
+                    {
+                        timeout -= 10;
+
+                        if (timeout <= 0)
+                        {
+                            throw new Exception("Tcp receive timeout");
+                        }
+                    }
+                    else
+                    {
+                        Array.Copy(buffer, 0, receivedBytes, receivedBytesIndex - 1, bytesRead);
+                        size -= bytesRead;
+                        receivedBytesIndex += bytesRead;
+                    }
                 }
-                if (isActive && myTcpClient?.Available > 0)
+                catch (Exception err)
                 {
-                    //TODO: Receive incoming message below (I left udp receive for inspiration, although tcp may be different)
-                    //receivedBytes = myUdpClient.Receive(ref endPoint);
-                    Log.Info($"Received message from {endPoint.ToString()}");
+                    Log.Error($"Unexpected exception while receiving data: {err.Message} ");
                 }
             }
-            catch (Exception err)
-            {
-                Log.Error($"Unexpected exception while receiving datagram: {err.Message} ");
-            }
 
+            stream.Close();
             return receivedBytes;
         }
 
