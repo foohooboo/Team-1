@@ -13,6 +13,7 @@ using Shared.Comms.ComService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
+using Shared.Leaderboard;
 using Shared.MarketStructures;
 using Shared.PortfolioResources;
 using Shared.Security;
@@ -96,7 +97,7 @@ namespace BrokerTest.Conversations
         public void Succeed()
         {
             var conv = new LeaderBoardUpdateRequestConversation(42);
-            SortedList<float, string> Records = new SortedList<float, string>();
+            List<LeaderboardRecord> Records = new List<LeaderboardRecord>();
             IPEndPoint clientEndpoint = new IPEndPoint(IPAddress.Parse("111.11.2.3"), 124);
 
             ValuatedStock[] day1 = { user1VStock, user2VStock, user3VStock };
@@ -109,7 +110,7 @@ namespace BrokerTest.Conversations
                 {
 
                     var serliazedLeaders = Convert.FromBase64String(((mock.Object as LeaderboardSendUpdateState).OutboundMessage.Contents as UpdateLeaderBoardMessage).SerializedRecords);
-                    Records = sigServe.Deserialize<SortedList<float, string>>(serliazedLeaders);
+                    Records = sigServe.Deserialize<List<LeaderboardRecord>>(serliazedLeaders);
                     var responseMessage = new AckMessage() { ConversationID = conv.Id, MessageID = "responseMessageID1234" };
                     var responseEnv = new Envelope(responseMessage);
                     ConversationManager.ProcessIncomingMessage(responseEnv);
@@ -130,14 +131,14 @@ namespace BrokerTest.Conversations
             mock.Verify(state => state.Prepare(), Times.Once);
             mock.Verify(state => state.Send(), Times.Once);
 
-            Assert.AreEqual("port1", Records.Values[0]);
-            Assert.AreEqual("port2", Records.Values[1]);
-            Assert.AreEqual("port3", Records.Values[2]);
+            Assert.AreEqual("port1", Records[0].Username);
+            Assert.AreEqual("port2", Records[1].Username);
+            Assert.AreEqual("port3", Records[2].Username);
 
             //new market day, change stock price, re-update leaderboard
 
             var conv2 = new LeaderBoardUpdateRequestConversation(42);
-            SortedList<float, string> Records2 = new SortedList<float, string>();
+            List<LeaderboardRecord> Records2 = new List<LeaderboardRecord>();
 
             user2VStock.Close = 100;
             ValuatedStock[] day2 = { user1VStock, user2VStock, user3VStock };
@@ -149,7 +150,7 @@ namespace BrokerTest.Conversations
                 .Callback(() =>
                 {
                     var serliazedLeaders = Convert.FromBase64String(((mock2.Object as LeaderboardSendUpdateState).OutboundMessage.Contents as UpdateLeaderBoardMessage).SerializedRecords);
-                    Records2 = sigServe.Deserialize<SortedList<float, string>>(serliazedLeaders);
+                    Records2 = sigServe.Deserialize<List<LeaderboardRecord>>(serliazedLeaders);
                     var responseMessage = new AckMessage() { ConversationID = conv2.Id, MessageID = "responseMessageID1234" };
                     var responseEnv = new Envelope(responseMessage);
                     ConversationManager.ProcessIncomingMessage(responseEnv);
@@ -169,9 +170,9 @@ namespace BrokerTest.Conversations
             mock2.Verify(state => state.Prepare(), Times.Once);
             mock2.Verify(state => state.Send(), Times.Once);
 
-            Assert.AreEqual("port1", Records2.Values[0]);
-            Assert.AreEqual("port3", Records2.Values[1]);
-            Assert.AreEqual("port2", Records2.Values[2]);
+            Assert.AreEqual("port1", Records2[0].Username);
+            Assert.AreEqual("port3", Records2[1].Username);
+            Assert.AreEqual("port2", Records2[2].Username);
 
             Assert.IsTrue(ClientManager.TryToRemove(clientEndpoint));
         }

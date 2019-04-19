@@ -41,7 +41,7 @@ namespace ClientTest.Conversations
             var conv = new CreatePortfolioRequestConversation(processIdId);
 
             //setup response message and mock
-            var mock = new Mock<CreatePortfolioRequestState>(username, password, password, conv, null) { CallBase = true };
+            var mock = new Mock<CreatePortfolioRequestState>(username, password, password,null, conv, null) { CallBase = true };
             mock.Setup(st => st.Send())//Pretend message is sent and response comes back...
                 .Callback(()=> {
                 var responseMessage = new PortfolioUpdateMessage() { ConversationID = conv.Id, MessageID = "responseMessageID1234" };

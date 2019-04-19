@@ -7,6 +7,7 @@ using SharedResources.DataGeneration;
 namespace BrokerTest
 {
     [TestClass]
+    [DoNotParallelize]
     public class PortfolioManagerTest
     {
         [TestMethod]
@@ -22,6 +23,8 @@ namespace BrokerTest
 
             Assert.AreEqual(0, PortfolioManager.PortfolioCount);
             Assert.IsTrue(File.Exists(PortfolioManager.PortfolioData));
+
+            PortfolioManager.Clear();
         }
 
         [TestMethod]
@@ -42,6 +45,10 @@ namespace BrokerTest
             Assert.IsTrue(p1.Equals(portfolio1));
             Assert.IsTrue(p2.Equals(portfolio2));
             Assert.IsTrue(p3.Equals(portfolio3));
+
+            PortfolioManager.TryToRemove( portfolio1.PortfolioID);
+            PortfolioManager.TryToRemove(portfolio2.PortfolioID);
+            PortfolioManager.TryToRemove(portfolio3.PortfolioID);
         }
 
         [TestMethod]

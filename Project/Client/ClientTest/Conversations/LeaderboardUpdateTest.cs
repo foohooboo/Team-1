@@ -6,6 +6,7 @@ using Shared.Comms.ComService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
+using Shared.Leaderboard;
 using Shared.MarketStructures;
 using Shared.Security;
 using System;
@@ -70,7 +71,7 @@ namespace ClientTest.Conversations
             var RequestMessage = new UpdateLeaderBoardMessage()
             {
                 ConversationID = RequestConvId,
-                SerializedRecords = Convert.ToBase64String(sigServ.Serialize(new SortedList<float, string>()))
+                SerializedRecords = Convert.ToBase64String(sigServ.Serialize(new List<LeaderboardRecord>()))
             };
 
             Envelope Request = new Envelope(RequestMessage, ClientIp, ClientPort);

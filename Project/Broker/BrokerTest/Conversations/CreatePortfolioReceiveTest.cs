@@ -13,6 +13,7 @@ using System.Linq;
 namespace BrokerTest.Conversations
 {
     [TestClass]
+    [DoNotParallelize]
     public class CreatePortfolioReceiveTest
     {
         private Mock<CreatePortfolioReceiveState> mock;
