@@ -33,7 +33,9 @@ namespace Client
             {
                 if (pass.Password == confirm.Password)//If they equal
                 {
-                    //TODO: initialize createPortfolio conversation
+                    Client.Conversations.CreatePortfolio.CreatePortfolioRequestConversation PRC=new Client.Conversations.CreatePortfolio.CreatePortfolioRequestConversation(1);
+                    PRC.SetInitialState(new GetPortfolioRequestState(user.Text,pass.Password,this,PRC));
+                    
                 }
             }
 
