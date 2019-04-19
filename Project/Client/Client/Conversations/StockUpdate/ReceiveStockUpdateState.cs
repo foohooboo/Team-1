@@ -62,7 +62,7 @@ namespace Client.Conversations.StockUpdate
         {
             StockUpdateEventHandler?.Invoke(this, new StockUpdateEventArgs(StockUpdate));
 
-            var ackmessage = MessageFactory.GetMessage<AckMessage>(Config.GetInt(Config.CLIENT_PROCESS_NUM), 0);
+            var ackmessage = MessageFactory.GetMessage<AckMessage>(Config.GetClientProcessNumber(), 0);
             ackmessage.ConversationID = Conversation.Id;
 
             var env = new Envelope(ackmessage)

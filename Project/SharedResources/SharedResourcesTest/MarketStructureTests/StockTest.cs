@@ -12,6 +12,14 @@ namespace SharedTest.MarketStructureTests
         }
 
         [TestMethod]
+        public void GetTestStockTest()
+        {
+            var stock = Stock.GetTestStock();
+            Assert.AreEqual(stock.Symbol.Length, 3);
+            Assert.AreEqual(stock.Name.Length, 7);
+        }
+
+        [TestMethod]
         public void DefaultConstructorTest()
         {
             var stock = new Stock();

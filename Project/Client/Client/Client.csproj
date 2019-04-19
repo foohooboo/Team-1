@@ -34,6 +34,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>logo_2BW_icon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -61,7 +64,10 @@
     </ApplicationDefinition>
     <Compile Include="ConversationBuilder.cs" />
     <Compile Include="IHandleTraderModelChanged.cs" />
-    <Compile Include="TraderModel.cs" />
+    <Compile Include="Models\AssetNetValue.cs" />
+    <Compile Include="Models\Leaders.cs" />
+    <Compile Include="Models\StockButton.cs" />
+    <Compile Include="Models\TraderModel.cs" />
     <Page Include="Login.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -86,7 +92,6 @@
     <Compile Include="Conversations\LeaderboardUpdate\ReceiveLeaderboardUpdateState.cs" />
     <Compile Include="Conversations\RequestTransaction\InitiateTransactionConversation.cs" />
     <Compile Include="Conversations\RequestTransaction\InitTransactionStartingState.cs" />
-    <Compile Include="Conversations\RequestTransaction\ReceiveConfirmationState.cs" />
     <Compile Include="Conversations\StockHistory\StockHistoryRequestConversation.cs" />
     <Compile Include="Conversations\StockHistory\StockHistoryRequestState.cs" />
     <Compile Include="Conversations\StockUpdate\ReceiveStockUpdateConversation.cs" />
@@ -153,6 +158,12 @@
       <Project>{bb2aadcf-d1e1-42de-ab97-ffd88f4a275c}</Project>
       <Name>SharedResources</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="logo_2BW_icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Capture.PNG" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

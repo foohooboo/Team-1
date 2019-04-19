@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Threading;
+using Client.Models;
 using log4net;
 using Shared;
 using Shared.Comms.ComService;
@@ -52,7 +53,7 @@ namespace Client.Conversations.LeaderboardUpdate
                 });
             }
             
-            var ack = MessageFactory.GetMessage<AckMessage>(Config.GetInt(Config.CLIENT_PROCESS_NUM),0);
+            var ack = MessageFactory.GetMessage<AckMessage>(Config.GetClientProcessNumber(), 0);
             ack.ConversationID = Conversation?.Id;
 
             var env = new Envelope(ack)

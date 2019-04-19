@@ -34,6 +34,7 @@ namespace StockServerTest.Conversations
             return conv;
         }
 
+        //TODO: this will change when tcp is done
         [TestInitialize]
         public void TestInitialize()
         {
@@ -41,6 +42,7 @@ namespace StockServerTest.Conversations
             ConversationManager.Start(ConversationBuilder);
         }
 
+        //TODO: this will change when tcp is done
         [TestCleanup]
         public void TestCleanup()
         {

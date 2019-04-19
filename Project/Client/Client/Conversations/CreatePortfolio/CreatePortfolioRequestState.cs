@@ -56,7 +56,7 @@ namespace Client.Conversations.CreatePortfolio
 
         public override Envelope Prepare()
         {
-            var mes = MessageFactory.GetMessage<CreatePortfolioRequestMessage>(Config.GetInt(Config.CLIENT_PROCESS_NUM), 0) as CreatePortfolioRequestMessage;
+            var mes = MessageFactory.GetMessage<CreatePortfolioRequestMessage>(Config.GetClientProcessNumber(), 0) as CreatePortfolioRequestMessage;
             mes.Account = new Portfolio()
             {
                 Username = this.Username,

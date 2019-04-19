@@ -69,7 +69,7 @@ namespace Shared.Comms.ComService
                         Log.Error(e);
                     }
 
-                    waitHandle.Set();//<- I don't think this is needed anymore?? -Dsphar 4/7/2019
+                    waitHandle.Set();//TODO: <- I don't think this is needed anymore?? -Dsphar 4/7/2019
                 }
             }
         }

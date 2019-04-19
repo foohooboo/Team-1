@@ -107,7 +107,6 @@ namespace BrokerTest.Conversations
             int ClientPort = 5655;
 
             PortfolioManager.TryToCreate(PortName, PortPass, out Portfolio preExistingPortfolio);
-            PortfolioManager.ReleaseLock(preExistingPortfolio);
 
             var RequestMessage = new CreatePortfolioRequestMessage()
             {

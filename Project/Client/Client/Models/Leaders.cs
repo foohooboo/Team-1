@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Client.Conversations.RequestTransaction
+namespace Client.Models
 {
-    class ReceiveConfirmationState
+    public class Leaders
     {
+        public string value { get; set; }
+        public string name { get; set; }
     }
 }

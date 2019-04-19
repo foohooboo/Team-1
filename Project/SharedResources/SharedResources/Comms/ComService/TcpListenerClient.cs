@@ -8,86 +8,44 @@ using System.Threading.Tasks;
 
 namespace Shared.Comms.ComService
 {
-    public class TcpClient : Client
+    /// <summary>
+    /// Listens on a tcp port specified in the config. Does not respond. 
+    /// </summary>
+    public class TcpListenerClient : Client
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public readonly System.Net.Sockets.TcpClient myTcpClient;
+        public readonly System.Net.Sockets.TcpListener myTcpListenerClient;
         private bool isActive;
 
         /// <summary>
-        /// Creates a new TcpCLient and binds it to the provided localPort.
+        /// Creates a new TcpListener and binds it to the provided localPort.
         /// A localPort of 0 will allow the client to bind to any available local port.
+        /// NOTE: If you bind to any port, you'll need to be able to know which one it found if you want to send anything to it.
         /// </summary>
         /// <param name="localPort"></param>
-        public TcpClient(int localPort)
+        public TcpListenerClient(int localPort)
         {
             var bindLocalEndPoint = new IPEndPoint(IPAddress.Any, localPort);
-            myTcpClient = new System.Net.Sockets.TcpClient(bindLocalEndPoint);
+            myTcpListenerClient = new System.Net.Sockets.TcpListener(bindLocalEndPoint);
 
-            Log.Info($"Started TcpClient on port {((IPEndPoint)myTcpClient.Client.LocalEndPoint).Port}");
+            myTcpListenerClient.Start();
 
-            isActive = true;
-            new Task(() => ListenForMessages()).Start();
-        }
-
-        public TcpClient(System.Net.Sockets.TcpClient client)
-        {
-            myTcpClient = client;
-
-            Log.Info($"Started TcpClient on port {((IPEndPoint)myTcpClient.Client.LocalEndPoint).Port}");
+            Log.Info($"Started TcpListener on port {((IPEndPoint)myTcpListenerClient.LocalEndpoint).Port}");
 
             isActive = true;
             new Task(() => ListenForMessages()).Start();
         }
 
-        ~TcpClient()
+        ~TcpListenerClient()
         {
             Close();
         }
 
+        //NOTE: TcpListener's don't send
         public override void Send(Envelope envelope)
         {
-            var messageId = envelope?.Contents?.MessageID ?? null;
-            Log.Info($"Sending message {messageId} to {envelope.To}");
-            
-            byte[] messageBytes = envelope.Contents.Encode();
-            byte[] messageLength = BitConverter.GetBytes(messageBytes.Length);
-
-            byte[] bytesToSend = new byte[messageLength.Length + messageBytes.Length];
-
-            System.Buffer.BlockCopy(messageLength,0,bytesToSend,0,bytesToSend.Length);
-            System.Buffer.BlockCopy(messageBytes, 0, bytesToSend, messageLength.Length, bytesToSend.Length);
-
-            try
-            {
-                if (myTcpClient.Connected)
-                {
-                    if (((IPEndPoint)myTcpClient.Client.LocalEndPoint) != envelope.To)
-                    {
-                        throw new Exception($"Connected endpoint {myTcpClient.Client.LocalEndPoint.ToString()} does not match envelope address {envelope.To.ToString()}");
-                    }
-                }
-                else
-                {
-                    myTcpClient.Connect(envelope.To);
-                }
-
-                System.Net.Sockets.NetworkStream stream = myTcpClient.GetStream();
-                stream.Write(bytesToSend, 0, bytesToSend.Length);
-            }
-            catch (Exception e)
-            {
-                Log.Error($"error sending message to {envelope.To}");
-                Log.Error(e.Message);
-            }
-        }
-
-        
-        public bool Connect()
-        {
-
-            return false;
+            throw new Exception("TcpListener cannot send");
         }
 
         public void ListenForMessages()
@@ -100,7 +58,6 @@ namespace Shared.Comms.ComService
                     try
                     {
                         ComService.HandleIncomingMessage(envelope);
-
                     }
                     catch (Exception e)
                     {
@@ -115,30 +72,23 @@ namespace Shared.Comms.ComService
         private Envelope GetIncomingMessages()
         {
             TcpEnvelope newEnvelope = null;
+            //Envelope newEnvelope = null;
 
-            int incomingData = myTcpClient.Available;
+            //Docs say that AcceptTcpClient() is a blocking call, so it won't just spin it's wheels. There is an asynch, AcceptTcpClientAsync. 
+            Log.Info($"Waiting for TCP connection on port ${((IPEndPoint)myTcpListenerClient.LocalEndpoint).Port}");
 
-            if (myTcpClient.Connected && (incomingData > 0))
-            {
-                System.Net.Sockets.NetworkStream stream = myTcpClient.GetStream();
+            System.Net.Sockets.TcpClient client = myTcpListenerClient.AcceptTcpClient();
 
-                var receivedBytes = ReceiveBytes(1000, stream);
+            Log.Info($"Incoming TCP Connection established with {((IPEndPoint)client.Client.LocalEndPoint).Address}");
 
-                var message = MessageFactory.GetMessage(receivedBytes, true);
-                Log.Info($"Received {message.GetType()} message from {((IPEndPoint)myTcpClient.Client.LocalEndPoint).Address} via TCP");
+            //string key = ((IPEndPoint)client.Client.LocalEndPoint).Address.ToString();
 
-                string key = ((IPEndPoint)myTcpClient.Client.LocalEndPoint).Address.ToString();
-
-                newEnvelope = new TcpEnvelope(message)
-                {
-                    To = (IPEndPoint)myTcpClient.Client.LocalEndPoint,
-                    Key = key
-                };
-            }
+            ComService.AddTcpClient(client);
 
             return newEnvelope;
         }
 
+        //unused in a TcpListener
         private byte[] ReceiveBytes(int timeout, System.Net.Sockets.NetworkStream stream)
         {
             byte[] buffer = new byte[256];
@@ -184,14 +134,14 @@ namespace Shared.Comms.ComService
         public override void Close()
         {
             isActive = false;
-            myTcpClient?.Close();
+            myTcpListenerClient?.Stop();
         }
 
         public override int getConnectedPort()
         {
             int localPort = -1;
 
-            IPEndPoint endpoint = (IPEndPoint)myTcpClient?.Client?.LocalEndPoint;
+            IPEndPoint endpoint = (IPEndPoint)myTcpListenerClient?.LocalEndpoint;
             if (endpoint != null)
                 localPort = endpoint.Port;
 

@@ -1,5 +1,4 @@
-﻿using System;
-using log4net;
+﻿using log4net;
 using Shared;
 using Shared.Comms.ComService;
 using Shared.Comms.Messages;
@@ -12,95 +11,49 @@ namespace Broker.Conversations.TransactionRequest
     public class RespondTransaction_InitialState : ConversationState
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        private readonly string InitMessageId;
 
-        public RespondTransaction_InitialState(Conversation conversation, string initMessageId) : base(conversation, null)
+        TransactionRequestMessage Request;
+
+        public RespondTransaction_InitialState(Conversation conversation, Envelope env) : base(env, conversation, null)
         {
-            InitMessageId = initMessageId;
+            Request = env.Contents as TransactionRequestMessage;
         }
 
         public override ConversationState HandleMessage(Envelope newMessage)
         {
-            Log.Debug($"{nameof(HandleMessage)} (enter)");
-
-            ConversationState state = null;
-
-            if (newMessage.Contents.MessageID == InitMessageId)
-            {
-                //client sent a retry message, resend transaction
-                Send();
-                state = new ConversationDoneState(Conversation, this);
-            }
-
-            Log.Debug($"{nameof(HandleMessage)} (exit)");
-            return state;
+            Log.Warn($"Respond Transaction initial state did not expect to handle a message.");
+            return this;
         }
 
         public override Envelope Prepare()
         {
             Log.Debug($"{nameof(Prepare)} (enter)");
 
-            Envelope env = null;
-            bool success = false;
+            var success = PortfolioManager.PerformTransaction(
+                Request.PortfolioId,
+                Request.StockValue.Symbol,
+                Request.Quantity,
+                Request.StockValue.Close,
+                out Portfolio updatedPortfolio,
+                out string errorMessage);
 
-            var processId = Config.GetInt(Config.BROKER_PROCESS_NUM);
-            var conv = Conversation as RespondTransactionConversation;
+            Envelope env;
 
-
-            PortfolioManager.TryToGet(conv.PortfoliId, out Portfolio portfolio);
-            Asset change = new Asset(conv.VStock, conv.Quantity);
-
-            //TODO: confirm vStock price is in recent update history
-            var totalCost = conv.Quantity * conv.VStock.Close;
-
-            //buying stock
-            if (totalCost > 0)
-            {
-                var dollars = portfolio.GetAsset("$")?.Quantity;
-                if (dollars >= totalCost)
-                {
-                    portfolio.ModifyAsset(change);
-                    success = true;
-                }
-            }
-            //selling stock
-            else
-            {
-                var qtyOwned = portfolio.GetAsset(conv.VStock.Symbol)?.Quantity;
-                if (qtyOwned > Math.Abs(conv.Quantity))
-                {
-                    portfolio.ModifyAsset(change);
-                    success = true;
-                }
-            }
-
-            Message message;
             if (success)
             {
-                message = MessageFactory.GetMessage<PortfolioUpdateMessage>(
-                    processId,
-                    portfolio.PortfolioID
-                    ) as PortfolioUpdateMessage;
-                message.ConversationID = conv.Id;
-                (message as PortfolioUpdateMessage).Assets = portfolio.Assets;
+                var reply = MessageFactory.GetMessage<PortfolioUpdateMessage>(Config.GetInt(Config.BROKER_PROCESS_NUM), 0) as PortfolioUpdateMessage;
+                reply.ConversationID = Conversation.Id;
+                reply.Assets = updatedPortfolio.Assets;
+                reply.PortfolioID = updatedPortfolio.PortfolioID;
+                env = new Envelope(reply) { To = this.To };
             }
             else
             {
-                message = MessageFactory.GetMessage<ErrorMessage>(
-                    processId,
-                    portfolio.PortfolioID
-                    ) as ErrorMessage;
-                message.ConversationID = conv.Id;
-                (message as ErrorMessage).ErrorText = "Broker could not complete transaction.";
+                var reply = MessageFactory.GetMessage<ErrorMessage>(Config.GetInt(Config.BROKER_PROCESS_NUM), 0) as ErrorMessage;
+                reply.ConversationID = Conversation.Id;
+                reply.ErrorText = errorMessage;
+                env = new Envelope(reply) { To = this.To };
             }
-
-            env = new Envelope()
-            {
-                Contents = message,
-                To = conv.ResponseAddress
-            };
-
-            PortfolioManager.ReleaseLock(portfolio);
 
             Log.Debug($"{nameof(Prepare)} (exit)");
             return env;

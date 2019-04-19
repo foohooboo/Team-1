@@ -1,9 +1,12 @@
-﻿using CommSystem;
+﻿using Client.Conversations;
+using Client.Models;
 using log4net;
 using OxyPlot;
+using OxyPlot.Axes;
 using OxyPlot.Series;
 using Shared;
 using Shared.Comms.ComService;
+using Shared.Conversations;
 using Shared.MarketStructures;
 using Shared.PortfolioResources;
 using System;
@@ -11,69 +14,92 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
-using static Client.Conversations.StockUpdate.ReceiveStockUpdateState;
 
 namespace Client
 {
     public partial class MainWindow : Window, INotifyPropertyChanged, IHandleTraderModelChanged
     {
-        public TraderModel TModel;
+        private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
 
         public ObservableCollection<Leaders> LeaderBoard { get; set; } = new ObservableCollection<Leaders>();
         public ObservableCollection<AssetNetValue> ValueOfAssets { get; set; } = new ObservableCollection<AssetNetValue>();
-
         public ObservableCollection<StockButton> StockList { get; set; } = new ObservableCollection<StockButton>();
+        public static string StockCount { get; set; } = "1";//holds the data in buySell textbox
 
-        public float TotalNetWorth { get; set; } = 12234234234.45f;
-
-        public class Leaders
-        {
-            public string value { get; set; }
-            public string name { get; set; }
-        }
-
-        public class StockButton
-        {
-            public string Symbol { get; set; }
-            public int QtyOwned { get; set; }
-            public string Price { get; set; }
-
-            public StockButton(string symbol, int qtyOwned, float price)
-            {
-                Symbol = symbol;
-                QtyOwned = qtyOwned;
-                Price = price.ToString("C2");
-            }
-        }
-
-        public string StockCount { get; set; } = "1";//holds the data in buySell textbox
-
-        private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        private HelloWorld helloWorld = new HelloWorld();
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private static Random rand = new Random();
+        private string _notification = "Welcome to Team-1's Stock Trading Simulation.   Good luck!!";
+        public string Notification
+        {
+            get => _notification;
+            set
+            {
+                _notification = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Notification"));
+                LastNotification = DateTime.Now;
+            }
+        }
+        private object LockCleanNotify = new object();
+        private bool DoCleanNotify = true;
+        private DateTime LastNotification = DateTime.Now;
 
-        public PlotModel MyModel { get; private set; }
+        public PlotModel CandlestickView { get; private set; } = new PlotModel { TitleColor = OxyColors.White, IsLegendVisible = false };
 
-        public MainWindow(TraderModel model)
+        public MainWindow()
         {
             Log.Debug($"{nameof(MainWindow)} (enter)");
 
             InitializeComponent();
-
-            TModel = model;
-            TModel.Handler = this;
-
-            Title = $"{TModel.Portfolio.Username}'s Portfolio.";
-
             DataContext = this;
 
-            helloWorld.HelloTextChanged += OnHelloTextChanged;
-            HelloTextLocal = helloWorld.HelloText;
+            TraderModel.Current.Handler = this;
+            Title = $"{TraderModel.Current.Portfolio.Username}'s Portfolio.";
 
-            this.MyModel = new PlotModel { Title = "Selected Stock Name (SMBL)" };
+            //start notification monitor
+            Task.Run(() =>
+            {
+                var clean = true;
+                while (clean)
+                {
+                    double ellapsed;
+                    lock (LockCleanNotify)
+                    {
+                        ellapsed = (DateTime.Now - LastNotification).TotalSeconds;
+                        clean = DoCleanNotify;
+                    }
+                    if (ellapsed > 3.5)
+                    {
+                        _notification = "";
+                        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Notification"));
+                    }
+                    Thread.Sleep(500);
+                }
+            });
+
+            CandlestickView.Axes.Add(new LinearAxis
+            {
+                Position = AxisPosition.Bottom,
+                IsZoomEnabled = false,
+                IsAxisVisible = false
+            });
+
+            CandlestickView.Axes.Add(new LinearAxis
+            {
+                Position = AxisPosition.Left,
+                IsZoomEnabled = false,
+                MajorGridlineColor = OxyColor.FromRgb(40, 40, 40),
+                MajorGridlineStyle = LineStyle.Solid,
+                MinorGridlineColor = OxyColor.FromRgb(32, 32, 32),
+                MinorGridlineStyle = LineStyle.LongDash,
+                TextColor = OxyColor.FromRgb(128, 128, 128),
+                TitleColor = OxyColors.White,
+                AxisTitleDistance = 15,
+                Title = "US Dollars"
+            });
 
             ReDrawPortfolioItems();
 
@@ -83,64 +109,124 @@ namespace Client
         ~MainWindow()
         {
             ComService.RemoveClient(Config.DEFAULT_UDP_CLIENT);
+
+            lock (LockCleanNotify)
+            {
+                DoCleanNotify = false;
+            }
         }
 
-        private void RedrawCandlestickChart()
+        private void RedrawStockCharts()
         {
+            var symbol = TraderModel.Current.SelectedStocksSymbol;
             var history = TraderModel.Current.GetHistory(TraderModel.Current.SelectedStocksSymbol);
 
-            if (history != null)
+            if (history != null && history.Count > 0)
             {
-                var chart = new CandleStickSeries();
-
-                for (int i=0; i< history.Count; i++)
-                {
-                    chart.Items.Add(new HighLowItem(i+1,history[i].High, history[i].Low, history[i].Open, history[i].Close));
-                }
-                MyModel.Series.Clear();
-                MyModel.Series.Add(chart);
-                MyModel.InvalidatePlot(true);
-                MyModel.ResetAllAxes();
-
-                chart.XAxis.IsZoomEnabled = false;
-                chart.YAxis.IsZoomEnabled = false;
+                CandlestickView.Title = $"{symbol}  --  {history[0].Name}";
+                RedreawCandlestick(history);
+                RedreawVolume(history);
             }
             else
             {
-                MyModel.InvalidatePlot(false);
+                CandlestickView.Title = null;
+                CandlestickView.InvalidatePlot(false);
             }
-        }   
+        }
 
-        private string helloTextLocal; //Todo: change this to fading status field
-        public string HelloTextLocal
+        private void RedreawCandlestick(List<ValuatedStock> history)
         {
-            get => helloTextLocal;
-            set
+            if (history != null && history.Count > 0)
             {
-                if (helloTextLocal != value)
+                var candlestickChart = new CandleStickSeries
                 {
-                    helloTextLocal = value;
-                    helloWorld.HelloText = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("HelloTextLocal"));
+
+                };
+
+                for (int i = 0; i < history.Count; i++)
+                {
+                    candlestickChart.Items.Add(new HighLowItem(i + 1, history[i].High, history[i].Low, history[i].Open, history[i].Close));
                 }
+
+                CandlestickView.Series.Clear();
+                CandlestickView.Series.Add(candlestickChart);
+                CandlestickView.InvalidatePlot(true);
+                CandlestickView.ResetAllAxes();
+            }
+            else
+            {
+                CandlestickView.InvalidatePlot(false);
+            }
+        }
+
+        private void RedreawVolume(List<ValuatedStock> history)
+        {
+            //Note: There seems to be an oxyplot rendering bug when updating ColumnSeries via MVVM. As such, I have to push
+            //a whole new PlotModel every time. But hey, at least it works... -Dsphar 4/9/2019
+
+            var series = new ColumnSeries();
+
+            if (history != null && history.Count > 0)
+            {
+                float max = history.Max(x => x.Volume);
+                float min = history.Min(x => x.Volume) - (0.05f * max); //Remove en extra 1% of max, so no % is actually 0.
+                float spread = max - min;
+
+                for (int i = 0; i < history.Count; i++)
+                {
+                    float adjusted = history[i].Volume - min;
+                    float fraction = adjusted / spread;
+                    float percent = fraction * 100;
+
+                    var col = new ColumnItem(percent);
+
+                    if (history[i].Close > history[i].Open)
+                        col.Color = OxyColors.Green;
+                    else
+                        col.Color = OxyColors.Red;
+
+                    series.Items.Add(col);
+                }
+
+                var model = new PlotModel();
+
+                model.Axes.Add(new CategoryAxis
+                {
+                    Position = AxisPosition.Left,
+                    IsZoomEnabled = false,
+
+                    MajorGridlineColor = OxyColors.Black,
+                    MajorGridlineStyle = LineStyle.Solid,
+
+                    TextColor = OxyColor.FromRgb(24, 24, 24),
+                    AxisTitleDistance = 15,
+
+                    TitleColor = OxyColors.White,
+                    Title = "Relative Volume"
+                });
+                model.Axes.Add(new CategoryAxis
+                {
+                    Position = AxisPosition.Bottom,
+                    IsZoomEnabled = false,
+                    IsAxisVisible = false,
+                });
+                model.Series.Add(series);
+                VolumeChart.Model = model;
+            }
+            else
+            {
+                CandlestickView.InvalidatePlot(false);
             }
         }
 
         public void OnStockSelected(object sender, RoutedEventArgs e)
         {
             var selectedItem = stockPanels.SelectedItem as StockButton;
-
             if (selectedItem != null)
             {
                 TraderModel.Current.SelectedStocksSymbol = selectedItem.Symbol;
             }
-
-            RedrawCandlestickChart();
-        }
-
-        public void OnHelloTextChanged(object source, EventArgs args)
-        {
-            HelloTextLocal = helloWorld.HelloText; //TODO: break this out into a fading status process
+            RedrawStockCharts();
         }
 
         /// <summary>
@@ -148,21 +234,21 @@ namespace Client
         /// largest possible amount if necessary.
         /// </summary>
         /// <param name="amount"></param>
-        private void SendTransaction(int amount)
+        private void SendTransaction(float amount)
         {
             var symbol = TraderModel.Current.SelectedStocksSymbol;
 
             if (string.IsNullOrEmpty(symbol))
             {
-                HelloTextLocal = "Please select a stock item before attempting a transaction.";
+                Notification = "Please select a stock item before attempting a transaction.";
                 return;
             }
 
             List<ValuatedStock> selectedVStockHistory = TraderModel.Current.GetHistory(symbol);
 
-            if (selectedVStockHistory==null || selectedVStockHistory.Count == 0)
+            if (selectedVStockHistory == null || selectedVStockHistory.Count == 0)
             {
-                HelloTextLocal = $"We have not received a recent update for ({symbol}). Transaction canceled.";
+                Notification = $"We have not received a recent update for ({symbol}). Transaction canceled.";
                 return;
             };
 
@@ -182,7 +268,7 @@ namespace Client
             else
             {
                 Asset ownedAsset = null;
-                var amountOwned = 0;
+                var amountOwned = 0f;
 
                 if (TraderModel.Current.Portfolio.Assets.TryGetValue(symbol, out ownedAsset))
                 {
@@ -196,13 +282,23 @@ namespace Client
             }
             if (amount == 0)
             {
-                HelloTextLocal = "Cannot perform the desired transaction.";
+                Notification = "Cannot perform the desired transaction.";
             }
             else
             {
-                HelloTextLocal = $"Initiated transaction for {amount} shares of {selectedVStock.Name} ({selectedVStock.Symbol}).";
+                Notification = $"Initiated transaction for {amount} shares of {selectedVStock.Name} ({selectedVStock.Symbol}).";
 
-                //TODO: Start transaction request conversation.
+                //Prepare and send transaction request
+                var stock = new ValuatedStock()
+                {
+                    Symbol = symbol,
+                    Close = TraderModel.Current.GetRecentValue(symbol)
+                };
+                var requestConv = new InitiateTransactionConversation(TraderModel.Current.Portfolio.PortfolioID);
+
+                requestConv.SetInitialState(new InitTransactionStartingState(requestConv, stock, amount));
+                ConversationManager.AddConversation(requestConv);
+
                 ReDrawPortfolioItems();
             }
         }
@@ -262,18 +358,32 @@ namespace Client
         {
             Application.Current?.Dispatcher?.Invoke(() =>
             {
+
+                RedrawStockCharts();
+
+                var currentBtn = 0;
+
+                //Update Net Asset box
                 ValueOfAssets.Clear();
                 float totalNetWorth = TraderModel.Current.QtyCash;
-
-                //show cash first
                 ValueOfAssets.Add(new AssetNetValue("CASH", "", TraderModel.Current.QtyCash.ToString("C2")));
-
-                //Clear stock list, then populate with owned stocks, followed by unowned
-                StockList.Clear();
-
-                //repopulate total net box and owned stocks in stocklist
                 var assets = TraderModel.Current.OwnedStocksByValue;
                 foreach (var asset in assets)
+                {
+                    var symbol = asset.RelatedStock.Symbol;
+                    if (symbol.Equals("$")) continue;
+                    var qtyOwned = asset.Quantity;
+                    float price = TraderModel.Current.GetRecentValue(symbol);
+                    var assetNet = asset.Quantity * price;
+                    totalNetWorth += assetNet;
+
+                    ValueOfAssets.Add(new AssetNetValue(symbol, qtyOwned.ToString(), assetNet.ToString("C2")));
+                }
+                TotalValueGridTextColumn.Header = totalNetWorth.ToString("C2");
+
+                //Update owned stocks in StockList
+                assets = TraderModel.Current.OwnedStocksBySymbol;
+                foreach (var asset in assets.ToList())
                 {
                     var symbol = asset.RelatedStock.Symbol;
                     if (symbol.Equals("$")) continue;
@@ -282,28 +392,26 @@ namespace Client
 
                     float price = TraderModel.Current.GetRecentValue(symbol);
 
-                    StockList.Add(new StockButton(symbol, qtyOwned, price));
-
-                    var assetNet = asset.Quantity * price;
-                    totalNetWorth += assetNet;
-                    ValueOfAssets.Add(new AssetNetValue(symbol, qtyOwned.ToString(), assetNet.ToString("C2")));
+                    StockList.Insert(currentBtn, new StockButton(symbol, qtyOwned, price));
+                    currentBtn++;
+                    if (currentBtn < StockList.Count)
+                        StockList.RemoveAt(currentBtn);
                 }
 
-                TotalValueGridTextColumn.Header = totalNetWorth.ToString("C2");
-
-                //Populate unowned stocks in stock list
+                //Update unowned stocks in StockList
                 if (TraderModel.Current.StockHistory?.Count > 0)
                 {
                     foreach (var vStock in TraderModel.Current.StockHistory[0].TradedCompanies)
                     {
                         if (vStock.Symbol.Equals("$")) continue;
-
-                        var stockButton = StockList.Where(s => s.Symbol.Equals(vStock.Symbol)).FirstOrDefault();
-
+                        var stockButton = assets.Where(s => s.RelatedStock.Symbol.Equals(vStock.Symbol)).FirstOrDefault();
                         if (stockButton == null)
                         {
                             float price = TraderModel.Current.GetRecentValue(vStock.Symbol);
-                            StockList.Add(new StockButton(vStock.Symbol, 0, price));
+                            StockList.Insert(currentBtn, new StockButton(vStock.Symbol, 0, price));
+                            currentBtn++;
+                            if (currentBtn < StockList.Count)
+                                StockList.RemoveAt(currentBtn);
                         }
                     }
                 }
@@ -313,21 +421,12 @@ namespace Client
                 {
                     stockPanels.SelectedItem = selectedButton;
                 }
-            });   
+            });
         }
 
-        public class AssetNetValue
+        public void ShowStatus(string message)
         {
-            public string Symbol { get; private set; }
-            public string Quantity { get; private set; }
-            public string TotalValue { get; private set; }
-
-            public AssetNetValue(string symbol, string quantity, string totalValue)
-            {
-                Symbol = symbol;
-                Quantity = quantity;
-                TotalValue = totalValue;
-            }
+            Notification = message;
         }
     }
 }

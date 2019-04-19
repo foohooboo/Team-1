@@ -34,7 +34,7 @@ namespace Shared.Conversations.SharedStates
         {
             Log.Debug($"{nameof(HandleTimeout)} (enter)");
             
-            if (++CountRetrys >= Config.GetInt(Config.DEFAULT_RETRY_COUNT))
+            if (++CountRetrys > Config.GetInt(Config.DEFAULT_RETRY_COUNT))
             {
                 Log.Debug($"Conversation {Conversation.Id} being cleaned up.");
 

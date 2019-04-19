@@ -54,6 +54,8 @@
     <Compile Include="Comms\ComService\EndPointParser.cs" />
     <Compile Include="Comms\ComService\Envelope.cs" />
     <Compile Include="Comms\ComService\TcpClient.cs" />
+    <Compile Include="Comms\ComService\TcpEnvelope.cs" />
+    <Compile Include="Comms\ComService\TcpListenerClient.cs" />
     <Compile Include="Comms\ComService\UdpClient.cs" />
     <Compile Include="Comms\Messages\AckMessage.cs" />
     <Compile Include="Comms\Messages\CreatePortfolioRequestMessage.cs" />

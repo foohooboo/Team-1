@@ -24,10 +24,10 @@ namespace BrokerTest.Conversations
             switch (env.Contents)
             {
                 case TransactionRequestMessage m:
-                    conv = new RespondTransactionConversation(m, env.To);
+                    conv = new RespondTransactionConversation(env);
 
                     //setup response message as mock
-                    mock = new Mock<RespondTransaction_InitialState>(conv, m.MessageID) { CallBase = true };
+                    mock = new Mock<RespondTransaction_InitialState>(conv, env) { CallBase = true };
                     conv.SetInitialState(mock.Object as RespondTransaction_InitialState);
 
                     break;
@@ -58,7 +58,6 @@ namespace BrokerTest.Conversations
             int ClientPort = 5682;
             int RequestQuanitity = 12;
             PortfolioManager.TryToCreate("TestRequestSucceed", "password", out Portfolio portfolio);
-            PortfolioManager.ReleaseLock(portfolio);
 
             var testStock = new Stock("TST", "Test Stock");
             var vStock = new ValuatedStock(("1984-02-22,1,2,3,100,5").Split(','), testStock);
@@ -96,7 +95,6 @@ namespace BrokerTest.Conversations
             int ClientPort = 5682;
             int RequestQuanitity = 12;
             PortfolioManager.TryToCreate("TestRequestSucceedAfterRetry", "password", out Portfolio portfolio);
-            PortfolioManager.ReleaseLock(portfolio);
 
             var testStock = new Stock("TST", "Test Stock");
             var vStock = new ValuatedStock(("1984-02-22,1,2,3,100,5").Split(','), testStock);

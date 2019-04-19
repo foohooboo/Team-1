@@ -1,14 +1,10 @@
-﻿using log4net;
+﻿using Client.Models;
+using log4net;
 using Shared;
 using Shared.Comms.ComService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Client.Conversations.StockHistory
 {
@@ -30,7 +26,7 @@ namespace Client.Conversations.StockHistory
                 case StockStreamResponseMessage m:
                     Log.Debug($"Received stock history for.");
 
-                    if(TraderModel.Current == null)
+                    if (TraderModel.Current == null)
                     {
                         Log.Warn("No current TrdaerModel set. Cannot assign incoming stock history");
                     }
@@ -46,7 +42,7 @@ namespace Client.Conversations.StockHistory
                     Log.Error($"Received error message as reply...\n{m.ErrorText}");
                     nextState = new ConversationDoneState(Conversation, this);
                     break;
-                
+
                 default:
                     Log.Error($"No logic to process incoming message of type {incomingMessage.Contents?.GetType()}. Ignoring message.");
                     break;
@@ -57,7 +53,7 @@ namespace Client.Conversations.StockHistory
 
         public override Envelope Prepare()
         {
-            var mes = MessageFactory.GetMessage<StockStreamRequestMessage>(Config.GetInt(Config.CLIENT_PROCESS_NUM),0);
+            var mes = MessageFactory.GetMessage<StockStreamRequestMessage>(Config.GetClientProcessNumber(), 0);
             mes.ConversationID = Conversation.Id;
             var env = new Envelope(mes, Config.GetString(Config.STOCK_SERVER_IP), Config.GetInt(Config.STOCK_SERVER_PORT));
             return env;

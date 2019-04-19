@@ -1,5 +1,5 @@
 ﻿using Client.Conversations.StockHistory;
-using Client.Conversations.StockUpdate;
+using Shared;
 using Shared.Conversations;
 using Shared.MarketStructures;
 using Shared.PortfolioResources;
@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using static Client.Conversations.StockUpdate.ReceiveStockUpdateState;
 
-namespace Client
+namespace Client.Models
 {
     public class TraderModel
     {
@@ -18,6 +18,8 @@ namespace Client
         private Portfolio _portfolio;
         private MarketSegment _stockHistory = new MarketSegment();
         private SortedList<float, string> _leaderboard;
+
+        private object LockOwnedStock = new object();
         private List<Asset> _ownedStocks = new List<Asset>();
 
         private Dictionary<string, List<ValuatedStock>> _stockHistoryBySymbol = new Dictionary<string, List<ValuatedStock>>();
@@ -49,16 +51,11 @@ namespace Client
             set
             {
                 _portfolio = value;
-
-                _ownedStocks.Clear();
-                foreach (var ownedStock in value.Assets.Values)
+                lock (LockOwnedStock)
                 {
-                    //TODO: Either changed the sortedlist to OwnedByQty, or factor in prices right here.
-                    _ownedStocks.Add(ownedStock);
+                    _ownedStocks = value.Assets.Values.ToList();
                 }
-
                 QtyCash = value.Assets.Where(s => s.Key.Equals("$")).FirstOrDefault().Value.Quantity;
-
                 Handler?.ReDrawPortfolioItems();
             }
         }
@@ -99,10 +96,13 @@ namespace Client
                 _stockHistoryBySymbol.Add(vStock.Symbol, new List<ValuatedStock>());
             }
 
-            //Question, do we want to limit the size of this history? Maybe by a configurable length?
-            _stockHistoryBySymbol[vStock.Symbol].Add(vStock);
+            var history = _stockHistoryBySymbol[vStock.Symbol];
+            while (history.Count > Config.GetInt(Config.MAX_STOCK_HISTORY))
+            {
+                history.RemoveAt(0);
+            }
 
-            //TODO: add candlestick for this day. Again, do we want to limit the history here?
+            history.Add(vStock);
         }
 
         public SortedList<float, string> Leaderboard
@@ -119,11 +119,14 @@ namespace Client
         {
             get
             {
-                var cashAsAsset = _ownedStocks.Where(s => s.RelatedStock.Symbol.Equals("$")).FirstOrDefault();
-                if (cashAsAsset == null)
-                    return 0;
-                else
-                    return cashAsAsset.Quantity;
+                lock (LockOwnedStock)
+                {
+                    var cashAsAsset = _ownedStocks.Where(s => s.RelatedStock.Symbol.Equals("$")).FirstOrDefault();
+                    if (cashAsAsset == null)
+                        return 0;
+                    else
+                        return cashAsAsset.Quantity;
+                }
             }
             private set { }
         }
@@ -132,12 +135,41 @@ namespace Client
         {
             get
             {
-                _ownedStocks.Sort((a, b) => -GetStockNet(a).CompareTo(GetStockNet(b)));
+                lock (LockOwnedStock)
+                {
+                    _ownedStocks.Sort((a, b) => -GetStockNet(a).CompareTo(GetStockNet(b)));
+                    return _ownedStocks;
+                }
+            }
+            set
+            {
+                lock (LockOwnedStock)
+                {
+                    _ownedStocks = value;
+                }
+                Handler?.ReDrawPortfolioItems();
+            }
+        }
+
+        public List<Asset> OwnedStocksBySymbol
+        {
+            get
+            {
+                List<Asset> sortedBySymbol = new List<Asset>();
+                lock (LockOwnedStock)
+                {
+                    sortedBySymbol = _ownedStocks.Select(asset => new Asset(asset.RelatedStock, asset.Quantity)).ToList();
+                }
+                sortedBySymbol.Sort((a, b) => a.RelatedStock.Symbol.CompareTo(b.RelatedStock.Symbol));
+
                 return _ownedStocks;
             }
             set
             {
-                _ownedStocks = value;
+                lock (LockOwnedStock)
+                {
+                    _ownedStocks = value;
+                }
                 Handler?.ReDrawPortfolioItems();
             }
         }
@@ -178,6 +210,11 @@ namespace Client
                 AddStockToHistory(vStock);
             }
             Handler?.ReDrawPortfolioItems();
+        }
+
+        public void PassStatus(string message)
+        {
+            Handler?.ShowStatus(message);
         }
     }
 }

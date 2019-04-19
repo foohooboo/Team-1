@@ -74,8 +74,8 @@ namespace StockServer.Conversations.StockUpdate
             {
                 ConversationManager.GetConversation(Conversation.Id).UpdateState(new ConversationDoneState(Conversation, this));
 
-                Log.Warn($"Client {OutboundMessage.To.ToString()} appears to be disconnected.");
-
+                Log.Warn($"Conversation {Conversation.Id}: Client {OutboundMessage.To.ToString()} appears to be disconnected.");
+                
                 if (Config.GetBool(Config.CLEANUP_DEAD_CLIENTS))
                 {
                     Log.Info($"Removing {OutboundMessage.To.ToString()} from connected clients.");
