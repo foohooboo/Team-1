@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Linq;
+using System.Collections.Concurrent;
 
 namespace Shared.Comms.ComService
 {
@@ -12,7 +13,7 @@ namespace Shared.Comms.ComService
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         //NOTE: left this to hold both the UDP client as well as any TCP clients
-        public static Dictionary<string,Client> Clients = new Dictionary<string, Client>();
+        public static ConcurrentDictionary<string,Client> Clients = new ConcurrentDictionary<string, Client>();
 
         public static bool HasClient()
         {
@@ -24,7 +25,7 @@ namespace Shared.Comms.ComService
             Log.Debug($"{nameof(AddClient)} (enter)");
 
             var box = new UdpClient(localPort);
-            Clients.Add(clientId, box);
+            Clients.TryAdd(clientId, box);
 
             Log.Debug($"{nameof(AddClient)} (exit)");
             return box;
@@ -35,7 +36,7 @@ namespace Shared.Comms.ComService
             Log.Debug($"{nameof(AddTcpClient)} (enter)");
 
             var box = new TcpListenerClient(localPort);
-            Clients.Add(clientId, box);
+            Clients.TryAdd(clientId, box);
 
             Log.Debug($"{nameof(AddTcpClient)} (exit)");
             return box;
@@ -51,7 +52,7 @@ namespace Shared.Comms.ComService
             //we need to connect immediately.
             if (box.Connect(remoteEndpoint))
             {
-                Clients.Add(((IPEndPoint)box.myTcpClient.Client.RemoteEndPoint).ToString(), box);
+                Clients.TryAdd(((IPEndPoint)box.myTcpClient.Client.RemoteEndPoint).ToString(), box);
             }
             else
             {
@@ -72,7 +73,7 @@ namespace Shared.Comms.ComService
             var box = new TcpClient(client);
             string key = ((IPEndPoint)client.Client.RemoteEndPoint).ToString();
 
-            Clients.Add(key, box);
+            Clients.TryAdd(key, box);
 
             Log.Debug($"{nameof(AddTcpClient)} (exit)");
             return box;
@@ -98,7 +99,7 @@ namespace Shared.Comms.ComService
         public static void RemoveClient(string clientId)
         {
             Clients[clientId].Close();
-            Clients.Remove(clientId);
+            Clients.TryRemove(clientId, out Client client);
         }
 
         /// <summary>
