@@ -79,9 +79,7 @@ namespace Shared.Comms.ComService
 
             System.Net.Sockets.TcpClient client = myTcpListenerClient.AcceptTcpClient();
 
-            Log.Info($"Incoming TCP Connection established with {((IPEndPoint)client.Client.LocalEndPoint).Address}");
-
-            //string key = ((IPEndPoint)client.Client.LocalEndPoint).Address.ToString();
+            Log.Info($"Incoming TCP Connection established with {((IPEndPoint)client.Client.RemoteEndPoint).Address}");
 
             ComService.AddTcpClient(client);
 
