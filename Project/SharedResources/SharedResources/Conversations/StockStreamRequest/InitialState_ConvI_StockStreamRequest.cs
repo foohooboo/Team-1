@@ -23,6 +23,8 @@ namespace Shared.Conversations.SharedStates
                     var stockHistory = m.RecentHistory;
                     Log.Info($"Received stock stream response with {stockHistory.Count} days of recent trading.");
 
+
+
                     //TODO: Update stock history (does this need to be broken into a non-shared state?) -Dsphar 3/25/2019
                     Temp t = new Temp();
                     t.LogStockHistory(stockHistory);
@@ -58,13 +60,9 @@ namespace Shared.Conversations.SharedStates
             var stockSerevrPort = Config.GetInt(Config.STOCK_SERVER_TCP_PORT);
 
             var address = new IPEndPoint(IPAddress.Parse(stockServerIp), stockSerevrPort);
-            var client = ComService.AddTcpClient(0, address);
+            ComService.AddTcpClient(0, address);
 
-            env = new TcpEnvelope(message)
-            {
-                To = address,
-                Key = client.myTcpClient.Client.RemoteEndPoint.ToString()
-            };
+            env = new TcpEnvelope(message, Config.GetString(Config.STOCK_SERVER_IP), Config.GetInt(Config.STOCK_SERVER_TCP_PORT));
 
             Log.Debug($"{nameof(Prepare)} (exit)");
             return env;

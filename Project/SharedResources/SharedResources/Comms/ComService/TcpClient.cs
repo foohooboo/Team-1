@@ -61,6 +61,13 @@ namespace Shared.Comms.ComService
 
             try
             {
+                if (!myTcpClient.Connected)
+                {
+                    //The following COULD cause us to connect to the wrong client, but in our case, by the time
+                    //this method gets called, we have already vetted the envelope "To" to this correct TcpClient
+                    Connect(envelope.To);
+                }
+
                 if (myTcpClient.Connected)
                 {
                     System.Net.Sockets.NetworkStream stream = myTcpClient.GetStream();
@@ -69,9 +76,7 @@ namespace Shared.Comms.ComService
                 }
                 else
                 {
-                    //NOTE: This try/catch used to connect on the first send, but now connection happens at initialization
-                    //myTcpClient.Connect(envelope.To);
-                    throw new Exception($"client not connected.");
+                    Log.Error("TCP Message not sent, no connected was made.");
                 }
 
                
@@ -85,9 +90,17 @@ namespace Shared.Comms.ComService
 
         public bool Connect(IPEndPoint distantEnd)
         {
-            myTcpClient.Connect(distantEnd);
-
-            return myTcpClient.Connected;
+            bool connected = false;
+            try
+            {
+                myTcpClient.Connect(distantEnd);
+                connected = myTcpClient.Connected;
+            }
+            catch(Exception e)
+            {
+                Log.Error(e);
+            }
+            return connected;
         }
 
         public void ListenForMessages()
@@ -120,13 +133,6 @@ namespace Shared.Comms.ComService
 
             if (myTcpClient.Connected && (incomingData > 0))
             {
-
-                //System.Net.Sockets.NetworkStream stream = myTcpClient.GetStream();
-
-                //var receivedBytes = ReceiveBytes(1000, stream);
-
-                //var message = MessageFactory.GetMessage(receivedBytes, true);
-
                 ////Get message
                 var stream = myTcpClient.GetStream();
                 byte[] bytes = new byte[4];

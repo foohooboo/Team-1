@@ -45,7 +45,7 @@ namespace SharedTest.Conversations
             Assert.IsTrue(ConversationManager.ConversationExists(conversationId));
 
             //Create fake response message and process it
-            var stockStreamResponse = new Envelope(new StockStreamResponseMessage() { MessageID = "123-abc" });
+            var stockStreamResponse = new TcpEnvelope(new StockStreamResponseMessage() { MessageID = "123-abc" });
             stockStreamResponse.Contents.ConversationID = stockStreamConv.Id;
             ConversationManager.ProcessIncomingMessage(stockStreamResponse);
 

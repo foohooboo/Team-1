@@ -56,14 +56,13 @@ namespace Client.Conversations.StockHistory
         {
             var mes = MessageFactory.GetMessage<StockStreamRequestMessage>(Config.GetClientProcessNumber(), 0);
             mes.ConversationID = Conversation.Id;
-            //var env = new Envelope(mes, Config.GetString(Config.STOCK_SERVER_IP), Config.GetInt(Config.STOCK_SERVER_PORT));
-            var address = new IPEndPoint(IPAddress.Parse(Config.GetString(Config.STOCK_SERVER_IP)),Config.GetInt(Config.STOCK_SERVER_TCP_PORT));
-            var client = ComService.AddTcpClient(0, address);
-            var env = new TcpEnvelope(mes)
-            {
-                To = address,
-                Key = client.myTcpClient.Client.RemoteEndPoint.ToString()
-            };
+
+            var stockServerIp = Config.GetString(Config.STOCK_SERVER_IP);
+            var stockSerevrPort = Config.GetInt(Config.STOCK_SERVER_TCP_PORT);
+            var stockServer = new IPEndPoint(IPAddress.Parse(stockServerIp), stockSerevrPort);
+            ComService.AddTcpClient(0, stockServer);
+
+            var env = new TcpEnvelope(mes, stockServerIp, stockSerevrPort);
 
             return env;
         }

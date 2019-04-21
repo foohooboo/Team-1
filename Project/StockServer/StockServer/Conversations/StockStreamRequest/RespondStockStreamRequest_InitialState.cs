@@ -50,8 +50,6 @@ namespace StockServer.Conversations.StockStreamRequest
             var responseMessage = MessageFactory.GetMessage<StockStreamResponseMessage>(Config.GetInt(Config.STOCK_SERVER_PROCESS_NUM), 0) as StockStreamResponseMessage;
             responseMessage.ConversationID = Conversation.Id;
             responseMessage.RecentHistory = StockData.GetRecentHistory(TicksRequested);
-
-            new Temp().LogStockHistory(responseMessage.RecentHistory);//log to console for prelim dev. Remove once not needed.
                        
             var responseEnvelope = new TcpEnvelope(responseMessage){
                 To = this.To,
