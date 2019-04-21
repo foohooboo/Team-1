@@ -38,7 +38,6 @@ namespace Shared.Comms.ComService
         public override void Send(Envelope envelope)
         {
             var messageId = envelope?.Contents?.MessageID ?? null;
-            Log.Info($"Sending message {messageId} to {envelope.To}");
             byte[] bytesToSend = envelope.Contents.Encode();
             try
             {
@@ -106,7 +105,6 @@ namespace Shared.Comms.ComService
                 if (isActive && myUdpClient?.Available > 0)
                 {
                     receivedBytes = myUdpClient.Receive(ref endPoint);
-                    Log.Info($"Received message from {endPoint.ToString()}");
                 }
             }
             catch (Exception err)

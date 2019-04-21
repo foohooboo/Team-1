@@ -91,7 +91,6 @@ namespace Broker
             Conversation conv = null;
 
             StockPriceUpdate m = e.Contents as StockPriceUpdate;
-            Log.Info($"Processing StockPriceUpdate message");
             var sigServ = new SignatureService();
             var bits = Convert.FromBase64String(m.SerializedStockList);
             var StocksList = sigServ.Deserialize<MarketDay>(bits);
@@ -103,9 +102,6 @@ namespace Broker
             else
             {
                 LeaderboardManager.Market = StocksList;
-                Log.Info("Stock Price Update signature verified, updating leaderboard.");
-                var t = new Temp();
-                t.LogStockDay(StocksList);
 
                 conv = new StockUpdateConversation(m.ConversationID);
                 conv.SetInitialState(new ProcessStockUpdateState(e, conv));

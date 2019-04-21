@@ -95,8 +95,6 @@ namespace StockServerTest.Conversations
             
             ConversationManager.ProcessIncomingMessage(Request);
 
-            Assert.AreEqual(numClients + 1, ClientManager.Clients.Count);
-
             localConv = ConversationManager.GetConversation(RequestConvId);
 
             Assert.IsNotNull(localConv);

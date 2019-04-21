@@ -43,7 +43,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommSystemWrapper.cs" />
     <Compile Include="Conversations\StockHistoryRequest\StockHistoryResponseConversation.cs" />
     <Compile Include="Conversations\StockHistoryRequest\StockHistoryResponseState.cs" />
     <Compile Include="Conversations\StockStreamResponse\StockStreamResponseConversation.cs" />

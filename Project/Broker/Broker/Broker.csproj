@@ -45,7 +45,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommSystemWrapper.cs" />
     <Compile Include="Conversations\CreatePortfolioResponse\CreatePortfoliolResponseConversation.cs" />
     <Compile Include="Conversations\CreatePortfolioResponse\CreatePortfolioReceiveState.cs" />
     <Compile Include="Conversations\GetPortfolioResponse\GetPortfoliolResponseConversation.cs" />

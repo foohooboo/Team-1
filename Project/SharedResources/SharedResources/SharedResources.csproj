@@ -81,7 +81,6 @@
     <Compile Include="Conversations\StockStreamRequest\StockStreamRequestConversation.cs" />
     <Compile Include="Conversations\StockStreamRequest\StockStreamRequestState.cs" />
     <Compile Include="DataGeneration\DataGenerator.cs" />
-    <Compile Include="HelloWorld.cs" />
     <Compile Include="Leaderboard\LeaderboardRecord.cs" />
     <Compile Include="MarketStructures\MarketDay.cs" />
     <Compile Include="MarketStructures\MarketSegment.cs" />
@@ -91,7 +90,6 @@
     <Compile Include="PortfolioResources\Portfolio.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Security\SignatureService.cs" />
-    <Compile Include="Temp.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="log4net.config">

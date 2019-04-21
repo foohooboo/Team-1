@@ -49,7 +49,6 @@ namespace Shared.Comms.ComService
         public override void Send(Envelope envelope)
         {
             var messageId = envelope?.Contents?.MessageID ?? null;
-            Log.Info($"Sending message {messageId} to {envelope.To}");
             
             byte[] messageBytes = envelope.Contents.Encode();
             byte[] messageLength = BitConverter.GetBytes(messageBytes.Length);
@@ -148,9 +147,6 @@ namespace Shared.Comms.ComService
                 }
 
                 var message = MessageFactory.GetMessage(bytes);
-
-                Log.Info($"Received {message.GetType()} message from {((IPEndPoint)myTcpClient.Client.RemoteEndPoint)} via TCP");
-
                 string key = ((IPEndPoint)myTcpClient.Client.RemoteEndPoint).ToString();
 
                 newEnvelope = new TcpEnvelope(message)
