@@ -6,21 +6,19 @@ using Shared.Conversations;
 
 namespace StockServer.Conversations.StockStreamRequest
 {
-    public class ConvR_StockStreamRequest : Conversation
+    public class StockHistoryResponseConversation : Conversation
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public readonly IPEndPoint ClientIp;
 
-        public ConvR_StockStreamRequest(Envelope e) : base(e.Contents.ConversationID)
+        public StockHistoryResponseConversation(Envelope e) : base(e.Contents.ConversationID)
         {
-            Log.Debug($"{nameof(ConvR_StockStreamRequest)} (enter)");
+            Log.Debug($"{nameof(StockHistoryResponseConversation)} (enter)");
 
             ClientIp = e.To;
 
-            ClientManager.TryToAdd(e.To);
-
-            Log.Debug($"{nameof(ConvR_StockStreamRequest)} (exit)");
+            Log.Debug($"{nameof(StockHistoryResponseConversation)} (exit)");
         }
     }
 }

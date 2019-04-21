@@ -5,6 +5,7 @@ using Shared.Conversations;
 using Shared.Conversations.SharedStates;
 using Shared;
 using System.Net;
+using SharedResources.Conversations.StockStreamRequest;
 
 namespace Broker.Conversations.StockHistoryRequest
 {
@@ -25,8 +26,12 @@ namespace Broker.Conversations.StockHistoryRequest
                 case StockHistoryResponseMessage m:
                     var stockHistory = m.RecentHistory;
                     Log.Info($"Received stock stream response with {stockHistory.Count} days of recent trading.");
-                    
                     nextState = new ConversationDoneState(Conversation, this);
+
+                    var streamConv = new StockStreamRequestConversation(Config.GetInt(Config.BROKER_PROCESS_NUM));
+                    streamConv.SetInitialState(new StockStreamRequestState(Config.GetInt(Config.BROKER_PROCESS_NUM), streamConv));
+                    ConversationManager.AddConversation(streamConv);
+
                     break;
                 case ErrorMessage m:
                     Log.Error($"Received error message as reply...\n{m.ErrorText}");

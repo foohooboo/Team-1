@@ -16,7 +16,7 @@ namespace StockServerTest.Conversations
     [TestClass]
     public class StockStreamRequestTest
     {
-        private Mock<RespondStockStreamRequest_InitialState> mock;
+        private Mock<StockHistoryResponseState> mock;
 
         public Conversation ConversationBuilder(Envelope env)
         {
@@ -25,9 +25,9 @@ namespace StockServerTest.Conversations
             switch (env.Contents)
             {
                 case StockHistoryRequestMessage m:
-                    conv = new ConvR_StockStreamRequest(env);
-                    mock = new Mock<RespondStockStreamRequest_InitialState>(env, conv) { CallBase = true };
-                    conv.SetInitialState(mock.Object as RespondStockStreamRequest_InitialState);
+                    conv = new StockHistoryResponseConversation(env);
+                    mock = new Mock<StockHistoryResponseState>(env, conv) { CallBase = true };
+                    conv.SetInitialState(mock.Object as StockHistoryResponseState);
                     break;
             }
 

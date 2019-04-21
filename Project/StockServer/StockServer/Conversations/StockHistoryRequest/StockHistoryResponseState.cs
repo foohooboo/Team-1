@@ -8,14 +8,14 @@ using StockServer.Data;
 
 namespace StockServer.Conversations.StockStreamRequest
 {
-    public class RespondStockStreamRequest_InitialState : ConversationState
+    public class StockHistoryResponseState : ConversationState
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private string TcpKey;
         private int TicksRequested;
 
-        public RespondStockStreamRequest_InitialState(TcpEnvelope env, Conversation conversation) : base(env, conversation, null)
+        public StockHistoryResponseState(TcpEnvelope env, Conversation conversation) : base(env, conversation, null)
         {
             TcpKey = env.Key;
             TicksRequested = (env.Contents as StockHistoryRequestMessage).TicksRequested;

@@ -5,7 +5,9 @@ using Shared.Comms.ComService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Security;
+using SharedResources.Conversations.StockStreamRequest;
 using StockServer.Conversations.StockStreamRequest;
+using StockServer.Conversations.StockStreamResponse;
 using StockServer.Conversations.StockUpdate;
 using StockServer.Data;
 using System;
@@ -55,8 +57,12 @@ namespace StockServer
             switch (e.Contents)
             {
                 case StockHistoryRequestMessage m:
-                    conv = new ConvR_StockStreamRequest(e);
-                    conv.SetInitialState(new RespondStockStreamRequest_InitialState(e as TcpEnvelope, conv));
+                    conv = new StockHistoryResponseConversation(e);
+                    conv.SetInitialState(new StockHistoryResponseState(e as TcpEnvelope, conv));
+                    break;
+                case StockStreamRequestMessage m:
+                    conv = new StockStreamResponseConversation(m.ConversationID);
+                    conv.SetInitialState(new StockStreamResponseState(e, conv));
                     break;
             }
 

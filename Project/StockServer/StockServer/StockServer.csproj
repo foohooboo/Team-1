@@ -44,8 +44,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommSystemWrapper.cs" />
-    <Compile Include="Conversations\StockHistoryRequest\ConvR_StockStreamRequest.cs" />
-    <Compile Include="Conversations\StockHistoryRequest\RespondStockStreamRequest_InitialState.cs" />
+    <Compile Include="Conversations\StockHistoryRequest\StockHistoryResponseConversation.cs" />
+    <Compile Include="Conversations\StockHistoryRequest\StockHistoryResponseState.cs" />
+    <Compile Include="Conversations\StockStreamResponse\StockStreamResponseConversation.cs" />
+    <Compile Include="Conversations\StockStreamResponse\StockStreamResponseState.cs" />
     <Compile Include="Conversations\StockUpdate\StockUpdateSendConversation.cs" />
     <Compile Include="Conversations\StockUpdate\StockUpdateSendState.cs" />
     <Compile Include="Data\CompanyDataRaw.cs" />

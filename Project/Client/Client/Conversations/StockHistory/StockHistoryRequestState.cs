@@ -6,6 +6,8 @@ using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
 using System.Net;
+using Shared.Conversations.SharedStates;
+using SharedResources.Conversations.StockStreamRequest;
 
 namespace Client.Conversations.StockHistory
 {
@@ -37,6 +39,11 @@ namespace Client.Conversations.StockHistory
                     }
 
                     nextState = new ConversationDoneState(Conversation, this);
+
+                    var streamConv = new StockStreamRequestConversation(Config.GetClientProcessNumber());
+                    streamConv.SetInitialState(new StockStreamRequestState(Config.GetClientProcessNumber(), streamConv));
+                    ConversationManager.AddConversation(streamConv);
+
                     break;
 
                 case ErrorMessage m:

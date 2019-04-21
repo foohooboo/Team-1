@@ -64,6 +64,7 @@
     <Compile Include="Comms\Messages\Message.cs" />
     <Compile Include="Comms\Messages\MessageFactory.cs" />
     <Compile Include="Comms\Messages\PortfolioUpdateMessage.cs" />
+    <Compile Include="Comms\Messages\StockStreamRequestMessage.cs" />
     <Compile Include="Comms\Messages\StockPriceUpdate.cs" />
     <Compile Include="Comms\Messages\StockHistoryRequestMessage.cs" />
     <Compile Include="Comms\Messages\StockHistoryResponseMessage.cs" />
@@ -77,6 +78,8 @@
     <Compile Include="Conversations\SendErrorMessage\SendErrorMessageState.cs" />
     <Compile Include="Conversations\SharedStates\ConversationDoneState.cs" />
     <Compile Include="Conversations\SharedStates\Template_ConvState.cs" />
+    <Compile Include="Conversations\StockStreamRequest\StockStreamRequestConversation.cs" />
+    <Compile Include="Conversations\StockStreamRequest\StockStreamRequestState.cs" />
     <Compile Include="DataGeneration\DataGenerator.cs" />
     <Compile Include="HelloWorld.cs" />
     <Compile Include="Leaderboard\LeaderboardRecord.cs" />
@@ -112,5 +115,6 @@
       <Version>4.6.0-preview3.19128.7</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
