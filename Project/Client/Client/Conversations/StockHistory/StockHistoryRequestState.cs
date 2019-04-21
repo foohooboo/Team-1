@@ -5,6 +5,7 @@ using Shared.Comms.ComService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
+using System.Net;
 
 namespace Client.Conversations.StockHistory
 {
@@ -55,7 +56,15 @@ namespace Client.Conversations.StockHistory
         {
             var mes = MessageFactory.GetMessage<StockStreamRequestMessage>(Config.GetClientProcessNumber(), 0);
             mes.ConversationID = Conversation.Id;
-            var env = new Envelope(mes, Config.GetString(Config.STOCK_SERVER_IP), Config.GetInt(Config.STOCK_SERVER_PORT));
+            //var env = new Envelope(mes, Config.GetString(Config.STOCK_SERVER_IP), Config.GetInt(Config.STOCK_SERVER_PORT));
+            var address = new IPEndPoint(IPAddress.Parse(Config.GetString(Config.STOCK_SERVER_IP)),Config.GetInt(Config.STOCK_SERVER_TCP_PORT));
+            var client = ComService.AddTcpClient(0, address);
+            var env = new TcpEnvelope(mes)
+            {
+                To = address,
+                Key = client.myTcpClient.Client.RemoteEndPoint.ToString()
+            };
+
             return env;
         }
     }

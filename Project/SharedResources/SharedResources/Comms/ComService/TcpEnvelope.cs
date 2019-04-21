@@ -20,6 +20,7 @@ namespace Shared.Comms.ComService
         {
             Insert(message);
             To = new IPEndPoint(IPAddress.Parse(ip), port);
+            Key = To.ToString();
         }
 
         public TcpEnvelope(Message message, string ip, int port, string key)

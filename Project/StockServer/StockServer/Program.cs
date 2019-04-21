@@ -31,7 +31,7 @@ namespace StockServer
             ConversationManager.Start(ConversationBuilder);
 
             ComService.AddUdpClient(Config.DEFAULT_UDP_CLIENT, Config.GetInt(Config.STOCK_SERVER_PORT));
-            //TODO: add tcp listener
+            ComService.AddTcpListener(Config.DEFAULT_TCP_CLIENT, Config.GetInt(Config.STOCK_SERVER_TCP_PORT));
 
             Log.Info("Starting simulation.");
             Task.Run(() => RunSimulation());
@@ -56,7 +56,7 @@ namespace StockServer
             {
                 case StockStreamRequestMessage m:
                     conv = new ConvR_StockStreamRequest(e);
-                    conv.SetInitialState(new RespondStockStreamRequest_InitialState(e, conv));
+                    conv.SetInitialState(new RespondStockStreamRequest_InitialState(e as TcpEnvelope, conv));
                     break;
             }
 

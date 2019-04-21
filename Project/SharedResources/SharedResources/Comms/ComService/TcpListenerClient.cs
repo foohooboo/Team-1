@@ -72,61 +72,29 @@ namespace Shared.Comms.ComService
         private Envelope GetIncomingMessages()
         {
             TcpEnvelope newEnvelope = null;
-            //Envelope newEnvelope = null;
 
             //Docs say that AcceptTcpClient() is a blocking call, so it won't just spin it's wheels. There is an asynch, AcceptTcpClientAsync. 
             Log.Info($"Waiting for TCP connection on port ${((IPEndPoint)myTcpListenerClient.LocalEndpoint).Port}");
 
             System.Net.Sockets.TcpClient client = myTcpListenerClient.AcceptTcpClient();
 
-            Log.Info($"Incoming TCP Connection established with {((IPEndPoint)client.Client.RemoteEndPoint).Address}");
-
-            ComService.AddTcpClient(client);
+            try
+            {
+                Log.Info($"Incoming TCP Connection established with {((IPEndPoint)client.Client.RemoteEndPoint).ToString()}");
+                ComService.AddTcpClient(client);
+            }
+            catch (Exception e)
+            {
+                Log.Error(e);
+            }
 
             return newEnvelope;
         }
 
-        //unused in a TcpListener
+        //unused in a TcpListener, because messages actually handled in TcpClient which spins off this listener on connection made.
         private byte[] ReceiveBytes(int timeout, System.Net.Sockets.NetworkStream stream)
         {
-            byte[] buffer = new byte[256];
-            byte[] receivedBytes = new byte[256];
-            int receivedBytesIndex = 0;
-
-            stream.Read(buffer, 0, 32);
-            int size = BitConverter.ToInt32(buffer, 0);
-
-            while (size > 0)
-            {
-                try
-                {
-                    //NOTE: If messages can't be deserialized, check for 1-off errors here!
-                    int bytesRead = stream.Read(buffer, 0, buffer.Length);
-
-                    if (bytesRead == 0)
-                    {
-                        timeout -= 10;
-
-                        if (timeout <= 0)
-                        {
-                            throw new Exception("Tcp receive timeout");
-                        }
-                    }
-                    else
-                    {
-                        Array.Copy(buffer, 0, receivedBytes, receivedBytesIndex - 1, bytesRead);
-                        size -= bytesRead;
-                        receivedBytesIndex += bytesRead;
-                    }
-                }
-                catch (Exception err)
-                {
-                    Log.Error($"Unexpected exception while receiving data: {err.Message} ");
-                }
-            }
-
-            stream.Close();
-            return receivedBytes;
+            return new byte[256];
         }
 
         public override void Close()

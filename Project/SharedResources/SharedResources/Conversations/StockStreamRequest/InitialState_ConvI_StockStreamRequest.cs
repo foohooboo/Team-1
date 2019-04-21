@@ -1,6 +1,7 @@
 ﻿using log4net;
 using Shared.Comms.ComService;
 using Shared.Comms.Messages;
+using System.Net;
 
 namespace Shared.Conversations.SharedStates
 {
@@ -50,12 +51,20 @@ namespace Shared.Conversations.SharedStates
             Envelope env = null;
 
             //Build request message
-            var processNum = Config.GetInt(Config.BROKER_PROCESS_NUM);//TODO: allow number to be loaded from broker OR client -dsphar 3/3/2019
+            var processNum = Config.GetInt(Config.BROKER_PROCESS_NUM);
             var message = MessageFactory.GetMessage<StockStreamRequestMessage>(processNum, 0);
             message.ConversationID = Conversation.Id;
             var stockServerIp = Config.GetString(Config.STOCK_SERVER_IP);
-            var stockSerevrPort = Config.GetInt(Config.STOCK_SERVER_PORT);
-            env = new Envelope(message, stockServerIp, stockSerevrPort);
+            var stockSerevrPort = Config.GetInt(Config.STOCK_SERVER_TCP_PORT);
+
+            var address = new IPEndPoint(IPAddress.Parse(stockServerIp), stockSerevrPort);
+            var client = ComService.AddTcpClient(0, address);
+
+            env = new TcpEnvelope(message)
+            {
+                To = address,
+                Key = client.myTcpClient.Client.RemoteEndPoint.ToString()
+            };
 
             Log.Debug($"{nameof(Prepare)} (exit)");
             return env;

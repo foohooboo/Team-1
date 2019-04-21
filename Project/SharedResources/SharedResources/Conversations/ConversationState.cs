@@ -138,7 +138,12 @@ namespace Shared.Conversations
             Log.Debug($"{nameof(Send)} (enter)");
             if (OutboundMessage != null)
             {
-                ComService.Send(Config.DEFAULT_UDP_CLIENT, OutboundMessage);
+                var sender = Config.DEFAULT_UDP_CLIENT;
+                if (OutboundMessage is TcpEnvelope)
+                {
+                    sender = (OutboundMessage as TcpEnvelope).Key;
+                }
+                ComService.Send(sender, OutboundMessage);
             }
             Log.Debug($"{nameof(Send)} (exit)");
         }

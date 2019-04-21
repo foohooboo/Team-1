@@ -12,9 +12,11 @@ namespace StockServer.Conversations.StockStreamRequest
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public RespondStockStreamRequest_InitialState(Envelope env, Conversation conversation) : base(env, conversation, null)
-        {
+        private string TcpKey;
 
+        public RespondStockStreamRequest_InitialState(TcpEnvelope env, Conversation conversation) : base(env, conversation, null)
+        {
+            TcpKey = env.Key;
         }
 
         public override ConversationState HandleMessage(Envelope incomingMessage)
@@ -43,15 +45,16 @@ namespace StockServer.Conversations.StockStreamRequest
         {
             Log.Debug($"{nameof(Prepare)} (enter)");
 
-            var conv = Conversation as ConvR_StockStreamRequest;
-
             var responseMessage = MessageFactory.GetMessage<StockStreamResponseMessage>(Config.GetInt(Config.STOCK_SERVER_PROCESS_NUM), 0) as StockStreamResponseMessage;
-            responseMessage.ConversationID = conv.Id;
+            responseMessage.ConversationID = Conversation.Id;
             responseMessage.RecentHistory = StockData.GetRecentHistory(5);
 
             new Temp().LogStockHistory(responseMessage.RecentHistory);//log to console for prelim dev. Remove once not needed.
                        
-            var responseEnvelope = new Envelope(responseMessage) { To = conv.ClientIp };
+            var responseEnvelope = new TcpEnvelope(responseMessage){
+                To = this.To,
+                Key = TcpKey
+            };
 
             Log.Debug($"{nameof(Prepare)} (exit)");
             return responseEnvelope;

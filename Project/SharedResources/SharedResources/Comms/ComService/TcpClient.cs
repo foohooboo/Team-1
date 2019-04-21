@@ -56,17 +56,16 @@ namespace Shared.Comms.ComService
 
             byte[] bytesToSend = new byte[messageLength.Length + messageBytes.Length];
 
-            System.Buffer.BlockCopy(messageLength,0,bytesToSend,0,bytesToSend.Length);
-            System.Buffer.BlockCopy(messageBytes, 0, bytesToSend, messageLength.Length, bytesToSend.Length);
+            Buffer.BlockCopy(messageLength,0,bytesToSend,0, messageLength.Length);
+            Buffer.BlockCopy(messageBytes, 0, bytesToSend, messageLength.Length, messageBytes.Length);
 
             try
             {
                 if (myTcpClient.Connected)
                 {
-                    if (((IPEndPoint)myTcpClient.Client.LocalEndPoint) != envelope.To)
-                    {
-                        throw new Exception($"Connected endpoint {((IPEndPoint)myTcpClient.Client.RemoteEndPoint).Address.ToString()} does not match envelope address {((IPEndPoint)envelope.To).Address.ToString()}");
-                    }
+                    System.Net.Sockets.NetworkStream stream = myTcpClient.GetStream();
+                    stream.Write(bytesToSend, 0, bytesToSend.Length);
+                    ///stream.Close();
                 }
                 else
                 {
@@ -75,9 +74,7 @@ namespace Shared.Comms.ComService
                     throw new Exception($"client not connected.");
                 }
 
-                System.Net.Sockets.NetworkStream stream = myTcpClient.GetStream();
-                stream.Write(bytesToSend, 0, bytesToSend.Length);
-                stream.Close();
+               
             }
             catch (Exception e)
             {
@@ -123,18 +120,29 @@ namespace Shared.Comms.ComService
 
             if (myTcpClient.Connected && (incomingData > 0))
             {
-                System.Net.Sockets.NetworkStream stream = myTcpClient.GetStream();
 
-                var receivedBytes = ReceiveBytes(1000, stream);
+                //System.Net.Sockets.NetworkStream stream = myTcpClient.GetStream();
 
-                var message = MessageFactory.GetMessage(receivedBytes, true);
-                Log.Info($"Received {message.GetType()} message from {((IPEndPoint)myTcpClient.Client.LocalEndPoint).Address} via TCP");
+                //var receivedBytes = ReceiveBytes(1000, stream);
 
-                string key = ((IPEndPoint)myTcpClient.Client.LocalEndPoint).Address.ToString();
+                //var message = MessageFactory.GetMessage(receivedBytes, true);
+
+                ////Get message
+                var stream = myTcpClient.GetStream();
+                byte[] bytes = new byte[4];
+                stream.Read(bytes, 0, bytes.Length);
+                var messageSize = BitConverter.ToInt32(bytes, 0);
+                bytes = new byte[messageSize];
+                stream.Read(bytes, 0, bytes.Length);
+                var message = MessageFactory.GetMessage(bytes);
+
+                Log.Info($"Received {message.GetType()} message from {((IPEndPoint)myTcpClient.Client.RemoteEndPoint)} via TCP");
+
+                string key = ((IPEndPoint)myTcpClient.Client.RemoteEndPoint).ToString();
 
                 newEnvelope = new TcpEnvelope(message)
                 {
-                    To = (IPEndPoint)myTcpClient.Client.LocalEndPoint,
+                    To = (IPEndPoint)myTcpClient.Client.RemoteEndPoint,
                     Key = key
                 };
             }
@@ -180,7 +188,7 @@ namespace Shared.Comms.ComService
                 }
             }
 
-            stream.Close();
+            //stream.Close();
             return receivedBytes;
         }
 

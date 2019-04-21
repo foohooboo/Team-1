@@ -42,7 +42,7 @@ namespace Shared.Comms.ComService
             return box;
         }
 
-        public static Client AddTcpClient(int localPort, IPEndPoint remoteEndpoint)
+        public static TcpClient AddTcpClient(int localPort, IPEndPoint remoteEndpoint)
         {
             Log.Debug($"{nameof(AddTcpClient)} (enter)");
 
