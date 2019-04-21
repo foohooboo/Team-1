@@ -17,7 +17,7 @@ namespace Shared
 
         public void LogStockHistory(MarketSegment seg)
         {
-            for (int i = 0; i < 5 && i < seg.Count; i++)
+            for (int i = 0; i < seg.Count; i++)
             {
                 Log.Info($"Day {i}, {seg[i].TradedCompanies[1].Name}, Price:{seg[i].TradedCompanies[1].Close}");
             }

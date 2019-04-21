@@ -13,10 +13,12 @@ namespace StockServer.Conversations.StockStreamRequest
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private string TcpKey;
+        private int TicksRequested;
 
         public RespondStockStreamRequest_InitialState(TcpEnvelope env, Conversation conversation) : base(env, conversation, null)
         {
             TcpKey = env.Key;
+            TicksRequested = (env.Contents as StockStreamRequestMessage).TicksRequested;
         }
 
         public override ConversationState HandleMessage(Envelope incomingMessage)
@@ -47,7 +49,7 @@ namespace StockServer.Conversations.StockStreamRequest
 
             var responseMessage = MessageFactory.GetMessage<StockStreamResponseMessage>(Config.GetInt(Config.STOCK_SERVER_PROCESS_NUM), 0) as StockStreamResponseMessage;
             responseMessage.ConversationID = Conversation.Id;
-            responseMessage.RecentHistory = StockData.GetRecentHistory(5);
+            responseMessage.RecentHistory = StockData.GetRecentHistory(TicksRequested);
 
             new Temp().LogStockHistory(responseMessage.RecentHistory);//log to console for prelim dev. Remove once not needed.
                        

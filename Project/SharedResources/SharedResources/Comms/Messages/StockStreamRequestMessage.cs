@@ -7,9 +7,6 @@
 
         }
 
-        public int TicksRequested
-        {
-            get => 30;
-        }
+        public int TicksRequested { get; set; } = 75;
     }
 }
