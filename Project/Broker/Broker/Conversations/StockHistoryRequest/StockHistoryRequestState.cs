@@ -1,15 +1,18 @@
 ﻿using log4net;
 using Shared.Comms.ComService;
 using Shared.Comms.Messages;
+using Shared.Conversations;
+using Shared.Conversations.SharedStates;
+using Shared;
 using System.Net;
 
-namespace Shared.Conversations.SharedStates
+namespace Broker.Conversations.StockHistoryRequest
 {
-    public class InitialState_ConvI_StockStreamRequest : ConversationState
+    public class StockHistoryRequestState : ConversationState
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public InitialState_ConvI_StockStreamRequest(Conversation conv) : base(conv, null) { }
+        public StockHistoryRequestState(Conversation conv) : base(conv, null) { }
 
         public override ConversationState HandleMessage(Envelope incomingMessage)
         {

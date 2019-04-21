@@ -38,6 +38,7 @@ namespace BrokerTest.Conversations
         [TestInitialize]
         public void TestInitialize()
         {
+            PortfolioManager.Clear();
             ComService.AddUdpClient(Config.DEFAULT_UDP_CLIENT, 0);
             ConversationManager.Start(ConversationBuilder);
         }
@@ -47,6 +48,7 @@ namespace BrokerTest.Conversations
         {
             ConversationManager.Stop();
             ComService.RemoveClient(Config.DEFAULT_UDP_CLIENT);
+            
         }
 
         [TestMethod]

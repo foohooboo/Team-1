@@ -52,6 +52,8 @@
     <Compile Include="Conversations\GetPortfolioResponse\GetPortfolioReceiveState.cs" />
     <Compile Include="Conversations\LeaderBoardUpdate\LeaderboardSendUpdateState.cs" />
     <Compile Include="Conversations\LeaderBoardUpdate\LeaderBoardUpdateRequestConversation.cs" />
+    <Compile Include="Conversations\StockHistoryRequest\StockHistoryRequestConversation.cs" />
+    <Compile Include="Conversations\StockHistoryRequest\StockHistoryRequestState.cs" />
     <Compile Include="Conversations\StockUpdate\ProcessStockUpdateState.cs" />
     <Compile Include="Conversations\StockUpdate\StockUpdateConversation.cs" />
     <Compile Include="Conversations\TransactionRequest\RespondTransactionConversation.cs" />

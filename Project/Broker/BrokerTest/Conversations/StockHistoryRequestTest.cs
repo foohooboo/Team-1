@@ -1,32 +1,33 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Broker.Conversations.StockHistoryRequest;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Shared;
 using Shared.Comms.ComService;
 using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
-using Shared.Conversations.StockStreamRequest.Initiator;
 using Shared.MarketStructures;
 using System.Threading;
 
-namespace SharedTest.Conversations
+namespace BrokerTest.Conversations
 {
 
 
     [TestClass]
-    public class Test_ConvI_StockStreamRequest
+    public class StockHistoryRequestTest
     {
         [TestInitialize]
         public void TestInitialize()
         {
             ConversationManager.Start(null);
-            ComService.AddUdpClient(Config.DEFAULT_UDP_CLIENT,0);
+            ComService.AddUdpClient(Config.DEFAULT_UDP_CLIENT, 0);
         }
 
         [TestCleanup]
         public void TestCleanup()
         {
             ComService.RemoveClient(Config.DEFAULT_UDP_CLIENT);
+            ConversationManager.Stop();
         }
 
         [TestMethod]
@@ -36,8 +37,8 @@ namespace SharedTest.Conversations
             int processId = 1;
 
             //Create a new StockStreamRequestConv_Initor conversation
-            var stockStreamConv = new ConvI_StockStreamRequest(processId);
-            stockStreamConv.SetInitialState(new InitialState_ConvI_StockStreamRequest(stockStreamConv));
+            var stockStreamConv = new StockHistoryRequestConversation(processId);
+            stockStreamConv.SetInitialState(new StockHistoryRequestState(stockStreamConv));
             ConversationManager.AddConversation(stockStreamConv);
             string conversationId = stockStreamConv.Id;
 
@@ -69,11 +70,11 @@ namespace SharedTest.Conversations
             var testStock = new Stock("TST", "Test Stock");
             var vStock = new ValuatedStock(("1984-02-22,11.0289,11.0822,10.7222,10.7222,197402").Split(','), testStock);
 
-            var conv = new ConvI_StockStreamRequest(processId);
+            var conv = new StockHistoryRequestConversation(processId);
             int requests = 0;
 
             //setup mock with response message
-            var mock = new Mock<InitialState_ConvI_StockStreamRequest>(conv) { CallBase = true };
+            var mock = new Mock<StockHistoryRequestState>(conv) { CallBase = true };
             mock.Setup(st => st.Send())
                 .Callback(() =>
                 {
@@ -90,16 +91,16 @@ namespace SharedTest.Conversations
                     }
                 });
 
-            conv.SetInitialState(mock.Object as InitialState_ConvI_StockStreamRequest);
+            conv.SetInitialState(mock.Object as StockHistoryRequestState);
 
-            Assert.IsTrue(conv.CurrentState is InitialState_ConvI_StockStreamRequest);
+            Assert.IsTrue(conv.CurrentState is StockHistoryRequestState);
             mock.Verify(state => state.Prepare(), Times.Never);
             mock.Verify(state => state.Send(), Times.Never);
             Assert.IsFalse(ConversationManager.ConversationExists(conv.Id));
 
             ConversationManager.AddConversation(conv);
 
-            Assert.IsTrue(conv.CurrentState is InitialState_ConvI_StockStreamRequest);
+            Assert.IsTrue(conv.CurrentState is StockHistoryRequestState);
             mock.Verify(state => state.Prepare(), Times.Once);
             mock.Verify(state => state.Send(), Times.Once);
             mock.Verify(state => state.HandleTimeout(), Times.Never);
@@ -107,7 +108,7 @@ namespace SharedTest.Conversations
 
             Thread.Sleep((int)(Config.GetInt(Config.DEFAULT_TIMEOUT) * 1.5));
 
-            Assert.IsFalse(conv.CurrentState is InitialState_ConvI_StockStreamRequest);
+            Assert.IsFalse(conv.CurrentState is StockHistoryRequestState);
             Assert.IsTrue(conv.CurrentState is ConversationDoneState);
             mock.Verify(state => state.Prepare(), Times.Once);
             mock.Verify(state => state.Send(), Times.Exactly(2));
@@ -122,26 +123,26 @@ namespace SharedTest.Conversations
             var testStock = new Stock("TST", "Test Stock");
             var vStock = new ValuatedStock(("1984-02-22,11.0289,11.0822,10.7222,10.7222,197402").Split(','), testStock);
 
-            var conv = new ConvI_StockStreamRequest(processId);
+            var conv = new StockHistoryRequestConversation(processId);
 
             //setup mock with response message
-            var mock = new Mock<InitialState_ConvI_StockStreamRequest>(conv) { CallBase = true };
+            var mock = new Mock<StockHistoryRequestState>(conv) { CallBase = true };
             mock.Setup(st => st.Send())
                 .Callback(() =>
                 {
                     //Pretend server isn't there, do nothing...
                 });
 
-            conv.SetInitialState(mock.Object as InitialState_ConvI_StockStreamRequest);
+            conv.SetInitialState(mock.Object as StockHistoryRequestState);
 
-            Assert.IsTrue(conv.CurrentState is InitialState_ConvI_StockStreamRequest);
+            Assert.IsTrue(conv.CurrentState is StockHistoryRequestState);
             mock.Verify(state => state.Prepare(), Times.Never);
             mock.Verify(state => state.Send(), Times.Never);
             Assert.IsFalse(ConversationManager.ConversationExists(conv.Id));
 
             ConversationManager.AddConversation(conv);
 
-            Assert.IsTrue(conv.CurrentState is InitialState_ConvI_StockStreamRequest);
+            Assert.IsTrue(conv.CurrentState is StockHistoryRequestState);
             mock.Verify(state => state.Prepare(), Times.Once);
             mock.Verify(state => state.Send(), Times.Once);
             mock.Verify(state => state.HandleTimeout(), Times.Never);
@@ -149,12 +150,12 @@ namespace SharedTest.Conversations
 
             Thread.Sleep((int)(Config.GetInt(Config.DEFAULT_TIMEOUT) * (Config.GetInt(Config.DEFAULT_RETRY_COUNT) + 1) * 1.2));
 
-            Assert.IsFalse(conv.CurrentState is InitialState_ConvI_StockStreamRequest);
+            Assert.IsFalse(conv.CurrentState is StockHistoryRequestState);
             Assert.IsTrue(conv.CurrentState is ConversationDoneState);
             mock.Verify(state => state.HandleMessage(It.IsAny<Envelope>()), Times.Never);
             mock.Verify(state => state.Prepare(), Times.Once);
             mock.Verify(state => state.Send(), Times.Exactly(3));
-            mock.Verify(state => state.HandleTimeout(), Times.Exactly(3));
+            mock.Verify(state => state.HandleTimeout(), Times.AtLeast(3));
             Assert.IsTrue(ConversationManager.ConversationExists(conv.Id));
         }
     }

@@ -57,7 +57,6 @@
     <Compile Include="Messages\ErrorTest.cs" />
     <Compile Include="Messages\GetPortfolioRequestTest.cs" />
     <Compile Include="Messages\MessageTest.cs" />
-    <Compile Include="Conversations\Test_ConvI_StockStreamRequest.cs" />
     <Compile Include="Messages\MessageFactoryTest.cs" />
     <Compile Include="Messages\PortfolioUpdateMessageTest.cs" />
     <Compile Include="Messages\StockPriceUpdateTest.cs" />

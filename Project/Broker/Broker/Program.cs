@@ -2,6 +2,7 @@
 using Broker.Conversations.GetPortfolio;
 using Broker.Conversations.GetPortfolioResponse;
 using Broker.Conversations.LeaderBoardUpdate;
+using Broker.Conversations.StockHistoryRequest;
 using Broker.Conversations.StockUpdate;
 using Broker.Conversations.TransactionRequest;
 using log4net;
@@ -12,7 +13,6 @@ using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SendErrorMessage;
 using Shared.Conversations.SharedStates;
-using Shared.Conversations.StockStreamRequest.Initiator;
 using Shared.MarketStructures;
 using Shared.PortfolioResources;
 using Shared.Security;
@@ -157,8 +157,8 @@ namespace Broker
 
         private static void RequestStockStream()
         {
-            var conv = new ConvI_StockStreamRequest(Config.GetInt(Config.BROKER_PROCESS_NUM));
-            conv.SetInitialState(new InitialState_ConvI_StockStreamRequest(conv));
+            var conv = new StockHistoryRequestConversation(Config.GetInt(Config.BROKER_PROCESS_NUM));
+            conv.SetInitialState(new StockHistoryRequestState(conv));
             ConversationManager.AddConversation(conv);
         }
     }
