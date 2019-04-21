@@ -24,7 +24,7 @@ namespace Client.Conversations.StockHistory
 
             switch (incomingMessage.Contents)
             {
-                case StockStreamResponseMessage m:
+                case StockHistoryResponseMessage m:
                     Log.Debug($"Received stock history for.");
 
                     if (TraderModel.Current == null)
@@ -54,7 +54,7 @@ namespace Client.Conversations.StockHistory
 
         public override Envelope Prepare()
         {
-            var mes = MessageFactory.GetMessage<StockStreamRequestMessage>(Config.GetClientProcessNumber(), 0);
+            var mes = MessageFactory.GetMessage<StockHistoryRequestMessage>(Config.GetClientProcessNumber(), 0);
             mes.ConversationID = Conversation.Id;
 
             var stockServerIp = Config.GetString(Config.STOCK_SERVER_IP);

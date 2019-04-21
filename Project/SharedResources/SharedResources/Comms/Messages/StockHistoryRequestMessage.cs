@@ -1,8 +1,8 @@
 ﻿namespace Shared.Comms.Messages
 {
-    public class StockStreamRequestMessage : Message
+    public class StockHistoryRequestMessage : Message
     {
-        public StockStreamRequestMessage()
+        public StockHistoryRequestMessage()
         {
 
         }

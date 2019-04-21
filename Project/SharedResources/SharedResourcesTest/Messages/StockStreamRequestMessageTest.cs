@@ -4,9 +4,9 @@ using Shared.Comms.Messages;
 namespace SharedTest.Messages
 {
     [TestClass]
-    public class StockStreamRequestMessageTest
+    public class StockHistoryRequestMessageTest
     {
-        public StockStreamRequestMessageTest()
+        public StockHistoryRequestMessageTest()
         {
 
         }
@@ -14,7 +14,7 @@ namespace SharedTest.Messages
         [TestMethod]
         public void DefaultConstructorTest()
         {
-            var streamRequestMessage = new StockStreamRequestMessage();
+            var streamRequestMessage = new StockHistoryRequestMessage();
 
             Assert.AreEqual(75, streamRequestMessage.TicksRequested);
         }
@@ -22,7 +22,7 @@ namespace SharedTest.Messages
         [TestMethod]
         public void InitializerConstructorTest()
         {
-            var streamRequestMessage = new StockStreamRequestMessage
+            var streamRequestMessage = new StockHistoryRequestMessage
             {
                 SourceID = 1,
                 ConversationID = "3",
@@ -38,7 +38,7 @@ namespace SharedTest.Messages
         [TestMethod]
         public void InheritsMessageTest()
         {
-            var streamRequestMessage = new StockStreamRequestMessage();
+            var streamRequestMessage = new StockHistoryRequestMessage();
 
             Assert.IsNull(streamRequestMessage.MessageID);
             Assert.IsNull(streamRequestMessage.ConversationID);
@@ -48,14 +48,14 @@ namespace SharedTest.Messages
         [TestMethod]
         public void SerializerTest()
         {
-            var streamRequestMessage = new StockStreamRequestMessage
+            var streamRequestMessage = new StockHistoryRequestMessage
             {
                 SourceID = 1,
                 ConversationID = "3",
                 MessageID = "1"
             };
 
-            var serializedMessage = MessageFactory.GetMessage(streamRequestMessage.Encode(), false) as StockStreamRequestMessage;
+            var serializedMessage = MessageFactory.GetMessage(streamRequestMessage.Encode(), false) as StockHistoryRequestMessage;
 
             Assert.AreEqual(streamRequestMessage.TicksRequested, serializedMessage.TicksRequested);
         }

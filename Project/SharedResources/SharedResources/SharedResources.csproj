@@ -65,8 +65,8 @@
     <Compile Include="Comms\Messages\MessageFactory.cs" />
     <Compile Include="Comms\Messages\PortfolioUpdateMessage.cs" />
     <Compile Include="Comms\Messages\StockPriceUpdate.cs" />
-    <Compile Include="Comms\Messages\StockStreamRequestMessage.cs" />
-    <Compile Include="Comms\Messages\StockStreamResponseMessage.cs" />
+    <Compile Include="Comms\Messages\StockHistoryRequestMessage.cs" />
+    <Compile Include="Comms\Messages\StockHistoryResponseMessage.cs" />
     <Compile Include="Comms\Messages\TransactionRequestMessage.cs" />
     <Compile Include="Comms\Messages\UpdateLeaderBoardMessage.cs" />
     <Compile Include="Config.cs" />

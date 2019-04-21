@@ -64,10 +64,10 @@ namespace Shared.Conversations
             }
             else
             {
-                LastUpdateTime = DateTime.Now;
-                ConversationStarted = true;
                 CurrentState.DoPrepare();
                 CurrentState.Send();
+                LastUpdateTime = DateTime.Now;
+                ConversationStarted = true;
             }
         }
 

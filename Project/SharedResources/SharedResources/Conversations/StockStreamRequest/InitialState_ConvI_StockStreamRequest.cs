@@ -19,16 +19,10 @@ namespace Shared.Conversations.SharedStates
 
             switch (incomingMessage.Contents)
             {
-                case StockStreamResponseMessage m:
+                case StockHistoryResponseMessage m:
                     var stockHistory = m.RecentHistory;
                     Log.Info($"Received stock stream response with {stockHistory.Count} days of recent trading.");
-
-
-
-                    //TODO: Update stock history (does this need to be broken into a non-shared state?) -Dsphar 3/25/2019
-                    Temp t = new Temp();
-                    t.LogStockHistory(stockHistory);
-
+                    
                     nextState = new ConversationDoneState(Conversation, this);
                     break;
                 case ErrorMessage m:
@@ -54,7 +48,7 @@ namespace Shared.Conversations.SharedStates
 
             //Build request message
             var processNum = Config.GetInt(Config.BROKER_PROCESS_NUM);
-            var message = MessageFactory.GetMessage<StockStreamRequestMessage>(processNum, 0);
+            var message = MessageFactory.GetMessage<StockHistoryRequestMessage>(processNum, 0);
             message.ConversationID = Conversation.Id;
             var stockServerIp = Config.GetString(Config.STOCK_SERVER_IP);
             var stockSerevrPort = Config.GetInt(Config.STOCK_SERVER_TCP_PORT);

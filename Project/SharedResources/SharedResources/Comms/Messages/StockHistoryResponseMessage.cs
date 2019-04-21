@@ -3,14 +3,14 @@ using Shared.MarketStructures;
 
 namespace Shared.Comms.Messages
 {
-    public class StockStreamResponseMessage : Message
+    public class StockHistoryResponseMessage : Message
     {
         public MarketSegment RecentHistory
         {
             get; set;
         }
 
-        public StockStreamResponseMessage() 
+        public StockHistoryResponseMessage() 
         {
             RecentHistory = new MarketSegment();
         }

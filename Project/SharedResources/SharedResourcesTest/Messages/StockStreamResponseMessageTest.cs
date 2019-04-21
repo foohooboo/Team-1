@@ -5,9 +5,9 @@ using Shared.Comms.Messages;
 namespace SharedTest.Messages
 {
     [TestClass]
-    public class StockStreamResponseMessageTest
+    public class StockHistoryResponseMessageTest
     {
-        public StockStreamResponseMessageTest()
+        public StockHistoryResponseMessageTest()
         {
 
         }
@@ -15,7 +15,7 @@ namespace SharedTest.Messages
         [TestMethod]
         public void DefaultConstructorTest()
         {
-            var stockStreamResponse = new StockStreamResponseMessage();
+            var stockStreamResponse = new StockHistoryResponseMessage();
 
             Assert.AreEqual(stockStreamResponse.RecentHistory.Count, 0);
         }
@@ -38,7 +38,7 @@ namespace SharedTest.Messages
                 day2
             };
 
-            var stockStreamResponse = new StockStreamResponseMessage
+            var stockStreamResponse = new StockHistoryResponseMessage
             {
                 RecentHistory = recentHistory
             };
@@ -53,7 +53,7 @@ namespace SharedTest.Messages
         [TestMethod]
         public void InheritsMessageTest()
         {
-            var stockStreamResponse = new StockStreamResponseMessage();
+            var stockStreamResponse = new StockHistoryResponseMessage();
 
             Assert.IsNull(stockStreamResponse.ConversationID);
             Assert.IsNull(stockStreamResponse.MessageID);
@@ -75,13 +75,13 @@ namespace SharedTest.Messages
                 day1
             };
 
-            var stockStreamResponse = new StockStreamResponseMessage
+            var stockStreamResponse = new StockHistoryResponseMessage
             {
                 RecentHistory = recentHistory
             };
 
             var serializedMessage = stockStreamResponse.Encode();
-            var deserializedMessage = MessageFactory.GetMessage(serializedMessage, false) as StockStreamResponseMessage;
+            var deserializedMessage = MessageFactory.GetMessage(serializedMessage, false) as StockHistoryResponseMessage;
 
             Assert.AreEqual(stockStreamResponse.RecentHistory[0].TradedCompanies.Count, deserializedMessage.RecentHistory[0].TradedCompanies.Count);
             Assert.AreEqual(stockStreamResponse.RecentHistory[0].TradedCompanies[0].Close, deserializedMessage.RecentHistory[0].TradedCompanies[0].Close);

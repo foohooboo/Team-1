@@ -24,7 +24,7 @@ namespace StockServerTest.Conversations
 
             switch (env.Contents)
             {
-                case StockStreamRequestMessage m:
+                case StockHistoryRequestMessage m:
                     conv = new ConvR_StockStreamRequest(env);
                     mock = new Mock<RespondStockStreamRequest_InitialState>(env, conv) { CallBase = true };
                     conv.SetInitialState(mock.Object as RespondStockStreamRequest_InitialState);
@@ -79,7 +79,7 @@ namespace StockServerTest.Conversations
             string ClientIp = "192.168.1.31";
             int ClientPort = 5682;
 
-            var RequestMessage = new StockStreamRequestMessage()
+            var RequestMessage = new StockHistoryRequestMessage()
             {
                 ConversationID = RequestConvId,
                 MessageID = RequestMessageId
@@ -114,7 +114,7 @@ namespace StockServerTest.Conversations
             string ClientIp = "192.168.1.31";
             int ClientPort = 5682;
 
-            var RequestMessage = new StockStreamRequestMessage()
+            var RequestMessage = new StockHistoryRequestMessage()
             {
                 ConversationID = RequestConvId,
                 MessageID = RequestMessageId

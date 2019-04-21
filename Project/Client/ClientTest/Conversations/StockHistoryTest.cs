@@ -42,7 +42,7 @@ namespace ClientTest.Conversations
             Assert.IsTrue(ConversationManager.ConversationExists(conversationId));
 
             //Create fake response message and process it
-            var stockStreamResponse = new TcpEnvelope(new StockStreamResponseMessage() { MessageID = "123-abc" });
+            var stockStreamResponse = new TcpEnvelope(new StockHistoryResponseMessage() { MessageID = "123-abc" });
             stockStreamResponse.Contents.ConversationID = stockStreamConv.Id;
             ConversationManager.ProcessIncomingMessage(stockStreamResponse);
 
@@ -76,7 +76,7 @@ namespace ClientTest.Conversations
                     //Pretend message is sent and response comes back, but only after second request...
                     if (++requests > 1)
                     {
-                        var responseMessage = new StockStreamResponseMessage()
+                        var responseMessage = new StockHistoryResponseMessage()
                         {
                             ConversationID = conv.Id,
                             MessageID = "345-234-56"
@@ -127,7 +127,7 @@ namespace ClientTest.Conversations
                     //Pretend message is sent and response comes back, but only after second request...
                     if (++requests > 1)
                     {
-                        var responseMessage = new StockStreamResponseMessage()
+                        var responseMessage = new StockHistoryResponseMessage()
                         {
                             ConversationID = conv.Id,
                             MessageID = "345-234-56"

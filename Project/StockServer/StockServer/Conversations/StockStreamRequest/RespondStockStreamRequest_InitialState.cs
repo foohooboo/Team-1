@@ -18,7 +18,7 @@ namespace StockServer.Conversations.StockStreamRequest
         public RespondStockStreamRequest_InitialState(TcpEnvelope env, Conversation conversation) : base(env, conversation, null)
         {
             TcpKey = env.Key;
-            TicksRequested = (env.Contents as StockStreamRequestMessage).TicksRequested;
+            TicksRequested = (env.Contents as StockHistoryRequestMessage).TicksRequested;
         }
 
         public override ConversationState HandleMessage(Envelope incomingMessage)
@@ -47,7 +47,7 @@ namespace StockServer.Conversations.StockStreamRequest
         {
             Log.Debug($"{nameof(Prepare)} (enter)");
 
-            var responseMessage = MessageFactory.GetMessage<StockStreamResponseMessage>(Config.GetInt(Config.STOCK_SERVER_PROCESS_NUM), 0) as StockStreamResponseMessage;
+            var responseMessage = MessageFactory.GetMessage<StockHistoryResponseMessage>(Config.GetInt(Config.STOCK_SERVER_PROCESS_NUM), 0) as StockHistoryResponseMessage;
             responseMessage.ConversationID = Conversation.Id;
             responseMessage.RecentHistory = StockData.GetRecentHistory(TicksRequested);
                        

@@ -54,7 +54,7 @@ namespace StockServer
 
             switch (e.Contents)
             {
-                case StockStreamRequestMessage m:
+                case StockHistoryRequestMessage m:
                     conv = new ConvR_StockStreamRequest(e);
                     conv.SetInitialState(new RespondStockStreamRequest_InitialState(e as TcpEnvelope, conv));
                     break;
