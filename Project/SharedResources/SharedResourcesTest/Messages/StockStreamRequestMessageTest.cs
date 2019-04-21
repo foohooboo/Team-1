@@ -16,7 +16,7 @@ namespace SharedTest.Messages
         {
             var streamRequestMessage = new StockStreamRequestMessage();
 
-            Assert.AreEqual(streamRequestMessage.TicksRequested, 30);
+            Assert.AreEqual(75, streamRequestMessage.TicksRequested);
         }
 
         [TestMethod]
@@ -29,7 +29,7 @@ namespace SharedTest.Messages
                 MessageID = "1"
             };
 
-            Assert.AreEqual(streamRequestMessage.TicksRequested, 30);
+            Assert.AreEqual(75, streamRequestMessage.TicksRequested);
             Assert.AreEqual(streamRequestMessage.SourceID, 1);
             Assert.AreEqual(streamRequestMessage.ConversationID, "3");
             Assert.AreEqual(streamRequestMessage.MessageID, "1");

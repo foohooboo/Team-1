@@ -85,7 +85,7 @@ namespace StockServerTest.Conversations
                 MessageID = RequestMessageId
             };
 
-            Envelope Request = new Envelope(RequestMessage, ClientIp, ClientPort);
+            Envelope Request = new TcpEnvelope(RequestMessage, ClientIp, ClientPort);
 
             var localConv = ConversationManager.GetConversation(RequestConvId);
             Assert.IsNull(localConv);
@@ -119,7 +119,7 @@ namespace StockServerTest.Conversations
                 ConversationID = RequestConvId,
                 MessageID = RequestMessageId
             };
-            Envelope Request = new Envelope(RequestMessage, ClientIp, ClientPort);
+            Envelope Request = new TcpEnvelope(RequestMessage, ClientIp, ClientPort);
 
             var localConv = ConversationManager.GetConversation(RequestConvId);
             Assert.IsNull(localConv);
