@@ -133,7 +133,14 @@ namespace Shared.Comms.ComService
                 stream.Read(bytes, 0, bytes.Length);
                 var messageSize = BitConverter.ToInt32(bytes, 0);
                 bytes = new byte[messageSize];
-                stream.Read(bytes, 0, bytes.Length);
+
+                int totalBytesRead = 0;
+
+                while (totalBytesRead != messageSize)
+                {
+                    totalBytesRead+= stream.Read(bytes, totalBytesRead, bytes.Length-totalBytesRead);
+                }
+
                 var message = MessageFactory.GetMessage(bytes);
 
                 Log.Info($"Received {message.GetType()} message from {((IPEndPoint)myTcpClient.Client.RemoteEndPoint)} via TCP");
