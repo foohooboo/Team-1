@@ -1,4 +1,6 @@
-﻿using Broker.Conversations.CreatePortfolio;
+﻿using System;
+using System.Threading.Tasks;
+using Broker.Conversations.CreatePortfolio;
 using Broker.Conversations.GetPortfolio;
 using Broker.Conversations.GetPortfolioResponse;
 using Broker.Conversations.LeaderBoardUpdate;
@@ -16,8 +18,6 @@ using Shared.Conversations.SharedStates;
 using Shared.MarketStructures;
 using Shared.PortfolioResources;
 using Shared.Security;
-using System;
-using System.Threading.Tasks;
 
 namespace Broker
 {
@@ -31,21 +31,12 @@ namespace Broker
 
             SignatureService.LoadPublicKey("Team1/StockServer");
 
-            //TODO: remove the following 3 dummy portfolio creations
-            PortfolioManager.TryToCreate("DevTrader", "password", out Portfolio devPortfolio);
-            PortfolioManager.PerformTransaction(devPortfolio.PortfolioID, "AAPL", 60, 0, out devPortfolio, out string error);
-
-            PortfolioManager.TryToCreate("SomeCompetitor", "password", out Portfolio competitorPortfolio);
-            PortfolioManager.PerformTransaction(competitorPortfolio.PortfolioID, "AMZN", 60, 0, out competitorPortfolio, out  error);
-                        
-            PortfolioManager.TryToCreate("Otherguy", "password", out Portfolio otherguyPortfolio);
-            PortfolioManager.PerformTransaction(otherguyPortfolio.PortfolioID, "FB", 60, 0, out otherguyPortfolio, out error);
-
             ConversationManager.Start(ConversationBuilder);
             ComService.AddUdpClient(Config.DEFAULT_UDP_CLIENT, Config.GetInt(Config.BROKER_PORT));
 
             RequestStockStream();
             PrintMenu();
+            PortfolioManager.LoadPortfolios();
 
             var input = Console.ReadLine();
             while (!input.Equals("exit"))
@@ -56,6 +47,7 @@ namespace Broker
             }
 
             ConversationManager.Stop();
+            PortfolioManager.SavePortfolios();
 
             Log.Debug($"{nameof(Main)} (exit)");
         }

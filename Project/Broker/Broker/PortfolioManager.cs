@@ -160,6 +160,11 @@ namespace Broker
         {
             var loadedPortfolios = new List<Portfolio>();
 
+            if (!File.Exists(PortfolioData))
+            {
+                return;
+            }
+
             using (var reader = new StreamReader(PortfolioData))
             {
                 loadedPortfolios = JsonConvert.DeserializeObject<List<Portfolio>>(reader.ReadToEnd());
