@@ -47,9 +47,13 @@ namespace Broker
             }
 
             ConversationManager.Stop();
-            PortfolioManager.SavePortfolios();
 
             Log.Debug($"{nameof(Main)} (exit)");
+        }
+
+        ~Program()
+        {
+            PortfolioManager.SavePortfolios();
         }
 
         private static void PrintMenu()
