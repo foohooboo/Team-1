@@ -1,9 +1,9 @@
-﻿using log4net;
-using Shared.Comms.ComService;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
+using log4net;
+using Shared.Comms.ComService;
 
 namespace Shared.Conversations
 {
@@ -17,7 +17,10 @@ namespace Shared.Conversations
 
         private static int NextConversationCount => Interlocked.Increment(ref count);
 
-        public static bool IsRunning { get; private set; }
+        public static bool IsRunning
+        {
+            get; private set;
+        }
 
         public static void Start(ConversationBuilder method)
         {
@@ -29,14 +32,16 @@ namespace Shared.Conversations
                 ComService.SetIncomingMessageHandler(ProcessIncomingMessage);
 
                 IsRunning = true;
-                new Task(() => {
+                new Task(() =>
+                {
                     var timeout = Config.GetInt(Config.DEFAULT_TIMEOUT);
                     while (IsRunning)
                     {
-                        foreach(var conv in conversations.Values)
+                        foreach (var conv in conversations.Values)
                         {
                             var timeSinceUpdate = (int)(DateTime.Now - conv.LastUpdateTime).TotalMilliseconds;
-                            if (timeSinceUpdate > timeout){
+                            if (timeSinceUpdate > timeout)
+                            {
                                 conv.HandleTimeout();
                             }
                         }
@@ -82,9 +87,13 @@ namespace Shared.Conversations
             else
             {
                 if (conversations.TryAdd(conversation.Id, conversation))
+                {
                     conversation.StartConversation();
+                }
                 else
+                {
                     Log.Error($"Could not add {conversation.Id} to conversations.");
+                }
             }
 
             Log.Debug($"{nameof(AddConversation)} (exit)");
@@ -101,7 +110,7 @@ namespace Shared.Conversations
 
             Conversation conv = null;
 
-            if( string.IsNullOrEmpty(m.Contents?.ConversationID))
+            if (String.IsNullOrEmpty(m.Contents?.ConversationID))
             {
                 Log.Warn("Incoming message does not contain a conversation id.");
             }
@@ -119,7 +128,7 @@ namespace Shared.Conversations
                 {
                     AddConversation(conv);
                 }
-            }            
+            }
 
             Log.Debug($"{nameof(ProcessIncomingMessage)} (exit)");
             return conv;
@@ -186,11 +195,17 @@ namespace Shared.Conversations
         public static void SetConversationBuilder(ConversationBuilder method)
         {
             if (conversationBuilder?.GetInvocationList().Length > 0)
+            {
                 throw new Exception("ConversationFromMessageBuilder can only be set once.");
+            }
             else if (method != null)
+            {
                 conversationBuilder = new ConversationBuilder(method);
+            }
             else
+            {
                 Log.Warn($"SetConversationBuilder was given a null ConversationBuilder.");
+            }
         }
 
         public static bool ConversationExists(string conversationId)
