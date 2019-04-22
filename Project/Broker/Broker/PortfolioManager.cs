@@ -37,8 +37,6 @@ namespace Broker
 
         public static bool TryToCreate(string username, string password, out Portfolio portfolio)
         {
-            Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (enter)");
-
             bool success = false;
 
             portfolio = null;
@@ -71,14 +69,11 @@ namespace Broker
                 }
             }
 
-            Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (exit)");
             return success;
         }
 
         public static bool TryToGet(string username, string password, out Portfolio portfolio)
         {
-            Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (enter)");
-
             bool sucess = false;
             portfolio = null;
 
@@ -95,13 +90,11 @@ namespace Broker
                 }
             }
 
-            Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (exit)");
             return sucess;
         }
 
         public static bool TryToGet(int portfolioID, out Portfolio portfolio)
         {
-            Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (enter)");
 
             bool success = false;
 
@@ -115,14 +108,11 @@ namespace Broker
                 success = true;
             }
 
-            Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (exit)");
             return success;
         }
 
         public static bool TryToRemove(int portfolioID)
         {
-            Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (enter)");
-
             bool sucess = false;
 
             if (!_portfolios.ContainsKey(portfolioID))
@@ -137,7 +127,6 @@ namespace Broker
                 }
             }
 
-            Log.Debug($"{System.Reflection.MethodBase.GetCurrentMethod().Name} (exit)");
             return sucess;
         }
 

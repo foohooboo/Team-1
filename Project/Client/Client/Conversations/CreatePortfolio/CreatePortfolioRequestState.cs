@@ -81,5 +81,18 @@ namespace Client.Conversations.CreatePortfolio
 
             return new Envelope(mes, Config.GetString(Config.BROKER_IP), Config.GetInt(Config.BROKER_PORT));
         }
+
+        public override void HandleTimeout()
+        {
+            if (++CountRetrys <= Config.GetInt(Config.DEFAULT_RETRY_COUNT))
+            {
+                Send();
+            }
+            else
+            {
+                Conversation.UpdateState(new ConversationDoneState(Conversation, this));
+                LoginHandler?.LoginFailure("Account creation timed out. Is the Broker running?");
+            }
+        }
     }
 }

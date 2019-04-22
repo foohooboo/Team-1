@@ -66,12 +66,10 @@ namespace Shared.Conversations
         {
             if (++CountRetrys <= Config.GetInt(Config.DEFAULT_RETRY_COUNT))
             {
-                Log.Warn($"Initiating retry for conversation {Conversation.Id}.");
                 Send();
             }
             else
             {
-                Log.Warn($"Timeout event is forcing conversation {Conversation.Id} into the Done state.");
                 Conversation.UpdateState(new ConversationDoneState(Conversation, this));
                 if(OutboundMessage!=null&&OutboundMessage is TcpEnvelope)
                 {

@@ -117,12 +117,8 @@ namespace Shared.Conversations
 
         public void HandleTimeout()
         {
-            if (!(CurrentState is ConversationDoneState))
-            {
-                Log.Warn($"Raising timeout event for Conversation {Id}.");
-            }
-            LastUpdateTime = DateTime.Now;
             CurrentState.HandleTimeout();
+            LastUpdateTime = DateTime.Now;
         }
     }
 }

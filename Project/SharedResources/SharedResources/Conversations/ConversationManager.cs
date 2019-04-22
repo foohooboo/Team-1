@@ -40,7 +40,7 @@ namespace Shared.Conversations
                                 conv.HandleTimeout();
                             }
                         }
-                        Thread.Sleep(15);
+                        Thread.Sleep(350);
                     }
                 }).Start();
             }

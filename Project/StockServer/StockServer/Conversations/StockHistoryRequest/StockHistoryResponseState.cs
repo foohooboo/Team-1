@@ -64,7 +64,6 @@ namespace StockServer.Conversations.StockStreamRequest
         {
             base.Send();
             Conversation.UpdateState(new ConversationDoneState(Conversation, this));
-            ComService.RemoveClient(To.ToString());
         }
     }
 }

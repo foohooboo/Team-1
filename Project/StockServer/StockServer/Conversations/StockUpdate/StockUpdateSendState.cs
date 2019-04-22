@@ -67,15 +67,11 @@ namespace StockServer.Conversations.StockUpdate
         {
             if (++CountRetrys <= Config.GetInt(Config.DEFAULT_RETRY_COUNT))
             {
-                Log.Warn($"Initiating retry for conversation {Conversation.Id}.");
                 Send();
             }
             else
             {
                 ConversationManager.GetConversation(Conversation.Id).UpdateState(new ConversationDoneState(Conversation, this));
-
-                Log.Warn($"Conversation {Conversation.Id}: Client {OutboundMessage.To.ToString()} appears to be disconnected.");
-                
                 if (Config.GetBool(Config.CLEANUP_DEAD_CLIENTS))
                 {
                     Log.Info($"Removing {OutboundMessage.To.ToString()} from connected clients.");
