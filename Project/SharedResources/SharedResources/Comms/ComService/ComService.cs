@@ -98,8 +98,10 @@ namespace Shared.Comms.ComService
 
         public static void RemoveClient(string clientId)
         {
-            Clients[clientId].Close();
-            Clients.TryRemove(clientId, out Client client);
+            if (Clients.ContainsKey(clientId)){
+                Clients[clientId].Close();
+                Clients.TryRemove(clientId, out Client client);
+            }
         }
 
         /// <summary>

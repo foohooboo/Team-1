@@ -5,22 +5,41 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Client"
         mc:Ignorable="d"
-        Title="Login" Height="500" Width="800">
+        Title="Practice Trader" Height="500" Width="800">
     <Grid>
-        <Grid Margin="0">
+        <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="300"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Rectangle Fill="#434343" Stroke="DimGray" Margin="0" Grid.ColumnSpan="3"/>
+            <Rectangle Fill="#434343" Stroke="DimGray" Margin="0" Grid.ColumnSpan="3" Height="600" VerticalAlignment="Top"/>
 
             <Image x:Name="image" Source="Logo.JPG" Height="260" VerticalAlignment="Top" Grid.Column="1"/>
-            <TextBox x:Name="user" Grid.Column="1" Height="23" Margin="40,260,40,0" TextWrapping="Wrap" Text="DevTrader" VerticalAlignment="Top" Width="300"/>
-            <PasswordBox x:Name="pass" Grid.Column="1" Height="23" Margin="40,300,40,0" VerticalAlignment="Top" PasswordChar="*" Password="password"/>
-            <PasswordBox x:Name="confirm" Grid.Column="1" Height="23" Margin="40,340,40,0" VerticalAlignment="Top" IsEnabled="False" PasswordChar="*"/>
-            <CheckBox x:Name="register" Content="Register" Grid.Column="1" HorizontalAlignment="Left" Margin="40,380,0,0" VerticalAlignment="Top" Checked="Register_Checked" Unchecked="Register_Checked"/>
-            <Button x:Name="submit" Content="Submit" Grid.Column="1" HorizontalAlignment="Left" Margin="150,380,0,0" VerticalAlignment="Top" Width="110" Click="Submit_Click"/>
+
+
+            <Grid Grid.Column="1">
+                <TextBox x:Name="user" Height="23" Margin="40,260,40,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300"/>
+                <TextBlock IsHitTestVisible="False" Margin="45,262,40,0" Text="Username" VerticalAlignment="Top" HorizontalAlignment="Left" Foreground="DarkGray" Height="23" Width="219">
+                    <TextBlock.Style>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Text, ElementName=user}" Value="">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Grid>
+
+
+            <PasswordBox x:Name="pass" Grid.Column="1" Height="23" Margin="40,319,40,0" VerticalAlignment="Top" PasswordChar="*" />
+            <PasswordBox x:Name="confirm" Grid.Column="1" Height="23" Margin="40,351,40,0" VerticalAlignment="Top" IsEnabled="False" PasswordChar="*"/>
+            <CheckBox x:Name="register" Content="Register" Grid.Column="1" HorizontalAlignment="Left" Margin="40,401,0,0" VerticalAlignment="Top" Checked="Register_Checked" Unchecked="Register_Checked"/>
+            <Button x:Name="submit" Content="Submit" Grid.Column="1" HorizontalAlignment="Left" Margin="150,399,0,0" VerticalAlignment="Top" Width="110" Click="Submit_Click"/>
+            <Label Margin="36,295,0,0" Grid.Column="1" Height="25" VerticalAlignment="Top" >Password:</Label>
 
 
         </Grid>

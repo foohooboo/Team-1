@@ -6,8 +6,6 @@ using Shared.Comms.Messages;
 using Shared.Conversations;
 using Shared.Conversations.SharedStates;
 using System.Net;
-using Shared.Conversations.SharedStates;
-using SharedResources.Conversations.StockStreamRequest;
 
 namespace Client.Conversations.StockHistory
 {
@@ -29,20 +27,9 @@ namespace Client.Conversations.StockHistory
                 case StockHistoryResponseMessage m:
                     Log.Debug($"Received stock history for.");
 
-                    if (TraderModel.Current == null)
-                    {
-                        Log.Warn("No current TrdaerModel set. Cannot assign incoming stock history");
-                    }
-                    else
-                    {
-                        TraderModel.Current.StockHistory = m.RecentHistory;
-                    }
-
+                    TraderModel.Current.StockHistory = m.RecentHistory;
+                    
                     nextState = new ConversationDoneState(Conversation, this);
-
-                    var streamConv = new StockStreamRequestConversation(Config.GetClientProcessNumber());
-                    streamConv.SetInitialState(new StockStreamRequestState(Config.GetClientProcessNumber(), streamConv));
-                    ConversationManager.AddConversation(streamConv);
 
                     break;
 

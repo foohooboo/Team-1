@@ -73,6 +73,10 @@ namespace Shared.Conversations
             {
                 Log.Warn($"Timeout event is forcing conversation {Conversation.Id} into the Done state.");
                 Conversation.UpdateState(new ConversationDoneState(Conversation, this));
+                if(OutboundMessage!=null&&OutboundMessage is TcpEnvelope)
+                {
+                    ComService.RemoveClient(OutboundMessage.To.ToString());
+                }
             }
         }
 

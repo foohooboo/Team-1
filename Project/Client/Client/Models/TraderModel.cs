@@ -4,6 +4,7 @@ using Shared.Conversations;
 using Shared.Leaderboard;
 using Shared.MarketStructures;
 using Shared.PortfolioResources;
+using SharedResources.Conversations.StockStreamRequest;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,9 +40,14 @@ namespace Client.Models
                 throw new Exception("Only one Trader model should be used.");
 
             Current = this;
+
             var getStockHistConv = new StockHistoryRequestConversation();
             getStockHistConv.SetInitialState(new StockHistoryRequestState(getStockHistConv));
             ConversationManager.AddConversation(getStockHistConv);
+
+            var stockStreamConv = new StockStreamRequestConversation(Config.GetClientProcessNumber());
+            stockStreamConv.SetInitialState(new StockStreamRequestState(Config.GetClientProcessNumber(), stockStreamConv));
+            ConversationManager.AddConversation(stockStreamConv);
 
             StockUpdateEventHandler += HandleStockUpdate;
         }
@@ -210,6 +216,13 @@ namespace Client.Models
             {
                 AddStockToHistory(vStock);
             }
+
+            _stockHistory.Add(args.CurrentDay);
+            while(_stockHistory.Count > Config.GetInt(Config.MAX_STOCK_HISTORY))
+            {
+                _stockHistory.RemoveAt(0);
+            }
+
             Handler?.ReDrawPortfolioItems();
         }
 
