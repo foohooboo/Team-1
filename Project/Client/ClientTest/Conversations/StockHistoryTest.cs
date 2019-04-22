@@ -101,8 +101,8 @@ namespace ClientTest.Conversations
 
             Thread.Sleep((int)(Config.GetInt(Config.DEFAULT_TIMEOUT) * Config.GetInt(Config.DEFAULT_RETRY_COUNT) * 2.1));
 
-            Assert.IsTrue(conv.CurrentState is StockHistoryRequestState);
-            Assert.IsFalse(conv.CurrentState is ConversationDoneState);
+            Assert.IsFalse(conv.CurrentState is StockHistoryRequestState);
+            Assert.IsTrue(conv.CurrentState is ConversationDoneState);
             mock.Verify(state => state.Prepare(), Times.Once);
             mock.Verify(state => state.Send(), Times.AtLeast(2));
             mock.Verify(state => state.HandleTimeout(), Times.AtLeast(1));
@@ -152,8 +152,8 @@ namespace ClientTest.Conversations
 
             Thread.Sleep((int)(Config.GetInt(Config.DEFAULT_TIMEOUT) * Config.GetInt(Config.DEFAULT_RETRY_COUNT) * 1.2));
 
-            Assert.IsTrue(conv.CurrentState is StockHistoryRequestState);
-            Assert.IsFalse(conv.CurrentState is ConversationDoneState);
+            Assert.IsFalse(conv.CurrentState is StockHistoryRequestState);
+            Assert.IsTrue(conv.CurrentState is ConversationDoneState);
             mock.Verify(state => state.Prepare(), Times.Once);
             mock.Verify(state => state.Send(), Times.AtLeast(2));
             mock.Verify(state => state.HandleTimeout(), Times.AtLeast(1));

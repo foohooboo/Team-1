@@ -27,7 +27,10 @@ namespace Client.Conversations.StockHistory
                 case StockHistoryResponseMessage m:
                     Log.Debug($"Received stock history for.");
 
-                    TraderModel.Current.StockHistory = m.RecentHistory;
+                    if (TraderModel.Current != null)
+                    {
+                        TraderModel.Current.StockHistory = m.RecentHistory;
+                    }
                     
                     nextState = new ConversationDoneState(Conversation, this);
 
